@@ -1,0 +1,8 @@
+.gradle/
+.idea/
+build/
+server/
+libsarchive/
+printouts/
+*.iml
+out/
