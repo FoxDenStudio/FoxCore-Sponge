@@ -46,7 +46,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.io.File;
 
-@Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.PLUGIN_VERSION, dependencies = "before:foxguard")
+@Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.PLUGIN_VERSION)
 public class FoxCoreMain {
 
     public static final String PLUGIN_VERSION = "SNAPSHOT";
@@ -77,19 +77,20 @@ public class FoxCoreMain {
     @Listener
     public void gamePreInit(GamePreInitializationEvent event) {
         FCStateRegistry.init();
+        registerCommands();
     }
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
-        registerCommands();
+        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         FCStateRegistry.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
     }
 
     private void registerCommands() {
         TextBuilder builder = Texts.builder();
-        builder.append(Texts.of(TextColors.GOLD, "FoxCore \n"));
+        builder.append(Texts.of(TextColors.GOLD, "FoxCore\n"));
         builder.append(Texts.of("Version: " + FoxCoreMain.PLUGIN_VERSION + "\n"));
-        builder.append(Texts.of("Author: gravityfox"));
+        builder.append(Texts.of("Author: gravityfox\n"));
 
         FCCommandMainDispatcher fcDispatcher = new FCCommandMainDispatcher("/foxcore");
         this.fcDispatcher = fcDispatcher;
@@ -99,7 +100,7 @@ public class FoxCoreMain {
         fcDispatcher.register(new CommandSubtract(), "subtract", "sub", "pop");
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
 
-        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
+        fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
     }
 
     public Logger logger() {

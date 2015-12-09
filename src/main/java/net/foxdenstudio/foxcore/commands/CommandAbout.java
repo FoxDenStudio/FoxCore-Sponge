@@ -83,4 +83,8 @@ public class CommandAbout implements CommandCallable {
     public Text getUsage(CommandSource source) {
         return Texts.of("about");
     }
+
+    public void addText(Text text){
+        this.pluginTexts.add(text);
+    }
 }
