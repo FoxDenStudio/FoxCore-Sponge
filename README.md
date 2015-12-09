@@ -2,10 +2,9 @@
 A Common Library for [FoxGuard](https://github.com/FoxDenStudio/FoxGuard) written for the [SpongeAPI](https://github.com/SpongePowered/SpongeAPI)
 
 ## Overview
-This is a common library split off from foxguard. It contains the entire statebuffer mechanism and will also contain the upcoming selections interface.
+This is a common library split off from FoxGuard. It contains the entire state buffer interface and will also contain the upcoming selections interface.
 Selections are a flexible and powerful way to describe an area and then execute a command on them.
 Plugins may want to use the selections in their own plugins. As a result I am putting it here to make it easier for that to happen, as this is a standalone plugin.
-
 
 ## Building from source
 ### Downloading
