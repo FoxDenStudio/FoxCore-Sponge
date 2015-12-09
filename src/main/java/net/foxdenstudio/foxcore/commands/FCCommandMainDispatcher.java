@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,10 +23,10 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands;
+package net.foxdenstudio.foxcore.commands;
 
-import net.foxdenstudio.foxcommon.commands.util.SourceState;
-import net.foxdenstudio.foxcommon.util.CallbackHashMap;
+import net.foxdenstudio.foxcore.commands.util.SourceState;
+import net.foxdenstudio.foxcore.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.dispatcher.Disambiguator;
 import org.spongepowered.api.command.dispatcher.SimpleDispatcher;

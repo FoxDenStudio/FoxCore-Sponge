@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,46 +23,12 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands.util;
+package net.foxdenstudio.foxcore.state.factory;
 
-import org.spongepowered.api.text.Text;
+import net.foxdenstudio.foxcore.state.IStateField;
 
-import java.util.Optional;
+public interface IStateFieldFactory {
 
-public class ProcessResult {
+    IStateField createStateField();
 
-    private static final ProcessResult SUCCESS = of(true);
-    private static final ProcessResult FAILURE = of(false);
-
-    private final boolean success;
-    private final Optional<Text> message;
-
-    private ProcessResult(boolean success, Optional<Text> message) {
-        this.success = success;
-        this.message = message;
-    }
-
-    public static ProcessResult of(boolean success) {
-        return new ProcessResult(success, Optional.empty());
-    }
-
-    public static ProcessResult of(boolean success, Text message) {
-        return new ProcessResult(success, Optional.of(message));
-    }
-
-    public static ProcessResult success() {
-        return SUCCESS;
-    }
-
-    public static ProcessResult failure() {
-        return FAILURE;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public Optional<Text> getMessage() {
-        return message;
-    }
 }

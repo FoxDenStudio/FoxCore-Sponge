@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,12 +23,12 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state;
+package net.foxdenstudio.foxcore.state;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.foxcommon.commands.util.AdvCmdParse;
-import net.foxdenstudio.foxcommon.commands.util.ProcessResult;
-import net.foxdenstudio.foxcommon.util.FCHelper;
+import net.foxdenstudio.foxcore.commands.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.commands.util.ProcessResult;
+import net.foxdenstudio.foxcore.util.FCHelper;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;

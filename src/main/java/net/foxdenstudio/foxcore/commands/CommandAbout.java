@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,11 +23,9 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands;
+package net.foxdenstudio.foxcore.commands;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcommon.commands.util.AdvCmdParse;
-import net.foxdenstudio.foxcommon.state.IStateField;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -37,9 +35,17 @@ import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-public class CommandState implements CommandCallable {
+public class CommandAbout implements CommandCallable {
+
+    List<Text> pluginTexts = new ArrayList<>();
+
+    public CommandAbout(Text pluginText) {
+        pluginTexts.add(pluginText);
+    }
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
@@ -47,35 +53,9 @@ public class CommandState implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).build();
-        String[] args = parse.getArgs();
-        TextBuilder output = Texts.builder().append(Texts.of(TextColors.GOLD, "-----------------------------------------------------\n"));
-        int flag = 0;
-        Collection<IStateField> fields;
-        if (args.length == 0) {
-            fields = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getMap().values();
-        } else {
-            fields = new ArrayList<>();
-            for (String alias : args) {
-                IStateField temp = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(alias);
-                if (temp != null) fields.add(temp);
-            }
-            if (fields.isEmpty()) {
-                fields = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getMap().values();
-            }
-        }
-        IStateField field = null;
-        for (Iterator<IStateField> it = fields.iterator(); it.hasNext();) {
-            field = it.next();
-            if (field != null && !field.isEmpty()) {
-                output.append(Texts.of(TextColors.GREEN, field.getName() + ":\n"));
-                output.append(field.state());
-                if (it.hasNext()) output.append(Texts.of("\n"));
-                flag++;
-            }
-        }
-        if (flag == 0) source.sendMessage(Texts.of("Your current state buffer is clear!"));
-        else source.sendMessage(output.build());
+        TextBuilder builder = Texts.builder();
+        pluginTexts.forEach(builder::append);
+        source.sendMessage(builder.build());
         return CommandResult.empty();
     }
 
@@ -86,7 +66,7 @@ public class CommandState implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcommon.command.state.state") || source.hasPermission("foxguard.command.state.state");
+        return source.hasPermission("foxcore.command.info.about") || source.hasPermission("foxguard.command.info.about");
     }
 
     @Override
@@ -96,11 +76,11 @@ public class CommandState implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Texts.of("Why would you need help using the \"about\" command?"));
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("state [fields]...");
+        return Texts.of("about");
     }
 }

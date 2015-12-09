@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,13 +23,11 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands;
+package net.foxdenstudio.foxcore.commands;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcommon.commands.util.AdvCmdParse;
-import net.foxdenstudio.foxcommon.commands.util.ProcessResult;
-import net.foxdenstudio.foxcommon.state.IStateField;
-import net.foxdenstudio.foxcommon.util.FCHelper;
+import net.foxdenstudio.foxcore.commands.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.state.FCStateRegistry;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -41,7 +39,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.List;
 import java.util.Optional;
 
-public class CommandAdd implements CommandCallable {
+public class CommandFlush implements CommandCallable {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
@@ -49,41 +47,19 @@ public class CommandAdd implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).build();
-        String[] args = parse.getArgs();
-        if (args.length == 0) {
-            source.sendMessage(Texts.builder()
-                    .append(Texts.of(TextColors.GREEN, "Usage: "))
-                    .append(getUsage(source))
-                    .build());
-            return CommandResult.empty();
-        }
-        IStateField field = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(args[0]);
-        if (field == null) throw new CommandException(Texts.of("\"" + args[0] + "\" is not a valid category!"));
-        String extraArgs = "";
-        if (args.length > 1) extraArgs = args[1];
-        ProcessResult result = field.add(source, extraArgs);
-        if (result.isSuccess()) {
-            if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.GREEN).build());
-                } else {
-                    source.sendMessage(result.getMessage().get());
-                }
-            } else {
-                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the " + field.getName() + " field!"));
-            }
+
+        if (arguments.isEmpty()) {
+            FCCommandMainDispatcher.getInstance().getStateMap().get(source).flush();
         } else {
-            if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.RED).build());
-                } else {
-                    source.sendMessage(result.getMessage().get());
-                }
-            } else {
-                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the " + field.getName() + " field!"));
+            AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
+            String[] args = parse.getArgs();
+            for (String arg : args) {
+                String id = FCStateRegistry.instance().getID(arg);
+                if (id == null) throw new CommandException(Texts.of("\"" + arg + "\" is not a valid type!"));
+                FCCommandMainDispatcher.getInstance().getStateMap().get(source).flush(id);
             }
         }
+        source.sendMessage(Texts.of(TextColors.GREEN, "Successfully flushed!"));
         return CommandResult.empty();
     }
 
@@ -94,7 +70,7 @@ public class CommandAdd implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcommon.command.state.add") || source.hasPermission("foxguard.command.state.add");
+        return source.hasPermission("foxcore.command.state.flush") || source.hasPermission("foxguard.command.state.flush");
     }
 
     @Override
@@ -109,6 +85,6 @@ public class CommandAdd implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("add <region [--w:<worldname>] | handler> <name>");
+        return Texts.of("flush [regions] [handlers] [positions]");
     }
 }

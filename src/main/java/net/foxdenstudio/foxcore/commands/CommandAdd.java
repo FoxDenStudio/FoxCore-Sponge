@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,17 +23,17 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands;
+package net.foxdenstudio.foxcore.commands;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcommon.commands.util.ProcessResult;
-import net.foxdenstudio.foxcommon.state.PositionsStateField;
-import net.foxdenstudio.foxcommon.util.FCHelper;
+import net.foxdenstudio.foxcore.commands.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.commands.util.ProcessResult;
+import net.foxdenstudio.foxcore.state.IStateField;
+import net.foxdenstudio.foxcore.util.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
@@ -41,7 +41,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.List;
 import java.util.Optional;
 
-public class CommandPosition implements CommandCallable {
+public class CommandAdd implements CommandCallable {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
@@ -49,8 +49,20 @@ public class CommandPosition implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        PositionsStateField positionsField = (PositionsStateField) FCCommandMainDispatcher.getInstance().getStateMap().get(source).get(PositionsStateField.ID);
-        ProcessResult result = positionsField.add(source, arguments);
+        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).build();
+        String[] args = parse.getArgs();
+        if (args.length == 0) {
+            source.sendMessage(Texts.builder()
+                    .append(Texts.of(TextColors.GREEN, "Usage: "))
+                    .append(getUsage(source))
+                    .build());
+            return CommandResult.empty();
+        }
+        IStateField field = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(args[0]);
+        if (field == null) throw new CommandException(Texts.of("\"" + args[0] + "\" is not a valid category!"));
+        String extraArgs = "";
+        if (args.length > 1) extraArgs = args[1];
+        ProcessResult result = field.add(source, extraArgs);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
                 if (!FCHelper.hasColor(result.getMessage().get())) {
@@ -59,7 +71,7 @@ public class CommandPosition implements CommandCallable {
                     source.sendMessage(result.getMessage().get());
                 }
             } else {
-                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the Positions field!"));
+                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the " + field.getName() + " field!"));
             }
         } else {
             if (result.getMessage().isPresent()) {
@@ -69,7 +81,7 @@ public class CommandPosition implements CommandCallable {
                     source.sendMessage(result.getMessage().get());
                 }
             } else {
-                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the Positions field!"));
+                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the " + field.getName() + " field!"));
             }
         }
         return CommandResult.empty();
@@ -82,7 +94,7 @@ public class CommandPosition implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcommon.command.state.add.position") || source.hasPermission("foxguard.command.state.add.position");
+        return source.hasPermission("foxcore.command.state.add") || source.hasPermission("foxguard.command.state.add");
     }
 
     @Override
@@ -97,9 +109,6 @@ public class CommandPosition implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        if (source instanceof Player)
-            return Texts.of("position [<x> <y> <z>]");
-        else return Texts.of("position <x> <y> <z>");
+        return Texts.of("add <region [--w:<worldname>] | handler> <name>");
     }
-
 }

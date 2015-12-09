@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,23 +23,23 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands;
+package net.foxdenstudio.foxcore.commands;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcommon.commands.util.AdvCmdParse;
-import net.foxdenstudio.foxcommon.state.FCStateRegistry;
+import net.foxdenstudio.foxcore.commands.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.state.IStateField;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class CommandFlush implements CommandCallable {
+public class CommandState implements CommandCallable {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
@@ -47,19 +47,35 @@ public class CommandFlush implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-
-        if (arguments.isEmpty()) {
-            FCCommandMainDispatcher.getInstance().getStateMap().get(source).flush();
+        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).build();
+        String[] args = parse.getArgs();
+        TextBuilder output = Texts.builder().append(Texts.of(TextColors.GOLD, "-----------------------------------------------------\n"));
+        int flag = 0;
+        Collection<IStateField> fields;
+        if (args.length == 0) {
+            fields = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getMap().values();
         } else {
-            AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
-            String[] args = parse.getArgs();
-            for (String arg : args) {
-                String id = FCStateRegistry.instance().getID(arg);
-                if (id == null) throw new CommandException(Texts.of("\"" + arg + "\" is not a valid type!"));
-                FCCommandMainDispatcher.getInstance().getStateMap().get(source).flush(id);
+            fields = new ArrayList<>();
+            for (String alias : args) {
+                IStateField temp = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(alias);
+                if (temp != null) fields.add(temp);
+            }
+            if (fields.isEmpty()) {
+                fields = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getMap().values();
             }
         }
-        source.sendMessage(Texts.of(TextColors.GREEN, "Successfully flushed!"));
+        IStateField field = null;
+        for (Iterator<IStateField> it = fields.iterator(); it.hasNext();) {
+            field = it.next();
+            if (field != null && !field.isEmpty()) {
+                output.append(Texts.of(TextColors.GREEN, field.getName() + ":\n"));
+                output.append(field.state());
+                if (it.hasNext()) output.append(Texts.of("\n"));
+                flag++;
+            }
+        }
+        if (flag == 0) source.sendMessage(Texts.of("Your current state buffer is clear!"));
+        else source.sendMessage(output.build());
         return CommandResult.empty();
     }
 
@@ -70,7 +86,7 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcommon.command.state.flush") || source.hasPermission("foxguard.command.state.flush");
+        return source.hasPermission("foxcore.command.state.state") || source.hasPermission("foxguard.command.state.state");
     }
 
     @Override
@@ -85,6 +101,6 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("flush [regions] [handlers] [positions]");
+        return Texts.of("state [fields]...");
     }
 }

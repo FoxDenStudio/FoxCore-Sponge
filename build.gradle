@@ -1,4 +1,4 @@
-group 'net.foxdenstudio.foxcommon'
+group 'net.foxdenstudio.foxcore'
 version 'ALPHA-SNAPSHOT'
 
 apply plugin: 'java'

@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.util;
+package net.foxdenstudio.foxcore.util;
 
 import org.spongepowered.api.util.Tristate;
 

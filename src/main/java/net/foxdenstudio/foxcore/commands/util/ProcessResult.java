@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,24 +23,46 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state;
+package net.foxdenstudio.foxcore.commands.util;
 
-import net.foxdenstudio.foxcommon.commands.util.ProcessResult;
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 
-public interface IStateField {
+import java.util.Optional;
 
-    String getName();
+public class ProcessResult {
 
-    Text state();
+    private static final ProcessResult SUCCESS = of(true);
+    private static final ProcessResult FAILURE = of(false);
 
-    ProcessResult add(CommandSource source, String arguments) throws CommandException;
+    private final boolean success;
+    private final Optional<Text> message;
 
-    ProcessResult subtract(CommandSource source, String arguments) throws CommandException;
+    private ProcessResult(boolean success, Optional<Text> message) {
+        this.success = success;
+        this.message = message;
+    }
 
-    void flush();
+    public static ProcessResult of(boolean success) {
+        return new ProcessResult(success, Optional.empty());
+    }
 
-    boolean isEmpty();
+    public static ProcessResult of(boolean success, Text message) {
+        return new ProcessResult(success, Optional.of(message));
+    }
+
+    public static ProcessResult success() {
+        return SUCCESS;
+    }
+
+    public static ProcessResult failure() {
+        return FAILURE;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public Optional<Text> getMessage() {
+        return message;
+    }
 }

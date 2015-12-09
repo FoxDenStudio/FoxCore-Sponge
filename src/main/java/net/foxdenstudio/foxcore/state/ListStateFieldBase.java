@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,25 +23,31 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.util;
+package net.foxdenstudio.foxcore.state;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CallbackHashMap<K, V> extends HashMap<K, V> {
-    final private BiFunction<Object, Map<K, V>, V> callback;
+public abstract class ListStateFieldBase<T> extends StateFieldBase {
 
-    public CallbackHashMap(BiFunction<Object, Map<K, V>, V> callback) {
-        this.callback = callback;
+    protected List<T> list = new ArrayList<>();
+
+    protected ListStateFieldBase(String name) {
+        super(name);
     }
 
     @Override
-    public V get(Object key) {
-        if (containsKey(key)) {
-            return super.get(key);
-        } else {
-            return callback.apply(key, this);
-        }
+    public void flush() {
+        list.clear();
     }
+
+    @Override
+    public boolean isEmpty() {
+        return this.list.isEmpty();
+    }
+
+    public List<T> getList() {
+        return list;
+    }
+
 }

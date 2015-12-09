@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,15 +23,25 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state.factory;
+package net.foxdenstudio.foxcore.util;
 
-import net.foxdenstudio.foxcommon.state.IStateField;
-import net.foxdenstudio.foxcommon.state.PositionsStateField;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
 
-public class PositionStateFieldFactory implements IStateFieldFactory {
+public class CallbackHashMap<K, V> extends HashMap<K, V> {
+    final private BiFunction<Object, Map<K, V>, V> callback;
+
+    public CallbackHashMap(BiFunction<Object, Map<K, V>, V> callback) {
+        this.callback = callback;
+    }
 
     @Override
-    public IStateField createStateField() {
-        return new PositionsStateField("Positions");
+    public V get(Object key) {
+        if (containsKey(key)) {
+            return super.get(key);
+        } else {
+            return callback.apply(key, this);
+        }
     }
 }

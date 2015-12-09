@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,11 +23,11 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.util;
+package net.foxdenstudio.foxcore.util;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.foxcommon.commands.FCCommandMainDispatcher;
-import net.foxdenstudio.foxcommon.state.PositionsStateField;
+import net.foxdenstudio.foxcore.commands.FCCommandMainDispatcher;
+import net.foxdenstudio.foxcore.state.PositionsStateField;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;

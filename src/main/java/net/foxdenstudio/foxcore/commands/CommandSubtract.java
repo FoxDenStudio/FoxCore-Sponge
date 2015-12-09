@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxGuard, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,13 +23,13 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.commands;
+package net.foxdenstudio.foxcore.commands;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcommon.commands.util.AdvCmdParse;
-import net.foxdenstudio.foxcommon.commands.util.ProcessResult;
-import net.foxdenstudio.foxcommon.state.IStateField;
-import net.foxdenstudio.foxcommon.util.FCHelper;
+import net.foxdenstudio.foxcore.commands.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.commands.util.ProcessResult;
+import net.foxdenstudio.foxcore.state.IStateField;
+import net.foxdenstudio.foxcore.util.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -44,8 +44,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static net.foxdenstudio.foxcommon.util.Aliases.WORLD_ALIASES;
-import static net.foxdenstudio.foxcommon.util.Aliases.isAlias;
+import static net.foxdenstudio.foxcore.util.Aliases.WORLD_ALIASES;
+import static net.foxdenstudio.foxcore.util.Aliases.isAlias;
 
 public class CommandSubtract implements CommandCallable {
 
@@ -106,7 +106,7 @@ public class CommandSubtract implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcommon.command.state.subtract") || source.hasPermission("foxguard.command.state.subtract");
+        return source.hasPermission("foxcore.command.state.subtract") || source.hasPermission("foxguard.command.state.subtract");
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,18 +23,15 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state;
+package net.foxdenstudio.foxcore.state.factory;
 
-public abstract class StateFieldBase implements IStateField {
+import net.foxdenstudio.foxcore.state.IStateField;
+import net.foxdenstudio.foxcore.state.PositionsStateField;
 
-    protected final String name;
-
-    protected StateFieldBase(String name) {
-        this.name = name;
-    }
+public class PositionStateFieldFactory implements IStateFieldFactory {
 
     @Override
-    public String getName() {
-        return this.name;
+    public IStateField createStateField() {
+        return new PositionsStateField("Positions");
     }
 }

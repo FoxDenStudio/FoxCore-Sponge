@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,12 +23,24 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state.factory;
+package net.foxdenstudio.foxcore.state;
 
-import net.foxdenstudio.foxcommon.state.IStateField;
+import net.foxdenstudio.foxcore.commands.util.ProcessResult;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.text.Text;
 
-public interface IStateFieldFactory {
+public interface IStateField {
 
-    IStateField createStateField();
+    String getName();
 
+    Text state();
+
+    ProcessResult add(CommandSource source, String arguments) throws CommandException;
+
+    ProcessResult subtract(CommandSource source, String arguments) throws CommandException;
+
+    void flush();
+
+    boolean isEmpty();
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state;
+package net.foxdenstudio.foxcore.state;
 
 import java.util.HashSet;
 import java.util.Set;

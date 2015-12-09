@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,14 +23,14 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state;
+package net.foxdenstudio.foxcore.state;
 
-import net.foxdenstudio.foxcommon.state.factory.IStateFieldFactory;
+import net.foxdenstudio.foxcore.state.factory.IStateFieldFactory;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static net.foxdenstudio.foxcommon.util.Aliases.isAlias;
+import static net.foxdenstudio.foxcore.util.Aliases.isAlias;
 
 public class FCStateRegistry {
 

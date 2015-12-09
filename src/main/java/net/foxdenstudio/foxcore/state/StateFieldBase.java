@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,31 +23,18 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon.state;
+package net.foxdenstudio.foxcore.state;
 
-import java.util.ArrayList;
-import java.util.List;
+public abstract class StateFieldBase implements IStateField {
 
-public abstract class ListStateFieldBase<T> extends StateFieldBase {
+    protected final String name;
 
-    protected List<T> list = new ArrayList<>();
-
-    protected ListStateFieldBase(String name) {
-        super(name);
+    protected StateFieldBase(String name) {
+        this.name = name;
     }
 
     @Override
-    public void flush() {
-        list.clear();
+    public String getName() {
+        return this.name;
     }
-
-    @Override
-    public boolean isEmpty() {
-        return this.list.isEmpty();
-    }
-
-    public List<T> getList() {
-        return list;
-    }
-
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCommon, licensed under the MIT License (MIT).
+ * This file is part of FoxCore, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,14 +23,14 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcommon;
+package net.foxdenstudio.foxcore;
 
 import com.google.inject.Inject;
-import net.foxdenstudio.foxcommon.commands.*;
-import net.foxdenstudio.foxcommon.state.FCStateRegistry;
-import net.foxdenstudio.foxcommon.state.PositionsStateField;
-import net.foxdenstudio.foxcommon.state.factory.PositionStateFieldFactory;
-import net.foxdenstudio.foxcommon.util.Aliases;
+import net.foxdenstudio.foxcore.commands.*;
+import net.foxdenstudio.foxcore.state.FCStateRegistry;
+import net.foxdenstudio.foxcore.state.PositionsStateField;
+import net.foxdenstudio.foxcore.state.factory.PositionStateFieldFactory;
+import net.foxdenstudio.foxcore.util.Aliases;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
@@ -40,15 +40,18 @@ import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.text.TextBuilder;
+import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.io.File;
 
-@Plugin(id = "foxcommon", name = "FoxCommon", version = FoxCommonMain.PLUGIN_VERSION)
-public class FoxCommonMain {
+@Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.PLUGIN_VERSION, dependencies = "before:foxguard")
+public class FoxCoreMain {
 
     public static final String PLUGIN_VERSION = "SNAPSHOT";
 
-    private static FoxCommonMain instance;
+    private static FoxCoreMain instance;
 
     @Inject
     private Logger logger;
@@ -62,7 +65,7 @@ public class FoxCommonMain {
 
     private FCCommandMainDispatcher fcDispatcher;
 
-    public static FoxCommonMain instance() {
+    public static FoxCoreMain instance() {
         return instance;
     }
 
@@ -83,7 +86,12 @@ public class FoxCommonMain {
     }
 
     private void registerCommands() {
-        FCCommandMainDispatcher fcDispatcher = new FCCommandMainDispatcher("/foxcommon");
+        TextBuilder builder = Texts.builder();
+        builder.append(Texts.of(TextColors.GOLD, "FoxCore \n"));
+        builder.append(Texts.of("Version: " + FoxCoreMain.PLUGIN_VERSION + "\n"));
+        builder.append(Texts.of("Author: gravityfox"));
+
+        FCCommandMainDispatcher fcDispatcher = new FCCommandMainDispatcher("/foxcore");
         this.fcDispatcher = fcDispatcher;
         fcDispatcher.register(new CommandState(), "state", "current", "cur");
         fcDispatcher.register(new CommandPosition(), "position", "pos", "p");
@@ -91,7 +99,7 @@ public class FoxCommonMain {
         fcDispatcher.register(new CommandSubtract(), "subtract", "sub", "pop");
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
 
-        game.getCommandManager().register(this, fcDispatcher, "foxcommon", "foxc", "fcommon", "fc");
+        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
     }
 
     public Logger logger() {
