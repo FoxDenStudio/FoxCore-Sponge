@@ -94,6 +94,25 @@ public class FCCommandDispatcher implements Dispatcher {
         }
     }
 
+    public Optional<CommandMapping> register(CommandCallable callable, String primaryAlias, List<String> secondaryAliases) {
+        checkNotNull(primaryAlias, "aliases");
+        checkNotNull(callable, "callable");
+
+        if (!primaryAlias.isEmpty()) {
+            if(secondaryAliases == null) secondaryAliases = new ArrayList<>();
+            CommandMapping mapping = new ImmutableCommandMapping(callable, primaryAlias, secondaryAliases);
+
+            this.commands.put(primaryAlias.toLowerCase(), mapping);
+            for (String alias : secondaryAliases) {
+                this.commands.put(alias.toLowerCase(), mapping);
+            }
+
+            return Optional.of(mapping);
+        } else {
+            return Optional.empty();
+        }
+    }
+
     @Override
     public Set<? extends CommandMapping> getCommands() {
         return ImmutableSet.copyOf(this.commands.values());

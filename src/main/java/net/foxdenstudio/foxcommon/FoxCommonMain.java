@@ -26,6 +26,7 @@
 package net.foxdenstudio.foxcommon;
 
 import com.google.inject.Inject;
+import net.foxdenstudio.foxcommon.commands.*;
 import net.foxdenstudio.foxcommon.state.FCStateRegistry;
 import net.foxdenstudio.foxcommon.state.PositionsStateField;
 import net.foxdenstudio.foxcommon.state.factory.PositionStateFieldFactory;
@@ -59,6 +60,11 @@ public class FoxCommonMain {
     @ConfigDir(sharedRoot = true)
     private File configDirectory;
 
+    private FCCommandMainDispatcher fcDispatcher;
+
+    public static FoxCommonMain instance() {
+        return instance;
+    }
 
     @Listener
     public void gameConstruct(GameConstructionEvent event) {
@@ -72,7 +78,20 @@ public class FoxCommonMain {
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
+        registerCommands();
         FCStateRegistry.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+    }
+
+    private void registerCommands() {
+        FCCommandMainDispatcher fcDispatcher = new FCCommandMainDispatcher("/foxcommon");
+        this.fcDispatcher = fcDispatcher;
+        fcDispatcher.register(new CommandState(), "state", "current", "cur");
+        fcDispatcher.register(new CommandPosition(), "position", "pos", "p");
+        fcDispatcher.register(new CommandAdd(), "add", "push");
+        fcDispatcher.register(new CommandSubtract(), "subtract", "sub", "pop");
+        fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
+
+        game.getCommandManager().register(this, fcDispatcher, "foxcommon", "foxc", "fcommon", "fc");
     }
 
     public Logger logger() {
@@ -81,5 +100,9 @@ public class FoxCommonMain {
 
     public Game game() {
         return game;
+    }
+
+    public FCCommandMainDispatcher getFCDispatcher() {
+        return fcDispatcher;
     }
 }
