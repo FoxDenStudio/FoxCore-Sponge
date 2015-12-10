@@ -26,7 +26,7 @@
 package net.foxdenstudio.foxcore.util;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.foxcore.commands.FCCommandMainDispatcher;
+import net.foxdenstudio.foxcore.command.FCCommandMainDispatcher;
 import net.foxdenstudio.foxcore.state.PositionsStateField;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.User;

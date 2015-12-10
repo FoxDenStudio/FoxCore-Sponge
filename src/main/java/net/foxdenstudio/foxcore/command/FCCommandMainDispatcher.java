@@ -23,9 +23,9 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands;
+package net.foxdenstudio.foxcore.command;
 
-import net.foxdenstudio.foxcore.commands.util.SourceState;
+import net.foxdenstudio.foxcore.command.util.SourceState;
 import net.foxdenstudio.foxcore.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.dispatcher.Disambiguator;

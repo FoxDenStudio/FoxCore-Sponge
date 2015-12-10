@@ -23,11 +23,11 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands;
+package net.foxdenstudio.foxcore.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcore.commands.util.AdvCmdParse;
-import net.foxdenstudio.foxcore.commands.util.ProcessResult;
+import net.foxdenstudio.foxcore.command.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.command.util.ProcessResult;
 import net.foxdenstudio.foxcore.state.IStateField;
 import net.foxdenstudio.foxcore.util.FCHelper;
 import org.spongepowered.api.command.CommandCallable;

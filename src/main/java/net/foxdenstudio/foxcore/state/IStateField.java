@@ -25,7 +25,7 @@
 
 package net.foxdenstudio.foxcore.state;
 
-import net.foxdenstudio.foxcore.commands.util.ProcessResult;
+import net.foxdenstudio.foxcore.command.util.ProcessResult;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;

@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands;
+package net.foxdenstudio.foxcore.command;
 
 import com.google.common.collect.*;
 import org.spongepowered.api.command.*;

@@ -26,7 +26,7 @@
 package net.foxdenstudio.foxcore;
 
 import com.google.inject.Inject;
-import net.foxdenstudio.foxcore.commands.*;
+import net.foxdenstudio.foxcore.command.*;
 import net.foxdenstudio.foxcore.state.FCStateRegistry;
 import net.foxdenstudio.foxcore.state.PositionsStateField;
 import net.foxdenstudio.foxcore.state.factory.PositionStateFieldFactory;
@@ -99,6 +99,7 @@ public class FoxCoreMain {
         fcDispatcher.register(new CommandAdd(), "add", "push");
         fcDispatcher.register(new CommandSubtract(), "subtract", "sub", "pop");
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
+        fcDispatcher.register(new CommandTest(), "test");
 
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
     }

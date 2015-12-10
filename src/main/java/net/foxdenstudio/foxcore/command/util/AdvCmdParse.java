@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands.util;
+package net.foxdenstudio.foxcore.command.util;
 
 import net.foxdenstudio.foxcore.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandException;

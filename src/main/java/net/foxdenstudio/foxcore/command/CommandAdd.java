@@ -23,29 +23,25 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands;
+package net.foxdenstudio.foxcore.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.foxcore.command.util.AdvCmdParse;
+import net.foxdenstudio.foxcore.command.util.ProcessResult;
+import net.foxdenstudio.foxcore.state.IStateField;
+import net.foxdenstudio.foxcore.util.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CommandAbout implements CommandCallable {
-
-    List<Text> pluginTexts = new ArrayList<>();
-
-    public CommandAbout(Text pluginText) {
-        pluginTexts.add(pluginText);
-    }
+public class CommandAdd implements CommandCallable {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
@@ -53,9 +49,41 @@ public class CommandAbout implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        TextBuilder builder = Texts.builder();
-        pluginTexts.forEach(builder::append);
-        source.sendMessage(builder.build());
+        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).build();
+        String[] args = parse.getArgs();
+        if (args.length == 0) {
+            source.sendMessage(Texts.builder()
+                    .append(Texts.of(TextColors.GREEN, "Usage: "))
+                    .append(getUsage(source))
+                    .build());
+            return CommandResult.empty();
+        }
+        IStateField field = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(args[0]);
+        if (field == null) throw new CommandException(Texts.of("\"" + args[0] + "\" is not a valid category!"));
+        String extraArgs = "";
+        if (args.length > 1) extraArgs = args[1];
+        ProcessResult result = field.add(source, extraArgs);
+        if (result.isSuccess()) {
+            if (result.getMessage().isPresent()) {
+                if (!FCHelper.hasColor(result.getMessage().get())) {
+                    source.sendMessage(result.getMessage().get().builder().color(TextColors.GREEN).build());
+                } else {
+                    source.sendMessage(result.getMessage().get());
+                }
+            } else {
+                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the " + field.getName() + " field!"));
+            }
+        } else {
+            if (result.getMessage().isPresent()) {
+                if (!FCHelper.hasColor(result.getMessage().get())) {
+                    source.sendMessage(result.getMessage().get().builder().color(TextColors.RED).build());
+                } else {
+                    source.sendMessage(result.getMessage().get());
+                }
+            } else {
+                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the " + field.getName() + " field!"));
+            }
+        }
         return CommandResult.empty();
     }
 
@@ -66,7 +94,7 @@ public class CommandAbout implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.info.about") || source.hasPermission("foxguard.command.info.about");
+        return source.hasPermission("foxcore.command.state.add") || source.hasPermission("foxguard.command.state.add");
     }
 
     @Override
@@ -76,15 +104,11 @@ public class CommandAbout implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.of(Texts.of("Why would you need help using the \"about\" command?"));
+        return Optional.empty();
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("about");
-    }
-
-    public void addText(Text text){
-        this.pluginTexts.add(text);
+        return Texts.of("add <region [--w:<worldname>] | handler> <name>");
     }
 }

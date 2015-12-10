@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCore, licensed under the MIT License (MIT).
+ * This file is part of FoxGuard, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,55 +23,43 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands;
+package net.foxdenstudio.foxcore.command;
+
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.foxcore.commands.util.ProcessResult;
-import net.foxdenstudio.foxcore.state.PositionsStateField;
-import net.foxdenstudio.foxcore.util.FCHelper;
+import net.foxdenstudio.foxcore.command.util.AdvCmdParse;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-public class CommandPosition implements CommandCallable {
-
+public class CommandTest implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        PositionsStateField positionsField = (PositionsStateField) FCCommandMainDispatcher.getInstance().getStateMap().get(source).get(PositionsStateField.ID);
-        ProcessResult result = positionsField.add(source, arguments);
-        if (result.isSuccess()) {
-            if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.GREEN).build());
-                } else {
-                    source.sendMessage(result.getMessage().get());
-                }
-            } else {
-                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the Positions field!"));
-            }
-        } else {
-            if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.RED).build());
-                } else {
-                    source.sendMessage(result.getMessage().get());
-                }
-            } else {
-                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the Positions field!"));
-            }
+        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(2).build();
+        TextBuilder builder = Texts.builder();
+        builder.append(Texts.of(TextColors.GOLD, "-----------------------------\n"));
+        int count = 0;
+        for (String str : parse.getArgs()) {
+            count++;
+            builder.append(Texts.of(count + ": " + str + "\n"));
         }
+        for (Map.Entry<String, String> entry : parse.getFlagmap().entrySet()) {
+            builder.append(Texts.of(entry.getKey() + " : " + entry.getValue() + "\n"));
+        }
+        source.sendMessage(builder.build());
         return CommandResult.empty();
     }
 
@@ -82,7 +70,7 @@ public class CommandPosition implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.add.position") || source.hasPermission("foxguard.command.state.add.position");
+        return source.hasPermission("foxguard.command.debug.test");
     }
 
     @Override
@@ -97,9 +85,6 @@ public class CommandPosition implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        if (source instanceof Player)
-            return Texts.of("position [<x> <y> <z>]");
-        else return Texts.of("position <x> <y> <z>");
+        return Texts.of("test [mystery args]...");
     }
-
 }

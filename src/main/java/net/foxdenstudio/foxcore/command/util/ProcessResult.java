@@ -23,50 +23,46 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.commands.util;
+package net.foxdenstudio.foxcore.command.util;
 
-import net.foxdenstudio.foxcore.state.FCStateRegistry;
-import net.foxdenstudio.foxcore.state.IStateField;
-import net.foxdenstudio.foxcore.util.CallbackHashMap;
+import org.spongepowered.api.text.Text;
 
-import java.util.Map;
+import java.util.Optional;
 
-public class SourceState {
+public class ProcessResult {
 
-    private Map<String, IStateField> state = new CallbackHashMap<>((key, map) -> {
-        if (key instanceof String) {
-            IStateField field = FCStateRegistry.instance().newStateField((String) key);
-            if (field != null) {
-                map.put((String) key, field);
-                return field;
-            }
-        }
-        return null;
-    });
+    private static final ProcessResult SUCCESS = of(true);
+    private static final ProcessResult FAILURE = of(false);
 
-    public Map<String, IStateField> getMap() {
-        return this.state;
+    private final boolean success;
+    private final Optional<Text> message;
+
+    private ProcessResult(boolean success, Optional<Text> message) {
+        this.success = success;
+        this.message = message;
     }
 
-    public IStateField get(String identifier) {
-        return this.state.get(identifier);
+    public static ProcessResult of(boolean success) {
+        return new ProcessResult(success, Optional.empty());
     }
 
-    public IStateField getFromAlias(String alias) {
-        return this.state.get(FCStateRegistry.instance().getID(alias));
+    public static ProcessResult of(boolean success, Text message) {
+        return new ProcessResult(success, Optional.of(message));
     }
 
-    public void flush() {
-        state.values().forEach(IStateField::flush);
+    public static ProcessResult success() {
+        return SUCCESS;
     }
 
-    public void flush(String field) {
-        if (state.containsKey(field)) state.get(field).flush();
+    public static ProcessResult failure() {
+        return FAILURE;
     }
 
-    public void flush(String... fields) {
-        for (String field : fields) {
-            this.flush(field);
-        }
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public Optional<Text> getMessage() {
+        return message;
     }
 }
