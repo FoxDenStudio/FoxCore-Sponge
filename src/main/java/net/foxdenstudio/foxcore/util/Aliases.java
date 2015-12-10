@@ -30,8 +30,8 @@ import org.spongepowered.api.util.Tristate;
 public final class Aliases {
 
     public static final String[] WORLD_ALIASES = {"world", "w", "dimension", "d"};
-    public static final String[] REGIONS_ALIASES = {"regions", "region", "reg", "r"};
-    public static final String[] HANDLERS_ALIASES = {"handlers", "handler", "handles", "handle", "hands", "hand", "h", "flagsets", "flagset", "flags", "flag", "f"};
+    public static final String[] REGIONS_ALIASES = {"regions", "region", "reg", "rg", "r"};
+    public static final String[] HANDLERS_ALIASES = {"handlers", "handler", "handles", "handle", "hands", "hand", "hn", "h", "flagsets", "flagset", "flags", "flag", "f"};
     public static final String[] POSITIONS_ALIASES = {"positions", "position", "points", "point", "locations", "location", "pos", "loc", "locs", "p"};
     public static final String[] OWNER_GROUP_ALIASES = {"owners", "owner", "masters", "master", "creators", "creator",
             "admins", "admin", "administrators", "administrator", "mods", "mod"};
