@@ -32,7 +32,7 @@ import java.util.Set;
 
 import static net.foxdenstudio.foxcore.util.Aliases.isAlias;
 
-public class FCStateRegistry {
+public final class FCStateRegistry {
 
     private static FCStateRegistry instance;
 

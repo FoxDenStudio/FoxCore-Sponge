@@ -47,7 +47,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.io.File;
 
 @Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.PLUGIN_VERSION)
-public class FoxCoreMain {
+public final class FoxCoreMain {
 
     public static final String PLUGIN_VERSION = "SNAPSHOT";
 

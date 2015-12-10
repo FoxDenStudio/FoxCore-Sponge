@@ -38,7 +38,7 @@ import org.spongepowered.api.util.Tristate;
 import java.util.Arrays;
 import java.util.List;
 
-public class FCHelper {
+public final class FCHelper {
     public static int parseCoordinate(int sPos, String arg) throws NumberFormatException {
         if (arg.equals("~")) {
             return sPos;

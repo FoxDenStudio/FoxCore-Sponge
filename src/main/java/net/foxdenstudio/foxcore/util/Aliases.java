@@ -27,7 +27,7 @@ package net.foxdenstudio.foxcore.util;
 
 import org.spongepowered.api.util.Tristate;
 
-public class Aliases {
+public final class Aliases {
 
     public static final String[] WORLD_ALIASES = {"world", "w", "dimension", "d"};
     public static final String[] REGIONS_ALIASES = {"regions", "region", "reg", "r"};
