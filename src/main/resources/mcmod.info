@@ -1,0 +1,19 @@
+[
+{
+"modid": "foxcoreforge",
+"name": "FoxCore Forge Client Mod",
+"description": "Client mod for working with FoxCore Selections",
+"version": "",
+"credits": "Written by gravityfox",
+"logoFile": "",
+"mcversion": "",
+"url": "",
+"updateUrl": "",
+"authors": [ "gravityfox" ],
+"parent":"",
+"screenshots": [],
+"dependencies": [
+"mod_MinecraftForge"
+]
+}
+]
