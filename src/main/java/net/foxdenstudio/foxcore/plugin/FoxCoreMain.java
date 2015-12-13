@@ -49,7 +49,7 @@ import java.io.File;
 @Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.VERSION)
 public final class FoxCoreMain {
 
-    public static final String VERSION = "SNAPSHOT";
+    public static final String VERSION = "SNAPSHOT";//VERSION
 
     private static FoxCoreMain instance;
 
@@ -82,7 +82,7 @@ public final class FoxCoreMain {
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
-        logger.info("Save directory: " + game.getSavesDirectory());
+        logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         FCStateRegistry.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
     }

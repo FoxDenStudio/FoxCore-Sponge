@@ -34,8 +34,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class TestRenderer {
 
-    private static final float OFFSET = 0.002f;
-
     private Minecraft mc;
 
     private byte red = 0;
@@ -55,68 +53,56 @@ public class TestRenderer {
         glPushMatrix();
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_ALPHA_TEST);
         //glDisable(GL_DEPTH_TEST);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
 
         glLineWidth(1f);
         glTranslated(-playerX, -playerY, -playerZ);
-        glColor4ub((byte) 255, (byte) 0, (byte) 0, (byte)(-System.currentTimeMillis() / 4));
+        float mx = 5;
+        float my = 79;
+        float mz = -20;
 
-        float mx = 0;
-        float my = 80;
-        float mz = 0;
-        drawBox(mx, my, mz);
+        final float alpha = 1f - ((System.currentTimeMillis()) % 1000) / 1000f;
 
-        drawBox(mx, my-1, mz);
+
+        glColor4f(1, 0, 0, alpha);
+        RenderUtil.drawBoxLines(mx, my, ++mz);
+        glColor4f(1, 0, 0, alpha / 4);
+        RenderUtil.drawBoxFaces(mx, my, mz);
+
+        glColor4f(1, 1, 0, (alpha + (1f/6f)) % 1f);
+        RenderUtil.drawBoxLines(mx, my, ++mz);
+        glColor4f(1, 1, 0, (alpha + (1f / 6f)) % 1f / 4);
+        RenderUtil.drawBoxFaces(mx, my, mz);
+
+        glColor4f(0, 1, 0, (alpha + (2f / 6f)) % 1f);
+        RenderUtil.drawBoxLines(mx, my, ++mz);
+        glColor4f(0, 1, 0, (alpha + (2f / 6f)) % 1f / 4);
+        RenderUtil.drawBoxFaces(mx, my, mz);
+
+        glColor4f(0, 1, 1, (alpha + (3f / 6f)) % 1f);
+        RenderUtil.drawBoxLines(mx, my, ++mz);
+        glColor4f(0, 1, 1, (alpha + (3f / 6f)) % 1f / 4);
+        RenderUtil.drawBoxFaces(mx, my, mz);
+
+        glColor4f(0, 0, 1, (alpha + (4f / 6f)) % 1f);
+        RenderUtil.drawBoxLines(mx, my, ++mz);
+        glColor4f(0, 0, 1, (alpha + (4f / 6f)) % 1f / 4);
+        RenderUtil.drawBoxFaces(mx, my, mz);
+
+        glColor4f(1, 0, 1, (alpha + (5f / 6f)) % 1f);
+        RenderUtil.drawBoxLines(mx, my, ++mz);
+        glColor4f(1, 0, 1, (alpha + (5f / 6f)) % 1f / 4);
+        RenderUtil.drawBoxFaces(mx, my, mz);
 
         glDisable(GL_BLEND);
+        glEnable(GL_ALPHA_TEST);
         glEnable(GL_LIGHTING);
         glEnable(GL_TEXTURE_2D);
         //glEnable(GL_DEPTH_TEST);
         glPopMatrix();
-    }
-
-    public static void drawBox(float x, float y, float z) {
-        glEnable(GL_LINE_SMOOTH);
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glBegin(GL_LINES);
-        float x1 = x - OFFSET;
-        float y1 = y - OFFSET;
-        float z1 = z - OFFSET;
-        float x2 = x + OFFSET + 1;
-        float y2 = y + OFFSET + 1;
-        float z2 = z + OFFSET + 1;
-        glVertex3f(x1, y1, z1);
-        glVertex3f(x2, y1, z1);
-        glVertex3f(x1, y1, z1);
-        glVertex3f(x1, y2, z1);
-        glVertex3f(x1, y1, z1);
-        glVertex3f(x1, y1, z2);
-
-        glVertex3f(x2, y1, z1);
-        glVertex3f(x2, y2, z1);
-        glVertex3f(x2, y1, z1);
-        glVertex3f(x2, y1, z2);
-
-        glVertex3f(x1, y2, z1);
-        glVertex3f(x2, y2, z1);
-        glVertex3f(x1, y2, z1);
-        glVertex3f(x1, y2, z2);
-
-        glVertex3f(x1, y1, z2);
-        glVertex3f(x2, y1, z2);
-        glVertex3f(x1, y1, z2);
-        glVertex3f(x1, y2, z2);
-
-        glVertex3f(x2, y2, z1);
-        glVertex3f(x2, y2, z2);
-        glVertex3f(x2, y1, z2);
-        glVertex3f(x2, y2, z2);
-        glVertex3f(x1, y2, z2);
-        glVertex3f(x2, y2, z2);
-
-        glEnd();
     }
 
 }
