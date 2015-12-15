@@ -31,7 +31,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class PacketManager {
 
-    public final FMLEventChannel INSTANCE;
+    //public final FMLEventChannel INSTANCE;
 
     public PacketManager() {
         if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
