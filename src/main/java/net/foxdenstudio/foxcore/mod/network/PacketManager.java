@@ -43,7 +43,7 @@ public class PacketManager {
 
 
     public static void test() {
-        NetworkRegistry.INSTANCE.
+        //NetworkRegistry.INSTANCE.
     }
 
 }

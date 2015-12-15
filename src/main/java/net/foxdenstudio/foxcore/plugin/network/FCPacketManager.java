@@ -36,7 +36,7 @@ public class FCPacketManager {
     private static ChannelBinding.IndexedMessageChannel channel;
 
     private FCPacketManager() {
-        
+
         channel = FoxCoreMain.instance().game().getChannelRegistrar().createChannel(FoxCoreMain.instance(), "foxcore");
         channel.registerMessage(YiffMessage.class, 69);
     }
