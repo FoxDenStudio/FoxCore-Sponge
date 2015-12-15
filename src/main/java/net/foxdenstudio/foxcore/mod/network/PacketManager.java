@@ -35,7 +35,7 @@ public class PacketManager {
 
     public PacketManager() {
         if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
-            this.INSTANCE = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT).;
+            //this.INSTANCE = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT).;
         } else {
             //this.INSTANCE = NetworkRegistry.INSTANCE.("foxcore");
         }
