@@ -23,16 +23,27 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.mod.network;
 
-public class CommonProxy {
+import net.minecraftforge.fml.common.network.FMLEventChannel;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
-    public void registerRenderers() {
+public class PacketManager {
 
+    public final FMLEventChannel INSTANCE;
+
+    public PacketManager() {
+        if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
+            this.INSTANCE = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT).;
+        } else {
+            //this.INSTANCE = NetworkRegistry.INSTANCE.("foxcore");
+        }
     }
 
-    public void registerNetworkHandlers(){
 
+    public static void test() {
+        NetworkRegistry.INSTANCE.
     }
 
 }

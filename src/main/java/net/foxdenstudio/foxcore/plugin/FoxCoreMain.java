@@ -27,6 +27,7 @@ package net.foxdenstudio.foxcore.plugin;
 
 import com.google.inject.Inject;
 import net.foxdenstudio.foxcore.plugin.command.*;
+import net.foxdenstudio.foxcore.plugin.network.FCPacketManager;
 import net.foxdenstudio.foxcore.plugin.state.FCStateRegistry;
 import net.foxdenstudio.foxcore.plugin.state.PositionsStateField;
 import net.foxdenstudio.foxcore.plugin.state.factory.PositionStateFieldFactory;
@@ -39,6 +40,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
@@ -85,6 +87,8 @@ public final class FoxCoreMain {
         logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         FCStateRegistry.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+
+        FCPacketManager.init();
     }
 
     private void registerCommands() {
@@ -115,5 +119,10 @@ public final class FoxCoreMain {
 
     public FCCommandMainDispatcher getFCDispatcher() {
         return fcDispatcher;
+    }
+
+    @Listener
+    public void playerJoin(ClientConnectionEvent.Join event) {
+        FCPacketManager.instance().yiff(event.getTargetEntity());
     }
 }

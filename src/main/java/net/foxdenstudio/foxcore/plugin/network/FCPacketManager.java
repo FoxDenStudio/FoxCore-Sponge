@@ -23,16 +23,33 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.plugin.network;
 
-public class CommonProxy {
+import net.foxdenstudio.foxcore.plugin.FoxCoreMain;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.network.ChannelBinding;
 
-    public void registerRenderers() {
+public class FCPacketManager {
 
+    private static FCPacketManager instance;
+
+    private static ChannelBinding.IndexedMessageChannel channel;
+
+    private FCPacketManager() {
+        
+        channel = FoxCoreMain.instance().game().getChannelRegistrar().createChannel(FoxCoreMain.instance(), "foxcore");
+        channel.registerMessage(YiffMessage.class, 69);
     }
 
-    public void registerNetworkHandlers(){
-
+    public static void init() {
+        if (instance == null) instance = new FCPacketManager();
     }
 
+    public static FCPacketManager instance() {
+        return instance;
+    }
+
+    public void yiff(Player player) {
+        channel.sendTo(player, new YiffMessage());
+    }
 }

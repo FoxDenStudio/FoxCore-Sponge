@@ -23,16 +23,50 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.mod.render;
 
-public class CommonProxy {
+import net.minecraft.client.Minecraft;
 
-    public void registerRenderers() {
+import java.util.ArrayList;
+import java.util.Collections;
+
+import static org.lwjgl.opengl.GL11.*;
+
+public class HighlightList extends ArrayList<Highlight> implements IRenderable {
+
+    Minecraft mc;
+
+    public HighlightList(Minecraft mc) {
+        this.mc = mc;
+    }
+
+    @Override
+    public void render() {
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_ALPHA_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(false);
+        //glDisable(GL_DEPTH_TEST);
+
+        glLineWidth(2f);
+
+        this.forEach(Highlight::render);
+
+        //glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glDisable(GL_BLEND);
+        glEnable(GL_ALPHA_TEST);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_LIGHTING);
 
     }
 
-    public void registerNetworkHandlers(){
-
+    public void sortZ(double x, double y, double z) {
+        Collections.sort(this, (o1, o2) ->
+                o1.getPos().toDouble().add(0.5, 0.5, 0.5).distanceSquared(x, y, z)
+                        < o2.getPos().toDouble().add(0.5, 0.5, 0.5).distanceSquared(x, y, z)
+                        ? 1 : -1);
     }
-
 }

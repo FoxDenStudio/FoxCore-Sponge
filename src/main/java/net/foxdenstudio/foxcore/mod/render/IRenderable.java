@@ -23,16 +23,12 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.mod.render;
 
-public class CommonProxy {
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-    public void registerRenderers() {
+public interface IRenderable {
 
-    }
-
-    public void registerNetworkHandlers(){
-
-    }
+    void render();
 
 }

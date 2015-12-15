@@ -23,16 +23,19 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.plugin.network;
 
-public class CommonProxy {
+import org.spongepowered.api.network.ChannelBuf;
+import org.spongepowered.api.network.Message;
 
-    public void registerRenderers() {
+public class YiffMessage implements Message {
+    @Override
+    public void readFrom(ChannelBuf buf){
 
     }
 
-    public void registerNetworkHandlers(){
-
+    @Override
+    public void writeTo(ChannelBuf buf) {
+        buf.writeString("Yiff yiff motherf**ker.");
     }
-
 }

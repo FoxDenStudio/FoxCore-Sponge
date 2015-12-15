@@ -49,6 +49,7 @@ public class FoxCoreForgeMain {
     @Mod.EventHandler
     public void load(FMLInitializationEvent event) {
         proxy.registerRenderers();
+        proxy.registerNetworkHandlers();
     }
 
     @Mod.EventHandler

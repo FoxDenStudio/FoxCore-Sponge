@@ -23,16 +23,33 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.mod.network;
 
-public class CommonProxy {
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-    public void registerRenderers() {
+import java.nio.charset.Charset;
+
+public class YiffMessage implements IMessage {
+
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        System.out.println(buf.toString(Charset.defaultCharset()));
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
 
     }
 
-    public void registerNetworkHandlers(){
+    public static class Handler implements IMessageHandler<YiffMessage, IMessage>{
 
+        @Override
+        public IMessage onMessage(YiffMessage message, MessageContext ctx) {
+
+            return null;
+        }
     }
-
 }

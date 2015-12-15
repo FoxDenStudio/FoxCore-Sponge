@@ -23,8 +23,10 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod.renderer;
+package net.foxdenstudio.foxcore.mod.render;
 
+import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector3i;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,12 +37,25 @@ import static org.lwjgl.opengl.GL11.*;
 public class TestRenderer {
 
     private Minecraft mc;
+    private HighlightList list;
 
     private byte red = 0;
 
     public TestRenderer(Minecraft mc) {
         super();
         this.mc = mc;
+        list = new HighlightList(mc);
+
+        float mx = 5;
+        float my = 79;
+        float mz = -20;
+
+        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 0, 0), 0f / 6f));
+        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 1, 0), 1f / 6f));
+        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 1, 0), 2f / 6f));
+        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 1, 1), 3f / 6f));
+        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 0, 1), 4f / 6f));
+        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 0, 1), 5f / 6f));
     }
 
     @SubscribeEvent
@@ -49,60 +64,15 @@ public class TestRenderer {
         double playerX = mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * event.partialTicks;
         double playerY = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * event.partialTicks;
         double playerZ = mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * event.partialTicks;
+        list.sortZ(playerX, playerY, playerZ);
 
         glPushMatrix();
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_ALPHA_TEST);
-        //glDisable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
 
-        glLineWidth(1f);
         glTranslated(-playerX, -playerY, -playerZ);
-        float mx = 5;
-        float my = 79;
-        float mz = -20;
 
-        final float alpha = 1f - ((System.currentTimeMillis()) % 1000) / 1000f;
-
-
-        glColor4f(1, 0, 0, alpha);
-        RenderUtil.drawBoxLines(mx, my, ++mz);
-        glColor4f(1, 0, 0, alpha / 4);
-        RenderUtil.drawBoxFaces(mx, my, mz);
-
-        glColor4f(1, 1, 0, (alpha + (1f/6f)) % 1f);
-        RenderUtil.drawBoxLines(mx, my, ++mz);
-        glColor4f(1, 1, 0, (alpha + (1f / 6f)) % 1f / 4);
-        RenderUtil.drawBoxFaces(mx, my, mz);
-
-        glColor4f(0, 1, 0, (alpha + (2f / 6f)) % 1f);
-        RenderUtil.drawBoxLines(mx, my, ++mz);
-        glColor4f(0, 1, 0, (alpha + (2f / 6f)) % 1f / 4);
-        RenderUtil.drawBoxFaces(mx, my, mz);
-
-        glColor4f(0, 1, 1, (alpha + (3f / 6f)) % 1f);
-        RenderUtil.drawBoxLines(mx, my, ++mz);
-        glColor4f(0, 1, 1, (alpha + (3f / 6f)) % 1f / 4);
-        RenderUtil.drawBoxFaces(mx, my, mz);
-
-        glColor4f(0, 0, 1, (alpha + (4f / 6f)) % 1f);
-        RenderUtil.drawBoxLines(mx, my, ++mz);
-        glColor4f(0, 0, 1, (alpha + (4f / 6f)) % 1f / 4);
-        RenderUtil.drawBoxFaces(mx, my, mz);
-
-        glColor4f(1, 0, 1, (alpha + (5f / 6f)) % 1f);
-        RenderUtil.drawBoxLines(mx, my, ++mz);
-        glColor4f(1, 0, 1, (alpha + (5f / 6f)) % 1f / 4);
-        RenderUtil.drawBoxFaces(mx, my, mz);
-
-        glDisable(GL_BLEND);
-        glEnable(GL_ALPHA_TEST);
-        glEnable(GL_LIGHTING);
-        glEnable(GL_TEXTURE_2D);
-        //glEnable(GL_DEPTH_TEST);
+        list.render();
         glPopMatrix();
+
     }
 
 }

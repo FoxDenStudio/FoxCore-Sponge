@@ -23,16 +23,10 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.foxcore.mod;
+package net.foxdenstudio.foxcore.mod.render;
 
-public class CommonProxy {
+import static org.lwjgl.opengl.GL11.*;
 
-    public void registerRenderers() {
-
-    }
-
-    public void registerNetworkHandlers(){
-
-    }
+public class RenderUtil {
 
 }

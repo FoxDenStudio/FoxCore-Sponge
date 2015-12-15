@@ -25,9 +25,12 @@
 
 package net.foxdenstudio.foxcore.mod;
 
-import net.foxdenstudio.foxcore.mod.renderer.TestRenderer;
+import net.foxdenstudio.foxcore.mod.network.PacketManager;
+import net.foxdenstudio.foxcore.mod.network.YiffMessage;
+import net.foxdenstudio.foxcore.mod.render.TestRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ClientProxy extends CommonProxy {
 
@@ -36,4 +39,8 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new TestRenderer(Minecraft.getMinecraft()));
     }
 
+    @Override
+    public void registerNetworkHandlers() {
+        PacketManager.INSTANCE.registerMessage(YiffMessage.Handler.class, YiffMessage.class, 69, Side.CLIENT);
+    }
 }
