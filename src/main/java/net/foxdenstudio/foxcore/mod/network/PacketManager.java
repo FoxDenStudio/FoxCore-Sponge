@@ -25,25 +25,42 @@
 
 package net.foxdenstudio.foxcore.mod.network;
 
-import net.minecraftforge.fml.common.network.FMLEventChannel;
+import io.netty.channel.ChannelHandler;
+import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.Map;
+
 public class PacketManager {
 
-    //public final FMLEventChannel INSTANCE;
+    public static PacketManager instance;
 
-    public PacketManager() {
+    public final FMLEmbeddedChannel channelInstance;
+
+    private PacketManager() {
         if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
-            //this.INSTANCE = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT).;
+            this.channelInstance = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT);
+            for (Map.Entry<String, ChannelHandler> entry : this.channelInstance.pipeline().toMap().entrySet()) {
+                if (entry.getKey().contains("Sponge")) {
+                    channelInstance.pipeline().replace(entry.getValue(), "foxcorehandler", new StringPrinter());
+                    break;
+                }
+            }
         } else {
-            //this.INSTANCE = NetworkRegistry.INSTANCE.("foxcore");
+            this.channelInstance = NetworkRegistry.INSTANCE.newChannel("foxcore", new StringPrinter()).get(Side.CLIENT);
         }
+        System.out.println("------------------------------------------------------------");
+        System.out.println(channelInstance.pipeline().toMap());
+        System.out.println("------------------------------------------------------------");
+        System.out.println(NetworkRegistry.INSTANCE.newChannel("asdftest", new StringPrinter()).get(Side.CLIENT).pipeline().toMap());
+        System.out.println("------------------------------------------------------------");
     }
 
-
-    public static void test() {
-        //NetworkRegistry.INSTANCE.
+    public static PacketManager instance() {
+        if (instance == null) instance = new PacketManager();
+        return instance;
     }
+
 
 }

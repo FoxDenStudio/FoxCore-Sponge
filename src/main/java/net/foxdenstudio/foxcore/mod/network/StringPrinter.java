@@ -26,30 +26,32 @@
 package net.foxdenstudio.foxcore.mod.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
-import java.nio.charset.Charset;
-
-public class YiffMessage implements IMessage {
-
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        System.out.println(buf.toString(Charset.defaultCharset()));
-    }
+@Sharable
+public class StringPrinter extends ChannelInboundHandlerAdapter {
 
     @Override
-    public void toBytes(ByteBuf buf) {
-
-    }
-
-    public static class Handler implements IMessageHandler<YiffMessage, IMessage>{
-
-        @Override
-        public IMessage onMessage(YiffMessage message, MessageContext ctx) {
-
-            return null;
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf in = ((FMLProxyPacket) msg).payload();
+        try {
+            System.out.println(ByteBufUtils.readUTF8String(in));
+            System.out.println(ByteBufUtils.readUTF8String(in));
+            System.out.flush();
+        } finally {
+            ReferenceCountUtil.release(msg);
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
+    }
+
 }

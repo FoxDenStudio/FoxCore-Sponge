@@ -123,6 +123,7 @@ public final class FoxCoreMain {
 
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
+        System.out.println("Preparing to yiff " + event.getTargetEntity().getName());
         FCPacketManager.instance().yiff(event.getTargetEntity());
     }
 }

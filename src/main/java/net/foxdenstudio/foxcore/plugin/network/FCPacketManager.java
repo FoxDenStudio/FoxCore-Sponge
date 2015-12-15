@@ -33,12 +33,12 @@ public class FCPacketManager {
 
     private static FCPacketManager instance;
 
-    private static ChannelBinding.IndexedMessageChannel channel;
+    private static ChannelBinding.RawDataChannel channel;
 
     private FCPacketManager() {
 
-        channel = FoxCoreMain.instance().game().getChannelRegistrar().createChannel(FoxCoreMain.instance(), "foxcore");
-        channel.registerMessage(YiffMessage.class, 69);
+        channel = FoxCoreMain.instance().game().getChannelRegistrar().createRawChannel(FoxCoreMain.instance(), "foxcore");
+        //channel.registerMessage(YiffMessage.class, 69);
     }
 
     public static void init() {
@@ -50,6 +50,7 @@ public class FCPacketManager {
     }
 
     public void yiff(Player player) {
-        channel.sendTo(player, new YiffMessage());
+        System.out.println("Yiffing " + player.getName());
+        channel.sendTo(player, (load) -> load.writeString("Yiff yiff motherfucker.").writeString("Dicks."));
     }
 }
