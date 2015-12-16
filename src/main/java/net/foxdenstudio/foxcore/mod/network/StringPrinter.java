@@ -40,8 +40,9 @@ public class StringPrinter extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf in = ((FMLProxyPacket) msg).payload();
         try {
-            System.out.println(ByteBufUtils.readUTF8String(in));
-            System.out.println(ByteBufUtils.readUTF8String(in));
+            while (in.isReadable()) {
+                System.out.println(ByteBufUtils.readUTF8String(in));
+            }
             System.out.flush();
         } finally {
             ReferenceCountUtil.release(msg);

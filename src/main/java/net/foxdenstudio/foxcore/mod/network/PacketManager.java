@@ -39,6 +39,7 @@ public class PacketManager {
     public final FMLEmbeddedChannel channelInstance;
 
     private PacketManager() {
+
         if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
             this.channelInstance = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT);
             for (Map.Entry<String, ChannelHandler> entry : this.channelInstance.pipeline().toMap().entrySet()) {
