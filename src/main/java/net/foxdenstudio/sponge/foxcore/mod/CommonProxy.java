@@ -31,7 +31,7 @@ public class CommonProxy {
 
     }
 
-    public void registerNetworkHandlers(){
+    public void registerNetworkHandlers() {
 
     }
 

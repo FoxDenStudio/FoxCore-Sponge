@@ -25,8 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-
 public interface IRenderable {
 
     void render();

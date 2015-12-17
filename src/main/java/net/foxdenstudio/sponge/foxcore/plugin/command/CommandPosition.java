@@ -27,6 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
@@ -49,7 +50,7 @@ public class CommandPosition implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        PositionsStateField positionsField = (PositionsStateField) FCCommandMainDispatcher.getInstance().getStateMap().get(source).get(PositionsStateField.ID);
+        PositionsStateField positionsField = (PositionsStateField)  FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID);
         ProcessResult result = positionsField.add(source, arguments);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {

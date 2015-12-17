@@ -26,14 +26,15 @@
 package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
+import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
-import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateRegistry;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.PositionStateFieldFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
-import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.command.dispatcher.Dispatcher;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
@@ -65,7 +66,7 @@ public final class FoxCoreMain {
     @ConfigDir(sharedRoot = true)
     private File configDirectory;
 
-    private FCCommandMainDispatcher fcDispatcher;
+    private FCCommandDispatcher fcDispatcher;
 
     public static FoxCoreMain instance() {
         return instance;
@@ -78,7 +79,7 @@ public final class FoxCoreMain {
 
     @Listener
     public void gamePreInit(GamePreInitializationEvent event) {
-        FCStateRegistry.init();
+        FCStateManager.init();
         registerCommands();
     }
 
@@ -86,7 +87,7 @@ public final class FoxCoreMain {
     public void gameInit(GameInitializationEvent event) {
         logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
-        FCStateRegistry.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
 
         FCPacketManager.init();
     }
@@ -97,8 +98,7 @@ public final class FoxCoreMain {
         builder.append(Texts.of("Version: " + FoxCoreMain.VERSION + "\n"));
         builder.append(Texts.of("Author: gravityfox\n"));
 
-        FCCommandMainDispatcher fcDispatcher = new FCCommandMainDispatcher("/foxcore");
-        this.fcDispatcher = fcDispatcher;
+        this.fcDispatcher = new FCCommandDispatcher("/foxcore", "Core commands for state and selections.");
         fcDispatcher.register(new CommandState(), "state", "current", "cur");
         fcDispatcher.register(new CommandPosition(), "position", "pos", "p");
         fcDispatcher.register(new CommandAdd(), "add", "push");
@@ -117,13 +117,13 @@ public final class FoxCoreMain {
         return game;
     }
 
-    public FCCommandMainDispatcher getFCDispatcher() {
-        return fcDispatcher;
-    }
-
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
         System.out.println("Preparing to yiff " + event.getTargetEntity().getName());
         FCPacketManager.instance().yiff(event.getTargetEntity());
+    }
+
+    public FCCommandDispatcher getFCDispatcher() {
+        return fcDispatcher;
     }
 }

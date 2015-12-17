@@ -25,7 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.command.util;
 
-import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateRegistry;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
 
@@ -35,7 +35,7 @@ public class SourceState {
 
     private Map<String, IStateField> state = new CallbackHashMap<>((key, map) -> {
         if (key instanceof String) {
-            IStateField field = FCStateRegistry.instance().newStateField((String) key);
+            IStateField field = FCStateManager.instance().newStateField((String) key);
             if (field != null) {
                 map.put((String) key, field);
                 return field;
@@ -53,7 +53,7 @@ public class SourceState {
     }
 
     public IStateField getFromAlias(String alias) {
-        return this.state.get(FCStateRegistry.instance().getID(alias));
+        return this.state.get(FCStateManager.instance().getID(alias));
     }
 
     public void flush() {

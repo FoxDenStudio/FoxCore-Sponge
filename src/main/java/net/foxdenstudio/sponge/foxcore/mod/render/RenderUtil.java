@@ -25,8 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
-import static org.lwjgl.opengl.GL11.*;
-
 public class RenderUtil {
 
 }

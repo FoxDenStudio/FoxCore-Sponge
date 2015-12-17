@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
-import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateRegistry;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -49,14 +49,14 @@ public class CommandFlush implements CommandCallable {
         }
 
         if (arguments.isEmpty()) {
-            FCCommandMainDispatcher.getInstance().getStateMap().get(source).flush();
+            FCStateManager.instance().getStateMap().get(source).flush();
         } else {
             AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
             String[] args = parse.getArgs();
             for (String arg : args) {
-                String id = FCStateRegistry.instance().getID(arg);
+                String id = FCStateManager.instance().getID(arg);
                 if (id == null) throw new CommandException(Texts.of("\"" + arg + "\" is not a valid type!"));
-                FCCommandMainDispatcher.getInstance().getStateMap().get(source).flush(id);
+                FCStateManager.instance().getStateMap().get(source).flush(id);
             }
         }
         source.sendMessage(Texts.of(TextColors.GREEN, "Successfully flushed!"));

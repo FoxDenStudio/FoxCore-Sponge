@@ -27,6 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -53,15 +54,15 @@ public class CommandState implements CommandCallable {
         int flag = 0;
         Collection<IStateField> fields;
         if (args.length == 0) {
-            fields = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getMap().values();
+            fields = FCStateManager.instance().getStateMap().get(source).getMap().values();
         } else {
             fields = new ArrayList<>();
             for (String alias : args) {
-                IStateField temp = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(alias);
+                IStateField temp = FCStateManager.instance().getStateMap().get(source).getFromAlias(alias);
                 if (temp != null) fields.add(temp);
             }
             if (fields.isEmpty()) {
-                fields = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getMap().values();
+                fields = FCStateManager.instance().getStateMap().get(source).getMap().values();
             }
         }
         IStateField field = null;

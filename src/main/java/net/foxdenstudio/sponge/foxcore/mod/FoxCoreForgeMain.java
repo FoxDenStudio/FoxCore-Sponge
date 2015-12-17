@@ -38,7 +38,7 @@ public class FoxCoreForgeMain {
     @Mod.Instance("foxcoreforge")
     public static FoxCoreForgeMain instance;
 
-    @SidedProxy(modId = "foxcoreforge", clientSide = "net.foxdenstudio.foxcore.mod.ClientProxy", serverSide = "net.foxdenstudio.foxcore.mod.CommonProxy")
+    @SidedProxy(modId = "foxcoreforge", clientSide = "net.foxdenstudio.sponge.foxcore.mod.ClientProxy", serverSide = "net.foxdenstudio.sponge.foxcore.mod.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler

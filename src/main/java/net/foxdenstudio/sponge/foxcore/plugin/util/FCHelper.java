@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.util;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.plugin.command.FCCommandMainDispatcher;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.User;
@@ -118,6 +118,6 @@ public final class FCHelper {
 
     @SuppressWarnings("unchecked")
     public static List<Vector3i> getPositions(CommandSource source) {
-        return ((PositionsStateField) FCCommandMainDispatcher.getInstance().getStateMap().get(source).get(PositionsStateField.ID)).getList();
+        return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID)).getList();
     }
 }

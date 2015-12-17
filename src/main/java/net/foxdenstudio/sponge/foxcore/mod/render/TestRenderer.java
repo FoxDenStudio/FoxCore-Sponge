@@ -25,8 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
-import com.flowpowered.math.vector.Vector3f;
-import com.flowpowered.math.vector.Vector3i;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,7 +43,7 @@ public class TestRenderer {
         super();
         this.mc = mc;
         list = new HighlightList(mc);
-
+        /*
         float mx = 5;
         float my = 79;
         float mz = -20;
@@ -56,6 +54,7 @@ public class TestRenderer {
         list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 1, 1), 3f / 6f));
         list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 0, 1), 4f / 6f));
         list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 0, 1), 5f / 6f));
+        */
     }
 
     @SubscribeEvent

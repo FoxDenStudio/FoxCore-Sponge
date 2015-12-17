@@ -28,6 +28,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
@@ -58,7 +59,7 @@ public class CommandAdd implements CommandCallable {
                     .build());
             return CommandResult.empty();
         }
-        IStateField field = FCCommandMainDispatcher.getInstance().getStateMap().get(source).getFromAlias(args[0]);
+        IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(args[0]);
         if (field == null) throw new CommandException(Texts.of("\"" + args[0] + "\" is not a valid category!"));
         String extraArgs = "";
         if (args.length > 1) extraArgs = args[1];

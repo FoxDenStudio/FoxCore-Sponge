@@ -25,24 +25,40 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
+import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
+import org.spongepowered.api.command.CommandSource;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-public final class FCStateRegistry {
+public final class FCStateManager {
 
-    private static FCStateRegistry instance;
+    private static FCStateManager instance;
 
+    private final Map<CommandSource, SourceState> stateMap = new CallbackHashMap<>((o, m) -> {
+        if (o instanceof CommandSource) {
+            SourceState state = new SourceState();
+            m.put((CommandSource) o, state);
+            return state;
+        }
+        return null;
+    });
     private Set<StateMapping> stateMappings = new HashSet<>();
 
     public static void init() {
-        if (instance == null) instance = new FCStateRegistry();
+        if (instance == null) instance = new FCStateManager();
     }
 
-    public static FCStateRegistry instance() {
+    public static FCStateManager instance() {
         return instance;
+    }
+
+    public Map<CommandSource, SourceState> getStateMap() {
+        return stateMap;
     }
 
     public boolean registerStateFactory(IStateFieldFactory factory, String identifier, String... aliases) {

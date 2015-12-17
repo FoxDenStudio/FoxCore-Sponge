@@ -30,7 +30,7 @@ import org.spongepowered.api.network.Message;
 
 public class YiffMessage implements Message {
     @Override
-    public void readFrom(ChannelBuf buf){
+    public void readFrom(ChannelBuf buf) {
 
     }
 

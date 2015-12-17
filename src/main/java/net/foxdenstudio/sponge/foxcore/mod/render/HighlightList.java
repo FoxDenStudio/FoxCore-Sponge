@@ -53,6 +53,7 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
         glLineWidth(2f);
 
         this.forEach(Highlight::render);
+        glColor4f(1, 1, 1, 1);
 
         //glEnable(GL_DEPTH_TEST);
         glDepthMask(true);
