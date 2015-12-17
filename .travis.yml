@@ -10,7 +10,8 @@ before_script:
   - bash ./setversion.sh
 
 env: GRADLE_OPTS="-Xms1g -Xmx3g"
-script: gradle build
+install: ./gradlew setupCIWorkspace
+script: ./gradlew build
 
 notifications:
   email: false
