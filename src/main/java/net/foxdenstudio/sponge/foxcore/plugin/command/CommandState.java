@@ -65,7 +65,7 @@ public class CommandState implements CommandCallable {
                 fields = FCStateManager.instance().getStateMap().get(source).getMap().values();
             }
         }
-        IStateField field = null;
+        IStateField field;
         for (Iterator<IStateField> it = fields.iterator(); it.hasNext(); ) {
             field = it.next();
             if (field != null && !field.isEmpty()) {
@@ -87,7 +87,7 @@ public class CommandState implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.state") || source.hasPermission("foxguard.command.state.state");
+        return source.hasPermission("foxcore.command.state.state");
     }
 
     @Override

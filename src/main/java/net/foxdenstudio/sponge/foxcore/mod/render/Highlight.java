@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Highlight implements IRenderable {
 
-    private static final float OFFSET = 0.001f;
+    private static final float OFFSET = 0.005f;
     private static final int PERIOD = 2000;
 
     boolean[][][] filled = new boolean[3][3][3];
@@ -40,6 +40,8 @@ public class Highlight implements IRenderable {
     Vector3i pos;
     Vector3f color;
     float phase;
+
+    public transient double distance;
 
     public Highlight(Vector3i pos) {
         this(pos, new Vector3f(1, 1, 1));

@@ -25,13 +25,14 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state.factory;
 
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 
 public class PositionStateFieldFactory implements IStateFieldFactory {
 
     @Override
-    public IStateField createStateField() {
-        return new PositionsStateField("Positions");
+    public IStateField createStateField(SourceState sourceState) {
+        return new PositionsStateField("Positions", sourceState);
     }
 }

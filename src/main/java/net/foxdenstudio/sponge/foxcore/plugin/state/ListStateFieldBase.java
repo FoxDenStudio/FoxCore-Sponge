@@ -25,6 +25,8 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
+import org.spongepowered.api.command.CommandSource;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public abstract class ListStateFieldBase<T> extends StateFieldBase {
     }
 
     @Override
-    public void flush() {
+    public void flush(){
         list.clear();
     }
 

@@ -28,7 +28,9 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
-import net.foxdenstudio.sponge.foxcore.plugin.util.FCHelper;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
+import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -43,8 +45,11 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     public static final String ID = "position";
 
-    public PositionsStateField(String name) {
+    private SourceState sourceState;
+
+    public PositionsStateField(String name, SourceState sourceState) {
         super(name);
+        this.sourceState = sourceState;
     }
 
     @Override
@@ -97,6 +102,9 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             throw new CommandException(Texts.of("Too many arguments!"));
         }
         this.list.add(new Vector3i(x, y, z));
+        if (source instanceof Player) {
+            FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
+        }
         return ProcessResult.of(true, Texts.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
 
@@ -117,7 +125,19 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         } catch (IndexOutOfBoundsException e) {
             throw new ArgumentParseException(Texts.of("Index out of bounds! (1 - " + this.list.size()), args[1], 1);
         }
+        if (source instanceof Player) {
+            FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
+        }
         return ProcessResult.of(true, Texts.of("Successfully removed position from your state buffer!"));
+    }
+
+    @Override
+    public void flush() {
+        super.flush();
+        if (sourceState.getSource() instanceof Player) {
+            FCPacketManager.instance().sendPos((Player) sourceState.getSource(), FCHelper.getPositions(sourceState.getSource()));
+        }
+
     }
 
     @Override

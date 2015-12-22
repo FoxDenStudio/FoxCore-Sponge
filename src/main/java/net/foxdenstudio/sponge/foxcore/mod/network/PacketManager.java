@@ -41,21 +41,29 @@ public class PacketManager {
     private PacketManager() {
 
         if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
+            String inboundHandlerName = null;
             this.channelInstance = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT);
             for (Map.Entry<String, ChannelHandler> entry : this.channelInstance.pipeline().toMap().entrySet()) {
                 if (entry.getKey().contains("Sponge")) {
-                    channelInstance.pipeline().replace(entry.getValue(), "foxcorehandler", new StringPrinter());
-                    break;
+                    channelInstance.pipeline().remove(entry.getValue());
+                } else if (entry.getKey().contains("Inbound")) {
+                    inboundHandlerName = entry.getKey();
                 }
             }
+            if (inboundHandlerName != null) {
+                channelInstance.pipeline().addBefore(inboundHandlerName, "FCPositionHandler", new PositionHandler());
+                channelInstance.pipeline().addBefore(inboundHandlerName, "StringPrinter", new StringPrinter());
+            } else {
+                channelInstance.pipeline().addLast(new PositionHandler(), new StringPrinter());
+            }
         } else {
-            this.channelInstance = NetworkRegistry.INSTANCE.newChannel("foxcore", new StringPrinter()).get(Side.CLIENT);
+            this.channelInstance = NetworkRegistry.INSTANCE.newChannel("foxcore", new PositionHandler(), new StringPrinter()).get(Side.CLIENT);
         }
         System.out.println("------------------------------------------------------------");
         System.out.println(channelInstance.pipeline().toMap());
         System.out.println("------------------------------------------------------------");
-        System.out.println(NetworkRegistry.INSTANCE.newChannel("asdftest", new StringPrinter()).get(Side.CLIENT).pipeline().toMap());
-        System.out.println("------------------------------------------------------------");
+        /*System.out.println(NetworkRegistry.INSTANCE.newChannel("asdftest", new StringPrinter()).get(Side.CLIENT).pipeline().toMap());
+        System.out.println("------------------------------------------------------------");*/
     }
 
     public static PacketManager instance() {

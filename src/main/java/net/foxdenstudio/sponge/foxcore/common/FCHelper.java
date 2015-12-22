@@ -23,8 +23,10 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.util;
+package net.foxdenstudio.sponge.foxcore.common;
 
+import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
@@ -120,4 +122,53 @@ public final class FCHelper {
     public static List<Vector3i> getPositions(CommandSource source) {
         return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID)).getList();
     }
+
+    public static Vector3f RGBfromHSV(double h, double s, double v) {
+        int i;
+        double dr, dg, db;
+        double f, p, q, t;
+        if (s == 0) {
+            return new Vector3f(v, v, v);
+        }
+        h /= 60;
+        i = (int) Math.floor(h);
+        f = h - i;
+        p = v * (1 - s);
+        q = v * (1 - s * f);
+        t = v * (1 - s * (1 - f));
+        switch (i) {
+            case 0:
+                dr = v;
+                dg = t;
+                db = p;
+                break;
+            case 1:
+                dr = q;
+                dg = v;
+                db = p;
+                break;
+            case 2:
+                dr = p;
+                dg = v;
+                db = t;
+                break;
+            case 3:
+                dr = p;
+                dg = q;
+                db = v;
+                break;
+            case 4:
+                dr = t;
+                dg = p;
+                db = v;
+                break;
+            default:
+                dr = v;
+                dg = p;
+                db = q;
+                break;
+        }
+        return new Vector3f(dr, dg, db);
+    }
+
 }

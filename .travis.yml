@@ -16,14 +16,14 @@ script: ./gradlew build
 notifications:
   email: false
 
-after_success:
-  - for f in "./build/libs/FoxCore*SNAPSHOT.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT.jar"; done
+before_deploy:
+  - for f in "./build/libs/FoxCore*SNAPSHOT-all.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT.jar-all"; done
 
 deploy:
   file_glob: true
   provider: releases
   api-key: ${KEY}
-  file: "./build/libs/FoxCore*.jar"
+  file: "./build/libs/FoxCore*all.jar"
   skip_cleanup: true
   on:
     tags: true

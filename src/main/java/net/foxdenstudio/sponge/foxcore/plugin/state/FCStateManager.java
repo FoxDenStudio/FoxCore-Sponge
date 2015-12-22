@@ -41,7 +41,7 @@ public final class FCStateManager {
 
     private final Map<CommandSource, SourceState> stateMap = new CallbackHashMap<>((o, m) -> {
         if (o instanceof CommandSource) {
-            SourceState state = new SourceState();
+            SourceState state = new SourceState((CommandSource) o);
             m.put((CommandSource) o, state);
             return state;
         }
@@ -72,10 +72,10 @@ public final class FCStateManager {
         return true;
     }
 
-    public IStateField newStateField(String alias) {
+    public IStateField newStateField(String alias, SourceState sourceState) {
         StateMapping mapping = getMappingbyAlias(alias);
         if (mapping != null) {
-            return mapping.factory.createStateField();
+            return mapping.factory.createStateField(sourceState);
         } else return null;
     }
 

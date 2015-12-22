@@ -25,6 +25,8 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
+import org.spongepowered.api.command.CommandSource;
+
 public abstract class StateFieldBase implements IStateField {
 
     protected final String name;

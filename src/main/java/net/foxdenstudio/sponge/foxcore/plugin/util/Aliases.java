@@ -44,6 +44,7 @@ public final class Aliases {
     public static final String[] FALSE_ALIASES = {"false", "f", "deny", "d"};
     public static final String[] PASSTHROUGH_ALIASES = {"passthrough", "pass", "p", "undefined", "undef", "un", "u"};
     public static final String[] CLEAR_ALIASES = {"clear", "erase", "reset", "remove", "default", "original"};
+    public static final String[] PLAYER_ALIASES = {"player", "user", "username", "p", "u"};
 
     public static boolean isAlias(String[] aliases, String input) {
         for (String alias : aliases) {

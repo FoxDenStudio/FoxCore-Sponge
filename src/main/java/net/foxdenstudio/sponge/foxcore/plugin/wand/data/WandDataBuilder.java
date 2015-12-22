@@ -23,32 +23,32 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.mod;
+package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.mod.network.PacketManager;
-import net.foxdenstudio.sponge.foxcore.mod.render.PositionRenderer;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
+import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
+import org.spongepowered.api.util.persistence.InvalidDataException;
 
-import java.util.List;
+import java.util.Optional;
 
-public class ClientProxy extends CommonProxy {
-
-    PositionRenderer positionRenderer;
+public class WandDataBuilder implements DataManipulatorBuilder<WandData, ImmutableWandData> {
 
     @Override
-    public void registerRenderers() {
-        MinecraftForge.EVENT_BUS.register(positionRenderer = new PositionRenderer(Minecraft.getMinecraft()));
+    public WandData create() {
+        return new WandData();
     }
 
     @Override
-    public void registerNetworkHandlers() {
-        PacketManager.instance();
+    public Optional<WandData> createFrom(DataHolder dataHolder) {
+        return create().fill(dataHolder);
     }
 
     @Override
-    public void updatePositionsList(List<Vector3i> list) {
-        this.positionRenderer.updateList(list);
+    public Optional<WandData> build(DataView container) throws InvalidDataException {
+        if (!container.contains(WandKeys.WANDTYPE.getQuery())) return Optional.empty();
+        WandData data = create();
+        data.setWandType(WandType.valueOf((String) container.get(WandKeys.WANDTYPE.getQuery()).get()));
+        return Optional.of(data);
     }
 }

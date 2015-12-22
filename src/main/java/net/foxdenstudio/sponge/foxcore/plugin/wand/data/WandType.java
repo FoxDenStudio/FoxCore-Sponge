@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCore, licensed under the MIT License (MIT).
+ * This file is part of FoxGuard, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,32 +23,21 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.mod;
+package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.mod.network.PacketManager;
-import net.foxdenstudio.sponge.foxcore.mod.render.PositionRenderer;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
+import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 
-import java.util.List;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isAlias;
 
-public class ClientProxy extends CommonProxy {
+public enum WandType {
+    POSITION;
 
-    PositionRenderer positionRenderer;
 
-    @Override
-    public void registerRenderers() {
-        MinecraftForge.EVENT_BUS.register(positionRenderer = new PositionRenderer(Minecraft.getMinecraft()));
+    public static WandType from(String name) {
+        if (isAlias(Aliases.POSITIONS_ALIASES, name))
+            return POSITION;
+        else return null;
     }
 
-    @Override
-    public void registerNetworkHandlers() {
-        PacketManager.instance();
-    }
 
-    @Override
-    public void updatePositionsList(List<Vector3i> list) {
-        this.positionRenderer.updateList(list);
-    }
 }

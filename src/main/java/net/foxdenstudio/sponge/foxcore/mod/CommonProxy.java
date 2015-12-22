@@ -25,6 +25,10 @@
 
 package net.foxdenstudio.sponge.foxcore.mod;
 
+import com.flowpowered.math.vector.Vector3i;
+
+import java.util.List;
+
 public class CommonProxy {
 
     public void registerRenderers() {
@@ -35,4 +39,7 @@ public class CommonProxy {
 
     }
 
+    public void updatePositionsList(List<Vector3i> list){
+
+    }
 }

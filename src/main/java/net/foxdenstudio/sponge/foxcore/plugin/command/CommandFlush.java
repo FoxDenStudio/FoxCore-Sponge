@@ -70,7 +70,7 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.flush") || source.hasPermission("foxguard.command.state.flush");
+        return source.hasPermission("foxcore.command.state.flush");
     }
 
     @Override

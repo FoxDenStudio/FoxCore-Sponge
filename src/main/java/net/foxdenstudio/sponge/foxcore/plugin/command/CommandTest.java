@@ -27,21 +27,56 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class CommandTest implements CommandCallable {
+
+
+    @Override
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+        if(source instanceof Player){
+            FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
+        }
+        return CommandResult.empty();
+    }
+
+    @Override
+    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public boolean testPermission(CommandSource source) {
+        return source.hasPermission("foxcore.command.debug.test");
+    }
+
+    @Override
+    public Optional<? extends Text> getShortDescription(CommandSource source) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<? extends Text> getHelp(CommandSource source) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Text getUsage(CommandSource source) {
+        return Texts.of("test [mystery args]...");
+    }
+
+    /*
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
@@ -61,30 +96,5 @@ public class CommandTest implements CommandCallable {
         }
         source.sendMessage(builder.build());
         return CommandResult.empty();
-    }
-
-    @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        return ImmutableList.of();
-    }
-
-    @Override
-    public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxguard.command.debug.test");
-    }
-
-    @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Text getUsage(CommandSource source) {
-        return Texts.of("test [mystery args]...");
-    }
+    }*/
 }

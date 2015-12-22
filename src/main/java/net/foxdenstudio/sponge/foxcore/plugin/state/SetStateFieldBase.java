@@ -25,6 +25,8 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
+import org.spongepowered.api.command.CommandSource;
+
 import java.util.HashSet;
 import java.util.Set;
 

@@ -27,32 +27,39 @@ package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
+import net.foxdenstudio.sponge.foxcore.plugin.event.WandListener;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.PositionStateFieldFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.ImmutableWandData;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.command.dispatcher.Dispatcher;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Tristate;
 
 import java.io.File;
 
 @Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.VERSION)
 public final class FoxCoreMain {
 
-    public static final String VERSION = "SNAPSHOT";//VERSION
+    public static final String VERSION = "0.3.0-SNAPSHOT";//VERSION
 
     private static FoxCoreMain instance;
 
@@ -79,17 +86,27 @@ public final class FoxCoreMain {
 
     @Listener
     public void gamePreInit(GamePreInitializationEvent event) {
+        logger.info("Starting FoxCore initialization");
+        logger.info("Initializing state manager");
         FCStateManager.init();
+        logger.info("Configuring commands");
         registerCommands();
+        logger.info("Setting default player permissions");
+        configurePermissions();
+
     }
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
         logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
+        logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
+        logger.info("Registering positions state field");
         FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
-
+        logger.info("Initializing network packet manager");
         FCPacketManager.init();
+        registerData();
+        registerListeners();
     }
 
     private void registerCommands() {
@@ -104,9 +121,25 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandAdd(), "add", "push");
         fcDispatcher.register(new CommandSubtract(), "subtract", "sub", "pop");
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
+        fcDispatcher.register(new CommandWand(), "wand", "tool", "stick", "w");
         fcDispatcher.register(new CommandTest(), "test");
 
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
+    }
+
+    private void registerListeners(){
+        logger.info("Registering event listeners");
+        game.getEventManager().registerListener(this, InteractBlockEvent.class, new WandListener());
+    }
+
+    private void registerData(){
+        logger.info("Registering custom data manipulators");
+        game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
+    }
+
+    private void configurePermissions() {
+        game.getServiceManager().provide(PermissionService.class).get()
+                .getDefaultData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcommon.command.info", Tristate.TRUE);
     }
 
     public Logger logger() {
@@ -117,13 +150,12 @@ public final class FoxCoreMain {
         return game;
     }
 
-    @Listener
-    public void playerJoin(ClientConnectionEvent.Join event) {
-        System.out.println("Preparing to yiff " + event.getTargetEntity().getName());
-        FCPacketManager.instance().yiff(event.getTargetEntity());
-    }
-
     public FCCommandDispatcher getFCDispatcher() {
         return fcDispatcher;
+    }
+
+    @Listener
+    public void playerJoin(ClientConnectionEvent.Join event) {
+        FCPacketManager.instance().yiff(event.getTargetEntity());
     }
 }

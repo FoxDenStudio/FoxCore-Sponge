@@ -28,14 +28,17 @@ package net.foxdenstudio.sponge.foxcore.plugin.command.util;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
+import org.spongepowered.api.command.CommandSource;
 
 import java.util.Map;
 
 public class SourceState {
 
+    private CommandSource source;
+
     private Map<String, IStateField> state = new CallbackHashMap<>((key, map) -> {
         if (key instanceof String) {
-            IStateField field = FCStateManager.instance().newStateField((String) key);
+            IStateField field = FCStateManager.instance().newStateField((String) key, this);
             if (field != null) {
                 map.put((String) key, field);
                 return field;
@@ -43,6 +46,10 @@ public class SourceState {
         }
         return null;
     });
+
+    public SourceState(CommandSource source) {
+        this.source = source;
+    }
 
     public Map<String, IStateField> getMap() {
         return this.state;
@@ -68,5 +75,9 @@ public class SourceState {
         for (String field : fields) {
             this.flush(field);
         }
+    }
+
+    public CommandSource getSource() {
+        return source;
     }
 }

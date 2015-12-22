@@ -26,15 +26,25 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
-import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
-import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandType;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
+import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
@@ -45,14 +55,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.WORLD_ALIASES;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.PLAYER_ALIASES;
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isAlias;
 
-public class CommandSubtract implements CommandCallable {
+public class CommandWand implements CommandCallable {
 
     private static final Function<Map<String, String>, Function<String, Consumer<String>>> MAPPER = map -> key -> value -> {
-        if (isAlias(WORLD_ALIASES, key) && !map.containsKey("world")) {
-            map.put("world", value);
+        if (isAlias(PLAYER_ALIASES, key) && !map.containsKey("player")) {
+            map.put("player", value);
         }
     };
 
@@ -62,41 +72,39 @@ public class CommandSubtract implements CommandCallable {
             source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).build();
+        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).flagMapper(MAPPER).build();
         String[] args = parse.getArgs();
-        if (args.length == 0) {
-            source.sendMessage(Texts.builder()
-                    .append(Texts.of(TextColors.GREEN, "Usage: "))
-                    .append(getUsage(source))
-                    .build());
-            return CommandResult.empty();
+
+        Player player = null;
+        if (source instanceof Player) player = (Player) source;
+        if (parse.getFlagmap().containsKey("player"))
+            player = Sponge.getGame().getServer().getPlayer(parse.getFlagmap().get("player")).orElse(null);
+        if (player == null) throw new CommandException(Texts.of("You must specify a player to give the wand to!"));
+        WandData wandData = Sponge.getDataManager().getManipulatorBuilder(WandData.class).get().create();
+        if (args.length > 0) {
+            WandType type = WandType.from(args[0]);
+            if(type == null) throw new CommandException(Texts.of("Not a valid wand type!"));
+            wandData.setWandType(type);
         }
-        IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(args[0]);
-        if (field == null) throw new CommandException(Texts.of("\"" + args[0] + "\" is not a valid category!"));
-        String extraArgs = "";
-        if (args.length > 1) extraArgs = args[1];
-        ProcessResult result = field.subtract(source, extraArgs);
-        if (result.isSuccess()) {
-            if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.GREEN).build());
-                } else {
-                    source.sendMessage(result.getMessage().get());
-                }
-            } else {
-                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully removed data from the " + field.getName() + " field!"));
-            }
+        LoreData loreData = Sponge.getDataManager().getManipulatorBuilder(LoreData.class).get().create();
+        final ListValue<Text> lore = loreData.lore();
+        lore.add(Texts.of("Position Wand"));
+        loreData.set(lore);
+        ItemStack stack = ItemStack.of(ItemTypes.WOODEN_AXE, 1);
+        stack.offer(wandData);
+        stack.offer(loreData);
+        stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
+
+        if (player.getItemInHand().isPresent()) {
+            Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition()).get();
+            entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+            player.getWorld().spawnEntity(entity, Cause.of(FoxCoreMain.instance()));
         } else {
-            if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.RED).build());
-                } else {
-                    source.sendMessage(result.getMessage().get());
-                }
-            } else {
-                source.sendMessage(Texts.of(TextColors.RED, "Failed to remove data from the " + field.getName() + " field!"));
-            }
+            player.setItemInHand(stack);
         }
+
+        source.sendMessage(Texts.of("Successfully created wand!"));
+
         return CommandResult.empty();
     }
 
@@ -107,7 +115,7 @@ public class CommandSubtract implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.subtract");
+        return source.hasPermission("foxcore.command.wand.create");
     }
 
     @Override
@@ -122,6 +130,7 @@ public class CommandSubtract implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("subtract <region [--w:<world>] | handler | position> < <name> | <index> >");
+        return Texts.of("wand <type>");
     }
+
 }

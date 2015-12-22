@@ -27,10 +27,12 @@ package net.foxdenstudio.sponge.foxcore.mod;
 
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "foxcoreforge", name = "FoxCoreForge", version = FoxCoreMain.VERSION, acceptableRemoteVersions = "*")
 public class FoxCoreForgeMain {
@@ -41,18 +43,20 @@ public class FoxCoreForgeMain {
     @SidedProxy(modId = "foxcoreforge", clientSide = "net.foxdenstudio.sponge.foxcore.mod.ClientProxy", serverSide = "net.foxdenstudio.sponge.foxcore.mod.CommonProxy")
     public static CommonProxy proxy;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    public static Logger logger;
 
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        logger = event.getModLog();
     }
 
-    @Mod.EventHandler
+    @EventHandler
     public void load(FMLInitializationEvent event) {
         proxy.registerRenderers();
         proxy.registerNetworkHandlers();
     }
 
-    @Mod.EventHandler
+    @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 
     }

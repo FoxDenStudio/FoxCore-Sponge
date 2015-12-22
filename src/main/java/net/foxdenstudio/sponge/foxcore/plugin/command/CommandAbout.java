@@ -66,7 +66,7 @@ public class CommandAbout implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.info.about") || source.hasPermission("foxguard.command.info.about");
+        return source.hasPermission("foxcore.command.info.about");
     }
 
     @Override

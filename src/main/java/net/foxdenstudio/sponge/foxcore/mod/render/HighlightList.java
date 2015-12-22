@@ -29,6 +29,7 @@ import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -51,8 +52,10 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
         //glDisable(GL_DEPTH_TEST);
 
         glLineWidth(2f);
-
-        this.forEach(Highlight::render);
+        try {
+            this.forEach(Highlight::render);
+        } catch (ConcurrentModificationException ignored) {
+        }
         glColor4f(1, 1, 1, 1);
 
         //glEnable(GL_DEPTH_TEST);
@@ -65,9 +68,10 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
     }
 
     public void sortZ(double x, double y, double z) {
-        Collections.sort(this, (o1, o2) ->
-                o1.getPos().toDouble().add(0.5, 0.5, 0.5).distanceSquared(x, y, z)
-                        < o2.getPos().toDouble().add(0.5, 0.5, 0.5).distanceSquared(x, y, z)
-                        ? 1 : -1);
+        try {
+        forEach(highlight -> highlight.distance = highlight.getPos().toDouble().add(0.5, 0.5, 0.5).distanceSquared(x, y, z));
+        Collections.sort(this, (o1, o2) -> o1.distance > o2.distance ? -1 : (o1.distance < o2.distance ? 1 : 0));
+        } catch (ConcurrentModificationException ignored) {
+        }
     }
 }

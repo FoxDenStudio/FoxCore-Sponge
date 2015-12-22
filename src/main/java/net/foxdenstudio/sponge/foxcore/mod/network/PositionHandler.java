@@ -25,19 +25,21 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.network;
 
+import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 import net.foxdenstudio.sponge.foxcore.mod.FoxCoreForgeMain;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
-@Sharable
-public class StringPrinter extends ChannelInboundHandlerAdapter {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static int ID = 1;
+@Sharable
+public class PositionHandler extends ChannelInboundHandlerAdapter {
+
+    public static int ID = 2;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -45,21 +47,21 @@ public class StringPrinter extends ChannelInboundHandlerAdapter {
             ByteBuf data = ((FMLProxyPacket) msg).payload();
             if (data.isReadable(4) && data.getInt(0) == ID) {
                 data.skipBytes(4);
-                try {
-                    while (data.isReadable()) {
-                        FoxCoreForgeMain.logger.info(ByteBufUtils.readUTF8String(data));
-                    }
-                } finally {
-                    ReferenceCountUtil.release(msg);
+                List<Vector3i> list = new ArrayList<>();
+                while (data.isReadable(12)) {
+                    Vector3i pos = new Vector3i(data.readInt(), data.readInt(), data.readInt());
+                    list.add(pos);
+                    //System.out.println("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]");
                 }
+                FoxCoreForgeMain.proxy.updatePositionsList(list);
+                //System.out.flush();
+            } else {
+                super.channelRead(ctx, msg);
             }
+        } else {
+            super.channelRead(ctx, msg);
         }
-    }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        ctx.close();
     }
 
 }

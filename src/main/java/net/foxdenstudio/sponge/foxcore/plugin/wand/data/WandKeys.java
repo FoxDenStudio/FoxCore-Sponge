@@ -1,5 +1,5 @@
 /*
- * This file is part of FoxCore, licensed under the MIT License (MIT).
+ * This file is part of FoxGuard, licensed under the MIT License (MIT).
  *
  * Copyright (c) gravityfox - https://gravityfox.net/
  * Copyright (c) contributors
@@ -23,19 +23,13 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.network;
+package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import org.spongepowered.api.network.ChannelBuf;
-import org.spongepowered.api.network.Message;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.key.KeyFactory;
+import org.spongepowered.api.data.value.mutable.Value;
 
-public class YiffMessage implements Message {
-    @Override
-    public void readFrom(ChannelBuf buf) {
-
-    }
-
-    @Override
-    public void writeTo(ChannelBuf buf) {
-        buf.writeString("Yiff yiff motherf**ker.");
-    }
+public class WandKeys {
+    public static final Key<Value<WandType>> WANDTYPE = KeyFactory.makeSingleKey(WandType.class, Value.class, DataQuery.of("wandtype"));
 }
