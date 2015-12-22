@@ -17,13 +17,13 @@ notifications:
   email: false
 
 before_deploy:
-  - for f in "./build/libs/FoxCore*SNAPSHOT-all.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT.jar-all"; done
+  - for f in "./build/libs/FoxCore*SNAPSHOT-all.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT-all.jar"; done
 
 deploy:
   file_glob: true
   provider: releases
   api-key: ${KEY}
-  file: "./build/libs/FoxCore*all.jar"
+  file: "./build/libs/FoxCore*.jar"
   skip_cleanup: true
   on:
     tags: true
