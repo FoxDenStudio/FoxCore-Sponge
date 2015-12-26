@@ -66,8 +66,8 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     @Override
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
-        String[] args = {};
-        if (!arguments.isEmpty()) args = arguments.split(" +");
+        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
+        String[] args = parse.getArgs();
         int x, y, z;
         Vector3i pPos = null;
         if (source instanceof Player)
@@ -84,17 +84,17 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             if (pPos == null)
                 pPos = Vector3i.ZERO;
             try {
-                x = FCHelper.parseCoordinate(pPos.getX(), args[0]);
+                x = (int) FCHelper.parseCoordinate(pPos.getX(), args[0]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Texts.of("Unable to parse \"" + args[0] + "\"!"), e, args[0], 0);
             }
             try {
-                y = FCHelper.parseCoordinate(pPos.getY(), args[1]);
+                y = (int) FCHelper.parseCoordinate(pPos.getY(), args[1]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Texts.of("Unable to parse \"" + args[1] + "\"!"), e, args[1], 1);
             }
             try {
-                z = FCHelper.parseCoordinate(pPos.getZ(), args[2]);
+                z = (int) FCHelper.parseCoordinate(pPos.getZ(), args[2]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Texts.of("Unable to parse \"" + args[2] + "\"!"), e, args[2], 2);
             }
@@ -113,17 +113,17 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
         String[] args = parse.getArgs();
         int index = this.list.size();
-        if (args.length > 1) {
+        if (args.length > 0) {
             try {
-                index = Integer.parseInt(args[1]);
+                index = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                throw new ArgumentParseException(Texts.of("Not a valid index!"), args[1], 1);
+                throw new ArgumentParseException(Texts.of("Not a valid index!"), args[0], 0);
             }
         }
         try {
             this.list.remove(index - 1);
         } catch (IndexOutOfBoundsException e) {
-            throw new ArgumentParseException(Texts.of("Index out of bounds! (1 - " + this.list.size()), args[1], 1);
+            throw new ArgumentParseException(Texts.of("Index out of bounds! (1 - " + this.list.size()), args[0], 0);
         }
         if (source instanceof Player) {
             FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));

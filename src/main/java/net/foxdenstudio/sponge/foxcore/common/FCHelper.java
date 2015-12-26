@@ -41,11 +41,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class FCHelper {
-    public static int parseCoordinate(int sPos, String arg) throws NumberFormatException {
+    public static double parseCoordinate(double sPos, String arg) throws NumberFormatException {
         if (arg.equals("~")) {
             return sPos;
         } else if (arg.startsWith("~")) {
-            return sPos + Integer.parseInt(arg.substring(1));
+            return sPos + Double.parseDouble(arg.substring(1));
         } else {
             return Integer.parseInt(arg);
         }

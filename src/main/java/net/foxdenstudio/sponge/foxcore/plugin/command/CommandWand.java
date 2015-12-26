@@ -90,7 +90,7 @@ public class CommandWand implements CommandCallable {
         final ListValue<Text> lore = loreData.lore();
         lore.add(Texts.of("Position Wand"));
         loreData.set(lore);
-        ItemStack stack = ItemStack.of(ItemTypes.WOODEN_AXE, 1);
+        ItemStack stack = ItemStack.of(ItemTypes.GOLDEN_AXE, 1);
         stack.offer(wandData);
         stack.offer(loreData);
         stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());

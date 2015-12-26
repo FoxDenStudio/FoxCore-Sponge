@@ -123,6 +123,7 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
         fcDispatcher.register(new CommandWand(), "wand", "tool", "stick", "w");
         fcDispatcher.register(new CommandTest(), "test");
+        fcDispatcher.register(new CommandDebug(), "debug");
 
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
     }

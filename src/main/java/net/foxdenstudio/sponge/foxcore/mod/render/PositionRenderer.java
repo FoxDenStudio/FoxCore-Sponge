@@ -26,7 +26,6 @@
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -65,6 +64,7 @@ public class PositionRenderer {
 
     @SubscribeEvent
     public void render(RenderWorldLastEvent event) {
+
         //System.out.println("TEST");
         double playerX = mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * event.partialTicks;
         double playerY = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * event.partialTicks;
@@ -78,13 +78,15 @@ public class PositionRenderer {
         list.render();
         glPopMatrix();
 
+
+
     }
 
     public void updateList(List<Vector3i> posList) {
         this.list.clear();
         Set<Vector3i> set = new HashSet<>();
         posList.forEach(set::add);
-        set.forEach(pos -> this.list.add(new Highlight(pos /*, FCHelper.RGBfromHSV(Math.random() * 360, 1, 1)*/ )));
+        set.forEach(pos -> this.list.add(new Highlight(pos /*, FCHelper.RGBfromHSV(Math.random() * 360, 1, 1)*/)));
     }
 
 }

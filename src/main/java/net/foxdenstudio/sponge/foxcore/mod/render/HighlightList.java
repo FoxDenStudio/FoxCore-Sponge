@@ -43,6 +43,8 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
 
     @Override
     public void render() {
+        glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT);
+
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_ALPHA_TEST);
@@ -56,15 +58,10 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
             this.forEach(Highlight::render);
         } catch (ConcurrentModificationException ignored) {
         }
-        glColor4f(1, 1, 1, 1);
 
         //glEnable(GL_DEPTH_TEST);
         glDepthMask(true);
-        glDisable(GL_BLEND);
-        glEnable(GL_ALPHA_TEST);
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_LIGHTING);
-
+        glPopAttrib();
     }
 
     public void sortZ(double x, double y, double z) {
