@@ -30,6 +30,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.foxdenstudio.sponge.foxcore.common.network.Packet;
 import net.foxdenstudio.sponge.foxcore.mod.FoxCoreForgeMain;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
@@ -39,13 +40,11 @@ import java.util.List;
 @Sharable
 public class PositionHandler extends ChannelInboundHandlerAdapter {
 
-    public static int ID = 2;
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FMLProxyPacket) {
             ByteBuf data = ((FMLProxyPacket) msg).payload();
-            if (data.isReadable(4) && data.getInt(0) == ID) {
+            if (data.isReadable(4) && data.getInt(0) == Packet.POSITION.ID) {
                 data.skipBytes(4);
                 List<Vector3i> list = new ArrayList<>();
                 while (data.isReadable(12)) {

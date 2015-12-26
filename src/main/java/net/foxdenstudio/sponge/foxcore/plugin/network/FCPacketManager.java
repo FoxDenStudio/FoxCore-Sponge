@@ -26,11 +26,15 @@
 package net.foxdenstudio.sponge.foxcore.plugin.network;
 
 import com.flowpowered.math.vector.Vector3i;
+import net.foxdenstudio.sponge.foxcore.common.network.Packet;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.network.ChannelBinding;
 
 import java.util.List;
+
+import static net.foxdenstudio.sponge.foxcore.common.network.Packet.POSITION;
+import static net.foxdenstudio.sponge.foxcore.common.network.Packet.PRINTSTRING;
 
 public class FCPacketManager {
 
@@ -55,7 +59,7 @@ public class FCPacketManager {
     public void yiff(Player player) {
         System.out.println("Yiffing " + player.getName());
         channel.sendTo(player, load -> {
-            load.writeInteger(1);
+            load.writeInteger(PRINTSTRING.ID);
             load.writeString("Yiff. (stupid Tzk told me to change it x3)");
         });
     }
@@ -63,7 +67,7 @@ public class FCPacketManager {
     public void sendPos(Player player, List<Vector3i> pos) {
         //FoxCoreMain.instance().logger().info("Sending positions to " + player.getName());
         channel.sendTo(player, load -> {
-            load.writeInteger(2);
+            load.writeInteger(POSITION.ID);
             pos.forEach(vec -> load.writeInteger(vec.getX()).writeInteger(vec.getY()).writeInteger(vec.getZ()));
         });
     }
