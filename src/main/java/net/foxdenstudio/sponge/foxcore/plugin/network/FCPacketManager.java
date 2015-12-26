@@ -61,7 +61,7 @@ public class FCPacketManager {
     }
 
     public void sendPos(Player player, List<Vector3i> pos) {
-        FoxCoreMain.instance().logger().info("Sending positions to " + player.getName());
+        //FoxCoreMain.instance().logger().info("Sending positions to " + player.getName());
         channel.sendTo(player, load -> {
             load.writeInteger(2);
             pos.forEach(vec -> load.writeInteger(vec.getX()).writeInteger(vec.getY()).writeInteger(vec.getZ()));

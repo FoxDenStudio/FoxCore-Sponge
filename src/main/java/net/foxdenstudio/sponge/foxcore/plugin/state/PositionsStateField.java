@@ -26,11 +26,11 @@
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import com.flowpowered.math.vector.Vector3i;
+import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -138,10 +138,5 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             FCPacketManager.instance().sendPos((Player) sourceState.getSource(), FCHelper.getPositions(sourceState.getSource()));
         }
 
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return this.list.isEmpty();
     }
 }
