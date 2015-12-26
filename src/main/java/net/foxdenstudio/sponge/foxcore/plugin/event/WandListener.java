@@ -28,8 +28,6 @@ package net.foxdenstudio.sponge.foxcore.plugin.event;
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
-import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
-import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandKeys;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
@@ -49,23 +47,25 @@ public class WandListener implements EventListener<InteractBlockEvent> {
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
             if (!event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
-                if (player.getItemInHand().isPresent()) {
-                    ItemStack item = player.getItemInHand().get();
-                    if (item.get(WandData.class).isPresent()) {
-                        Vector3i pos = event.getTargetBlock().getPosition();
-                        List<Vector3i> positions = FCHelper.getPositions(player);
-                        if (event instanceof InteractBlockEvent.Primary) {
-                            if (positions.contains(pos)) {
-                                positions.remove(positions.lastIndexOf(pos));
-                                player.sendMessage(Texts.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                if (player.hasPermission("foxcore.wand.use")) {
+                    if (player.getItemInHand().isPresent()) {
+                        ItemStack item = player.getItemInHand().get();
+                        if (item.getItem().equals(ItemTypes.GOLDEN_AXE) /*item.get(WandData.class).isPresent()*/) {
+                            Vector3i pos = event.getTargetBlock().getPosition();
+                            List<Vector3i> positions = FCHelper.getPositions(player);
+                            if (event instanceof InteractBlockEvent.Primary) {
+                                if (positions.contains(pos)) {
+                                    positions.remove(positions.lastIndexOf(pos));
+                                    player.sendMessage(Texts.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                                    FCPacketManager.instance().sendPos(player, positions);
+                                }
+                            } else if (event instanceof InteractBlockEvent.Secondary) {
+                                positions.add(pos);
+                                player.sendMessage(Texts.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
                                 FCPacketManager.instance().sendPos(player, positions);
                             }
-                        } else if (event instanceof InteractBlockEvent.Secondary) {
-                            positions.add(pos);
-                            player.sendMessage(Texts.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-                            FCPacketManager.instance().sendPos(player, positions);
+                            event.setCancelled(true);
                         }
-                        event.setCancelled(true);
                     }
                 }
             }

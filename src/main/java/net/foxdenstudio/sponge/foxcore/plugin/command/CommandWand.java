@@ -115,7 +115,7 @@ public class CommandWand implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.wand.create");
+        return source.hasPermission("foxcore.command.wand");
     }
 
     @Override
