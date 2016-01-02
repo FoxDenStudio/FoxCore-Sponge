@@ -204,7 +204,7 @@ public class FCCommandDispatcher implements Dispatcher {
                             Text.of(TextColors.GOLD, optCommand.get().getPrimaryAlias()),
                             Text.of(TextColors.GOLD, "\" Help"),
                             Text.of(TextColors.GREEN, "----------\n"));
-                    source.sendMessage(builder.append(helpText.orElse(Text.of("Usage: " + dispatcherPrefix + " ").builder().append(command.getUsage(source)).build())).build());
+                    source.sendMessage(builder.append(helpText.orElse(Text.of("Usage: " + dispatcherPrefix + " ").toBuilder().append(command.getUsage(source)).build())).build());
                     return CommandResult.empty();
                 } else {
                     source.sendMessage(this.getHelp(source).get());
@@ -224,8 +224,8 @@ public class FCCommandDispatcher implements Dispatcher {
                 } catch (CommandException e) {
                     Text text = e.getText();
                     if (text == null) text = Text.of("There was an error processing command: " + args[0]);
-                    source.sendMessage(text.builder().color(TextColors.RED).build());
-                    source.sendMessage(Text.of("Usage: " + dispatcherPrefix + " ").builder()
+                    source.sendMessage(text.toBuilder().color(TextColors.RED).build());
+                    source.sendMessage(Text.of("Usage: " + dispatcherPrefix + " ").toBuilder()
                             .append(command.getUsage(source)).color(TextColors.RED).build());
                     return CommandResult.empty();
                 }
@@ -283,7 +283,7 @@ public class FCCommandDispatcher implements Dispatcher {
         if (this.commands.isEmpty()) {
             return Optional.empty();
         }
-        Text.Builder build = Text.of(TextColors.GREEN, "Available commands:\n").builder();
+        Text.Builder build = Text.of(TextColors.GREEN, "Available commands:\n").toBuilder();
         for (Iterator<CommandMapping> it = filterCommandMappings(source).iterator(); it.hasNext(); ) {
 
             CommandMapping mapping = it.next();

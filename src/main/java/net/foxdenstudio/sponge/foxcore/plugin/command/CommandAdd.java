@@ -66,7 +66,7 @@ public class CommandAdd implements CommandCallable {
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
                 if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.GREEN).build());
+                    source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.GREEN).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
                 }
@@ -76,7 +76,7 @@ public class CommandAdd implements CommandCallable {
         } else {
             if (result.getMessage().isPresent()) {
                 if (!FCHelper.hasColor(result.getMessage().get())) {
-                    source.sendMessage(result.getMessage().get().builder().color(TextColors.RED).build());
+                    source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.RED).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
                 }

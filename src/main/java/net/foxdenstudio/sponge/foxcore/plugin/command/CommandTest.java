@@ -36,10 +36,12 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class CommandTest implements CommandCallable {
 
+    /*
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
@@ -56,10 +58,11 @@ public class CommandTest implements CommandCallable {
         source.sendMessage(builder.build());
         return CommandResult.empty();
     }
+    */
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).autoCloseQuotes(true).limit(3).parse2();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).autoCloseQuotes(true).limit(2).parse2();
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
         builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
@@ -91,7 +94,7 @@ public class CommandTest implements CommandCallable {
         return Text.of("test [mystery args]...");
     }
 
-    /*
+
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
@@ -111,5 +114,5 @@ public class CommandTest implements CommandCallable {
         }
         source.sendMessage(builder.build());
         return CommandResult.empty();
-    }*/
+    }
 }

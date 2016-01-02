@@ -34,13 +34,13 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "foxcoreforge", name = "FoxCoreForge", version = FoxCoreMain.VERSION, acceptableRemoteVersions = "*")
+@Mod(modid = "foxcorecui", name = "FoxCoreCUI", version = FoxCoreMain.VERSION, acceptableRemoteVersions = "*")
 public class FoxCoreForgeMain {
 
-    @Mod.Instance("foxcoreforge")
+    @Mod.Instance("foxcorecui")
     public static FoxCoreForgeMain instance;
 
-    @SidedProxy(modId = "foxcoreforge", clientSide = "net.foxdenstudio.sponge.foxcore.mod.ClientProxy", serverSide = "net.foxdenstudio.sponge.foxcore.mod.CommonProxy")
+    @SidedProxy(modId = "foxcorecui", clientSide = "net.foxdenstudio.sponge.foxcore.mod.ClientProxy", serverSide = "net.foxdenstudio.sponge.foxcore.mod.CommonProxy")
     public static CommonProxy proxy;
 
     public static Logger logger;
