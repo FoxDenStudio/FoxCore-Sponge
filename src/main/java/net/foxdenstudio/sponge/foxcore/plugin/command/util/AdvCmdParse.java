@@ -382,7 +382,6 @@ public class AdvCmdParse {
         if (!lastIsCurrent && (parseResult.currentElement == null || parseResult.currentElement.type != CurrentElement.ElementType.COMMENT)) {
             parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.ARGUMENT, "", argsList.size(), "");
         }
-        System.out.println(argsList);
 
         // This part converts the argument list to the final argument array.
         // A number of arguments are copied to a new list less than or equal to the limit.
@@ -402,8 +401,6 @@ public class AdvCmdParse {
         if (!finalString.isEmpty()) {
             finalList.add(finalString);
         }
-
-        System.out.println(finalString);
 
         if (parseResult.currentElement != null && parseResult.currentElement.type == CurrentElement.ElementType.ARGUMENT && parseResult.currentElement.index >= limit)
             parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (lastIsCurrent ? "" : " "), finalList.size() - 1, "");
