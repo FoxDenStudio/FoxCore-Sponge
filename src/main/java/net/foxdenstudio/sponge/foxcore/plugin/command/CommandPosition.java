@@ -26,17 +26,16 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public class CommandPosition implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
         PositionsStateField positionsField = (PositionsStateField)  FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID);
@@ -60,7 +59,7 @@ public class CommandPosition implements CommandCallable {
                     source.sendMessage(result.getMessage().get());
                 }
             } else {
-                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the Positions field!"));
+                source.sendMessage(Text.of(TextColors.GREEN, "Successfully added data to the Positions field!"));
             }
         } else {
             if (result.getMessage().isPresent()) {
@@ -70,7 +69,7 @@ public class CommandPosition implements CommandCallable {
                     source.sendMessage(result.getMessage().get());
                 }
             } else {
-                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the Positions field!"));
+                source.sendMessage(Text.of(TextColors.RED, "Failed to add data to the Positions field!"));
             }
         }
         return CommandResult.empty();
@@ -99,8 +98,8 @@ public class CommandPosition implements CommandCallable {
     @Override
     public Text getUsage(CommandSource source) {
         if (source instanceof Player)
-            return Texts.of("position [<x> <y> <z>]");
-        else return Texts.of("position <x> <y> <z>");
+            return Text.of("position [<x> <y> <z>]");
+        else return Text.of("position <x> <y> <z>");
     }
 
 }

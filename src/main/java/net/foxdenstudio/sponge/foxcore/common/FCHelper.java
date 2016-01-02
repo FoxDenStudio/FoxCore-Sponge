@@ -25,7 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.common;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
@@ -33,7 +32,6 @@ import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
@@ -89,13 +87,13 @@ public final class FCHelper {
     public static Text readableTristateText(Tristate state) {
         switch (state) {
             case UNDEFINED:
-                return Texts.of(TextColors.YELLOW, "Passthrough");
+                return Text.of(TextColors.YELLOW, "Passthrough");
             case TRUE:
-                return Texts.of(TextColors.GREEN, "True");
+                return Text.of(TextColors.GREEN, "True");
             case FALSE:
-                return Texts.of(TextColors.RED, "False");
+                return Text.of(TextColors.RED, "False");
             default:
-                return Texts.of(TextColors.LIGHT_PURPLE, "Wait wat?");
+                return Text.of(TextColors.LIGHT_PURPLE, "Wait wat?");
         }
     }
 

@@ -31,8 +31,6 @@ import org.spongepowered.api.command.dispatcher.Disambiguator;
 import org.spongepowered.api.command.dispatcher.Dispatcher;
 import org.spongepowered.api.command.dispatcher.SimpleDispatcher;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
@@ -42,7 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spongepowered.api.command.CommandMessageFormatting.NEWLINE_TEXT;
 import static org.spongepowered.api.command.CommandMessageFormatting.SPACE_TEXT;
 
 public class FCCommandDispatcher implements Dispatcher {
@@ -57,7 +54,7 @@ public class FCCommandDispatcher implements Dispatcher {
         if (shortDescription == null || shortDescription.isEmpty()) {
             this.shortDescription = null;
         } else {
-            this.shortDescription = Texts.of(shortDescription);
+            this.shortDescription = Text.of(shortDescription);
         }
         this.disambiguator = disambiguator;
     }
@@ -180,7 +177,7 @@ public class FCCommandDispatcher implements Dispatcher {
     @Override
     public CommandResult process(CommandSource source, String inputArguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
         if (!inputArguments.isEmpty()) {
@@ -191,23 +188,23 @@ public class FCCommandDispatcher implements Dispatcher {
                 if (args.length > 1) {
                     final Optional<CommandMapping> optCommand = get(args[1], source);
                     if (!optCommand.isPresent()) {
-                        source.sendMessage(Texts.of("That command doesn't exist!"));
+                        source.sendMessage(Text.of("That command doesn't exist!"));
                         return CommandResult.empty();
                     }
                     CommandCallable command = optCommand.get().getCallable();
                     if (!command.testPermission(source)) {
-                        source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to view help for this command!"));
+                        source.sendMessage(Text.of(TextColors.RED, "You don't have permission to view help for this command!"));
                         return CommandResult.empty();
                     }
                     @SuppressWarnings("unchecked")
                     final Optional<Text> helpText = (Optional<Text>) command.getHelp(source);
-                    TextBuilder builder = Texts.builder();
-                    if (helpText.isPresent()) builder.append(Texts.of(TextColors.GREEN, "----------"),
-                            Texts.of(TextColors.GOLD, "Command \""),
-                            Texts.of(TextColors.GOLD, optCommand.get().getPrimaryAlias()),
-                            Texts.of(TextColors.GOLD, "\" Help"),
-                            Texts.of(TextColors.GREEN, "----------\n"));
-                    source.sendMessage(builder.append(helpText.orElse(Texts.of("Usage: " + dispatcherPrefix + " ").builder().append(command.getUsage(source)).build())).build());
+                    Text.Builder builder = Text.builder();
+                    if (helpText.isPresent()) builder.append(Text.of(TextColors.GREEN, "----------"),
+                            Text.of(TextColors.GOLD, "Command \""),
+                            Text.of(TextColors.GOLD, optCommand.get().getPrimaryAlias()),
+                            Text.of(TextColors.GOLD, "\" Help"),
+                            Text.of(TextColors.GREEN, "----------\n"));
+                    source.sendMessage(builder.append(helpText.orElse(Text.of("Usage: " + dispatcherPrefix + " ").builder().append(command.getUsage(source)).build())).build());
                     return CommandResult.empty();
                 } else {
                     source.sendMessage(this.getHelp(source).get());
@@ -216,26 +213,26 @@ public class FCCommandDispatcher implements Dispatcher {
             } else {
                 final Optional<CommandMapping> cmdOptional = get(args[0], source);
                 if (!cmdOptional.isPresent())
-                    throw new CommandNotFoundException(Texts.of("Command not found!"), args[0]);
+                    throw new CommandNotFoundException(Text.of("Command not found!"), args[0]);
 
                 final String arguments = args.length > 1 ? args[1] : "";
                 final CommandCallable command = cmdOptional.get().getCallable();
                 try {
                     return command.process(source, arguments);
                 } catch (CommandNotFoundException e) {
-                    throw new CommandException(Texts.of("No such child command: %s" + e.getCommand()));
+                    throw new CommandException(Text.of("No such child command: %s" + e.getCommand()));
                 } catch (CommandException e) {
                     Text text = e.getText();
-                    if (text == null) text = Texts.of("There was an error processing command: " + args[0]);
+                    if (text == null) text = Text.of("There was an error processing command: " + args[0]);
                     source.sendMessage(text.builder().color(TextColors.RED).build());
-                    source.sendMessage(Texts.of("Usage: " + dispatcherPrefix + " ").builder()
+                    source.sendMessage(Text.of("Usage: " + dispatcherPrefix + " ").builder()
                             .append(command.getUsage(source)).color(TextColors.RED).build());
                     return CommandResult.empty();
                 }
             }
         } else {
-            source.sendMessage(Texts.builder()
-                    .append(Texts.of(TextColors.GREEN, "Usage: "))
+            source.sendMessage(Text.builder()
+                    .append(Text.of(TextColors.GREEN, "Usage: "))
                     .append(getUsage(source))
                     .build());
             return CommandResult.empty();
@@ -286,18 +283,18 @@ public class FCCommandDispatcher implements Dispatcher {
         if (this.commands.isEmpty()) {
             return Optional.empty();
         }
-        TextBuilder build = Texts.of(TextColors.GREEN, "Available commands:\n").builder();
+        Text.Builder build = Text.of(TextColors.GREEN, "Available commands:\n").builder();
         for (Iterator<CommandMapping> it = filterCommandMappings(source).iterator(); it.hasNext(); ) {
 
             CommandMapping mapping = it.next();
             @SuppressWarnings("unchecked")
             final Optional<Text> description = (Optional<Text>) mapping.getCallable().getShortDescription(source);
-            build.append(Texts.builder(mapping.getPrimaryAlias() + ":")
+            build.append(Text.builder(mapping.getPrimaryAlias() + ":")
                             .color(TextColors.GOLD)
                             .onClick(TextActions.suggestCommand(this.dispatcherPrefix + " " + mapping.getPrimaryAlias())).build(),
                     SPACE_TEXT, description.orElse(mapping.getCallable().getUsage(source)));
             if (it.hasNext()) {
-                build.append(NEWLINE_TEXT);
+                build.append(Text.of("\n"));
             }
         }
         return Optional.of(build.build());
@@ -305,7 +302,7 @@ public class FCCommandDispatcher implements Dispatcher {
 
     @Override
     public Text getUsage(CommandSource source) {
-        final TextBuilder build = Texts.builder();
+        final Text.Builder build = Text.builder();
         List<String> commands = filterCommands(source).stream()
                 .filter(input -> {
                     if (input == null) {
@@ -317,9 +314,9 @@ public class FCCommandDispatcher implements Dispatcher {
                 .collect(Collectors.toList());
 
         for (Iterator<String> it = commands.iterator(); it.hasNext(); ) {
-            build.append(Texts.of(it.next()));
+            build.append(Text.of(it.next()));
             if (it.hasNext()) {
-                build.append(Texts.of(" | "));
+                build.append(Text.of(" | "));
             }
         }
         return build.build();

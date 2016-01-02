@@ -34,8 +34,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
@@ -59,10 +57,10 @@ public class CommandDebug implements CommandCallable {
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (debug.get(source).equals(Boolean.FALSE)) {
             debug.put(source, Boolean.TRUE);
-            source.sendMessage(Texts.of(TextColors.GREEN, "Debug mode enabled!"));
+            source.sendMessage(Text.of(TextColors.GREEN, "Debug mode enabled!"));
         } else {
             debug.remove(source);
-            source.sendMessage(Texts.of(TextColors.RED, "Debug mode disabled!"));
+            source.sendMessage(Text.of(TextColors.RED, "Debug mode disabled!"));
         }
         return CommandResult.empty();
     }
@@ -89,7 +87,11 @@ public class CommandDebug implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("debug");
+        return Text.of("debug");
+    }
+
+    public Map<CommandSource, Boolean> getDebug() {
+        return debug;
     }
 
     @Listener

@@ -34,8 +34,6 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.*;
@@ -45,19 +43,18 @@ public class CommandState implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).build();
-        String[] args = parse.getArgs();
-        TextBuilder output = Texts.builder().append(Texts.of(TextColors.GOLD, "-----------------------------------------------------\n"));
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parse();
+        Text.Builder output = Text.builder().append(Text.of(TextColors.GOLD, "-----------------------------------------------------\n"));
         int flag = 0;
         Collection<IStateField> fields;
-        if (args.length == 0) {
+        if (parse.args.length == 0) {
             fields = FCStateManager.instance().getStateMap().get(source).getMap().values();
         } else {
             fields = new ArrayList<>();
-            for (String alias : args) {
+            for (String alias : parse.args) {
                 IStateField temp = FCStateManager.instance().getStateMap().get(source).getFromAlias(alias);
                 if (temp != null) fields.add(temp);
             }
@@ -69,13 +66,13 @@ public class CommandState implements CommandCallable {
         for (Iterator<IStateField> it = fields.iterator(); it.hasNext(); ) {
             field = it.next();
             if (field != null && !field.isEmpty()) {
-                output.append(Texts.of(TextColors.GREEN, field.getName() + ":\n"));
+                output.append(Text.of(TextColors.GREEN, field.getName() + ":\n"));
                 output.append(field.state());
-                if (it.hasNext()) output.append(Texts.of("\n"));
+                if (it.hasNext()) output.append(Text.of("\n"));
                 flag++;
             }
         }
-        if (flag == 0) source.sendMessage(Texts.of("Your current state buffer is clear!"));
+        if (flag == 0) source.sendMessage(Text.of("Your current state buffer is clear!"));
         else source.sendMessage(output.build());
         return CommandResult.empty();
     }
@@ -102,6 +99,6 @@ public class CommandState implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("state [fields]...");
+        return Text.of("state [fields]...");
     }
 }

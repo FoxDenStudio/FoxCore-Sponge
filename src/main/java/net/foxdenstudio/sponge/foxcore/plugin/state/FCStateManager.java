@@ -27,13 +27,15 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
-import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandSource;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isAlias;
 
 public final class FCStateManager {
 
@@ -61,14 +63,14 @@ public final class FCStateManager {
         return stateMap;
     }
 
-    public boolean registerStateFactory(IStateFieldFactory factory, String identifier, String... aliases) {
+    public boolean registerStateFactory(IStateFieldFactory factory, String identifier, String primaryAlias, String... aliases) {
         for (StateMapping mapping : this.stateMappings) {
             if (mapping.identifier.equals(identifier)) return false;
             for (String alias : aliases) {
-                if (Aliases.isAlias(mapping.aliases, alias)) return false;
+                if (isAlias(mapping.aliases, alias)) return false;
             }
         }
-        this.stateMappings.add(new StateMapping(factory, identifier, aliases));
+        this.stateMappings.add(new StateMapping(factory, identifier, primaryAlias, aliases));
         return true;
     }
 
@@ -86,6 +88,11 @@ public final class FCStateManager {
         } else return null;
     }
 
+    public String[] getPrimaryAliases(){
+        String[] array = new String[this.stateMappings.size()];
+        return this.stateMappings.stream().map(stateMapping -> stateMapping.primaryAlias).collect(Collectors.toList()).toArray(array);
+    }
+
     private StateMapping getMappingbyID(String identifier) {
         for (StateMapping mapping : this.stateMappings) {
             if (mapping.identifier.equals(identifier)) return mapping;
@@ -95,7 +102,7 @@ public final class FCStateManager {
 
     private StateMapping getMappingbyAlias(String alias) {
         for (StateMapping mapping : this.stateMappings) {
-            if (Aliases.isAlias(mapping.aliases, alias)) return mapping;
+            if (isAlias(mapping.aliases, alias)) return mapping;
         }
         return null;
     }
@@ -103,11 +110,13 @@ public final class FCStateManager {
     private static class StateMapping {
         public final IStateFieldFactory factory;
         public final String identifier;
+        public final String primaryAlias;
         public final String[] aliases;
 
-        public StateMapping(IStateFieldFactory factory, String identifier, String[] aliases) {
+        public StateMapping(IStateFieldFactory factory, String identifier, String primaryAlias, String[] aliases) {
             this.factory = factory;
             this.identifier = identifier;
+            this.primaryAlias = primaryAlias;
             this.aliases = aliases;
         }
     }

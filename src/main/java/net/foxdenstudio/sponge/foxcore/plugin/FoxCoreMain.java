@@ -49,8 +49,7 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.SubjectData;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
@@ -91,29 +90,30 @@ public final class FoxCoreMain {
         FCStateManager.init();
         logger.info("Configuring commands");
         registerCommands();
-        logger.info("Setting default player permissions");
-        configurePermissions();
-
     }
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
+        logger.info("Setting default player permissions");
+        configurePermissions();
         logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Registering positions state field");
-        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Initializing network packet manager");
         FCPacketManager.init();
+        logger.info("Registering Wand DataManipulators");
         registerData();
+        logger.info("Registering event listeners");
         registerListeners();
     }
 
     private void registerCommands() {
-        TextBuilder builder = Texts.builder();
-        builder.append(Texts.of(TextColors.GOLD, "FoxCore\n"));
-        builder.append(Texts.of("Version: " + FoxCoreMain.VERSION + "\n"));
-        builder.append(Texts.of("Author: gravityfox\n"));
+        Text.Builder builder = Text.builder();
+        builder.append(Text.of(TextColors.GOLD, "FoxCore\n"));
+        builder.append(Text.of("Version: " + FoxCoreMain.VERSION + "\n"));
+        builder.append(Text.of("Author: gravityfox\n"));
 
         this.fcDispatcher = new FCCommandDispatcher("/foxcore", "Core commands for state and selections.");
         fcDispatcher.register(new CommandState(), "state", "current", "cur");

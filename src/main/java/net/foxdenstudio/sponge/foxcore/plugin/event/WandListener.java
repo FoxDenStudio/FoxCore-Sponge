@@ -34,7 +34,7 @@ import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
@@ -56,12 +56,12 @@ public class WandListener implements EventListener<InteractBlockEvent> {
                             if (event instanceof InteractBlockEvent.Primary) {
                                 if (positions.contains(pos)) {
                                     positions.remove(positions.lastIndexOf(pos));
-                                    player.sendMessage(Texts.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                                    player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
                                     FCPacketManager.instance().sendPos(player, positions);
                                 }
                             } else if (event instanceof InteractBlockEvent.Secondary) {
                                 positions.add(pos);
-                                player.sendMessage(Texts.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                                player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
                                 FCPacketManager.instance().sendPos(player, positions);
                             }
                             event.setCancelled(true);

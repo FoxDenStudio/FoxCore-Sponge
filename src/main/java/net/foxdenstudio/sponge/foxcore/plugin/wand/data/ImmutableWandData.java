@@ -80,6 +80,11 @@ public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, 
     }
 
     @Override
+    public int getContentVersion() {
+        return 1;
+    }
+
+    @Override
     public DataContainer toContainer() {
         return new MemoryDataContainer().set(WANDTYPE.getQuery(), this.type.name());
     }

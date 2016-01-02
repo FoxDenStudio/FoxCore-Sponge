@@ -26,7 +26,6 @@
 package net.foxdenstudio.sponge.foxcore.plugin.network;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.common.network.Packet;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.network.ChannelBinding;
@@ -57,7 +56,7 @@ public class FCPacketManager {
     }
 
     public void yiff(Player player) {
-        System.out.println("Yiffing " + player.getName());
+        FoxCoreMain.instance().logger().info("Yiffing " + player.getName());
         channel.sendTo(player, load -> {
             load.writeInteger(PRINTSTRING.ID);
             load.writeString("Yiff. (stupid Tzk told me to change it x3)");

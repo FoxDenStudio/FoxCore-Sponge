@@ -25,8 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
-import org.spongepowered.api.command.CommandSource;
-
 import java.util.ArrayList;
 import java.util.List;
 

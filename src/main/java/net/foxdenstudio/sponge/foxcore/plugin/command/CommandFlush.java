@@ -33,7 +33,6 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
@@ -44,22 +43,21 @@ public class CommandFlush implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
 
         if (arguments.isEmpty()) {
             FCStateManager.instance().getStateMap().get(source).flush();
         } else {
-            AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
-            String[] args = parse.getArgs();
-            for (String arg : args) {
+            AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse2();
+            for (String arg : parse.args) {
                 String id = FCStateManager.instance().getID(arg);
-                if (id == null) throw new CommandException(Texts.of("\"" + arg + "\" is not a valid type!"));
+                if (id == null) throw new CommandException(Text.of("\"" + arg + "\" is not a valid type!"));
                 FCStateManager.instance().getStateMap().get(source).flush(id);
             }
         }
-        source.sendMessage(Texts.of(TextColors.GREEN, "Successfully flushed!"));
+        source.sendMessage(Text.of(TextColors.GREEN, "Successfully flushed!"));
         return CommandResult.empty();
     }
 
@@ -85,6 +83,6 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("flush [regions] [handlers] [positions]");
+        return Text.of("flush [regions] [handlers] [positions]");
     }
 }

@@ -46,7 +46,6 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
@@ -69,26 +68,25 @@ public class CommandWand implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).flagMapper(MAPPER).build();
-        String[] args = parse.getArgs();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).flagMapper(MAPPER).parse2();
 
         Player player = null;
         if (source instanceof Player) player = (Player) source;
-        if (parse.getFlagmap().containsKey("player"))
-            player = Sponge.getGame().getServer().getPlayer(parse.getFlagmap().get("player")).orElse(null);
-        if (player == null) throw new CommandException(Texts.of("You must specify a player to give the wand to!"));
+        if (parse.flagmap.containsKey("player"))
+            player = Sponge.getGame().getServer().getPlayer(parse.flagmap.get("player")).orElse(null);
+        if (player == null) throw new CommandException(Text.of("You must specify a player to give the wand to!"));
         WandData wandData = Sponge.getDataManager().getManipulatorBuilder(WandData.class).get().create();
-        if (args.length > 0) {
-            WandType type = WandType.from(args[0]);
-            if(type == null) throw new CommandException(Texts.of("Not a valid wand type!"));
+        if (parse.args.length > 0) {
+            WandType type = WandType.from(parse.args[0]);
+            if(type == null) throw new CommandException(Text.of("Not a valid wand type!"));
             wandData.setWandType(type);
         }
         LoreData loreData = Sponge.getDataManager().getManipulatorBuilder(LoreData.class).get().create();
         final ListValue<Text> lore = loreData.lore();
-        lore.add(Texts.of("Position Wand"));
+        lore.add(Text.of("Position Wand"));
         loreData.set(lore);
         ItemStack stack = ItemStack.of(ItemTypes.GOLDEN_AXE, 1);
         stack.offer(wandData);
@@ -103,7 +101,7 @@ public class CommandWand implements CommandCallable {
             player.setItemInHand(stack);
         }
 
-        source.sendMessage(Texts.of("Successfully created wand!"));
+        source.sendMessage(Text.of("Successfully created wand!"));
 
         return CommandResult.empty();
     }
@@ -130,7 +128,7 @@ public class CommandWand implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("wand <type>");
+        return Text.of("wand <type>");
     }
 
 }

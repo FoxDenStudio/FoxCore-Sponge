@@ -26,17 +26,17 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse.ParseResult;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
@@ -47,22 +47,21 @@ public class CommandAdd implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).build();
-        String[] args = parse.getArgs();
-        if (args.length == 0) {
-            source.sendMessage(Texts.builder()
-                    .append(Texts.of(TextColors.GREEN, "Usage: "))
+        ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse2();
+        if (parse.args.length == 0) {
+            source.sendMessage(Text.builder()
+                    .append(Text.of(TextColors.GREEN, "Usage: "))
                     .append(getUsage(source))
                     .build());
             return CommandResult.empty();
         }
-        IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(args[0]);
-        if (field == null) throw new CommandException(Texts.of("\"" + args[0] + "\" is not a valid category!"));
+        IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(parse.args[0]);
+        if (field == null) throw new CommandException(Text.of("\"" + parse.args[0] + "\" is not a valid category!"));
         String extraArgs = "";
-        if (args.length > 1) extraArgs = args[1];
+        if (parse.args.length > 1) extraArgs = parse.args[1];
         ProcessResult result = field.add(source, extraArgs);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
@@ -72,7 +71,7 @@ public class CommandAdd implements CommandCallable {
                     source.sendMessage(result.getMessage().get());
                 }
             } else {
-                source.sendMessage(Texts.of(TextColors.GREEN, "Successfully added data to the " + field.getName() + " field!"));
+                source.sendMessage(Text.of(TextColors.GREEN, "Successfully added data to the " + field.getName() + " field!"));
             }
         } else {
             if (result.getMessage().isPresent()) {
@@ -82,7 +81,7 @@ public class CommandAdd implements CommandCallable {
                     source.sendMessage(result.getMessage().get());
                 }
             } else {
-                source.sendMessage(Texts.of(TextColors.RED, "Failed to add data to the " + field.getName() + " field!"));
+                source.sendMessage(Text.of(TextColors.RED, "Failed to add data to the " + field.getName() + " field!"));
             }
         }
         return CommandResult.empty();
@@ -110,6 +109,6 @@ public class CommandAdd implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("add <region [--w:<worldname>] | handler> <name>");
+        return Text.of("add <region [--w:<worldname>] | handler> <name>");
     }
 }

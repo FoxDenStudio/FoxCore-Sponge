@@ -31,8 +31,6 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
@@ -50,10 +48,10 @@ public class CommandAbout implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        TextBuilder builder = Texts.builder();
+        Text.Builder builder = Text.builder();
         pluginTexts.forEach(builder::append);
         source.sendMessage(builder.build());
         return CommandResult.empty();
@@ -76,12 +74,12 @@ public class CommandAbout implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.of(Texts.of("Why would you need help using the \"about\" command?"));
+        return Optional.of(Text.of("Why would you need help using the \"about\" command?"));
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("about");
+        return Text.of("about");
     }
 
     public void addText(Text text) {

@@ -36,8 +36,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
 
 import java.util.Iterator;
 
@@ -54,81 +52,80 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     @Override
     public Text state() {
-        TextBuilder builder = Texts.builder();
+        Text.Builder builder = Text.builder();
         int index = 1;
         for (Iterator<Vector3i> it = this.list.iterator(); it.hasNext(); ) {
             Vector3i pos = it.next();
-            builder.append(Texts.of("  " + (index++) + ": " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()));
-            if (it.hasNext()) builder.append(Texts.of("\n"));
+            builder.append(Text.of("  " + (index++) + ": " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()));
+            if (it.hasNext()) builder.append(Text.of("\n"));
         }
         return builder.build();
     }
 
     @Override
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
-        String[] args = parse.getArgs();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse2();
+        
         int x, y, z;
         Vector3i pPos = null;
         if (source instanceof Player)
             pPos = ((Player) source).getLocation().getBlockPosition();
-        if (args.length == 0) {
+        if (parse.args.length == 0) {
             if (pPos == null)
-                throw new CommandException(Texts.of("Must specify coordinates!"));
+                throw new CommandException(Text.of("Must specify coordinates!"));
             x = pPos.getX();
             y = pPos.getY();
             z = pPos.getZ();
-        } else if (args.length > 0 && args.length < 3) {
-            throw new CommandException(Texts.of("Not enough arguments!"));
-        } else if (args.length == 3) {
+        } else if (parse.args.length > 0 && parse.args.length < 3) {
+            throw new CommandException(Text.of("Not enough arguments!"));
+        } else if (parse.args.length == 3) {
             if (pPos == null)
                 pPos = Vector3i.ZERO;
             try {
-                x = (int) FCHelper.parseCoordinate(pPos.getX(), args[0]);
+                x = (int) FCHelper.parseCoordinate(pPos.getX(), parse.args[0]);
             } catch (NumberFormatException e) {
-                throw new ArgumentParseException(Texts.of("Unable to parse \"" + args[0] + "\"!"), e, args[0], 0);
+                throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[0] + "\"!"), e, parse.args[0], 0);
             }
             try {
-                y = (int) FCHelper.parseCoordinate(pPos.getY(), args[1]);
+                y = (int) FCHelper.parseCoordinate(pPos.getY(), parse.args[1]);
             } catch (NumberFormatException e) {
-                throw new ArgumentParseException(Texts.of("Unable to parse \"" + args[1] + "\"!"), e, args[1], 1);
+                throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[1] + "\"!"), e, parse.args[1], 1);
             }
             try {
-                z = (int) FCHelper.parseCoordinate(pPos.getZ(), args[2]);
+                z = (int) FCHelper.parseCoordinate(pPos.getZ(), parse.args[2]);
             } catch (NumberFormatException e) {
-                throw new ArgumentParseException(Texts.of("Unable to parse \"" + args[2] + "\"!"), e, args[2], 2);
+                throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[2] + "\"!"), e, parse.args[2], 2);
             }
         } else {
-            throw new CommandException(Texts.of("Too many arguments!"));
+            throw new CommandException(Text.of("Too many arguments!"));
         }
         this.list.add(new Vector3i(x, y, z));
         if (source instanceof Player) {
             FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
         }
-        return ProcessResult.of(true, Texts.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
+        return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
 
     @Override
     public ProcessResult subtract(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).build();
-        String[] args = parse.getArgs();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse2();
         int index = this.list.size();
-        if (args.length > 0) {
+        if (parse.args.length > 0) {
             try {
-                index = Integer.parseInt(args[0]);
+                index = Integer.parseInt(parse.args[0]);
             } catch (NumberFormatException e) {
-                throw new ArgumentParseException(Texts.of("Not a valid index!"), args[0], 0);
+                throw new ArgumentParseException(Text.of("Not a valid index!"), parse.args[0], 0);
             }
         }
         try {
             this.list.remove(index - 1);
         } catch (IndexOutOfBoundsException e) {
-            throw new ArgumentParseException(Texts.of("Index out of bounds! (1 - " + this.list.size()), args[0], 0);
+            throw new ArgumentParseException(Text.of("Index out of bounds! (1 - " + this.list.size()), parse.args[0], 0);
         }
         if (source instanceof Player) {
             FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
         }
-        return ProcessResult.of(true, Texts.of("Successfully removed position from your state buffer!"));
+        return ProcessResult.of(true, Text.of("Successfully removed position from your state buffer!"));
     }
 
     @Override

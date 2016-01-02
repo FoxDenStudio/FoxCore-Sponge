@@ -27,32 +27,47 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CommandTest implements CommandCallable {
 
-
-    @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
-        if(source instanceof Player){
-            FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
+        if (!testPermission(source)) {
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
+            return CommandResult.empty();
         }
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(3).parse2();
+        Text.Builder builder = Text.builder();
+        builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
+        builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.currentElement.type, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.currentElement.token, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.currentElement.index, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.currentElement.key, TextColors.GOLD, "\"\n"));
+        source.sendMessage(builder.build());
         return CommandResult.empty();
     }
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).autoCloseQuotes(true).limit(3).parse2();
+        Text.Builder builder = Text.builder();
+        builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
+        builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.currentElement.type, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.currentElement.token, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.currentElement.index, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.currentElement.key, TextColors.GOLD, "\"\n"));
+        source.sendMessage(builder.build());
         return ImmutableList.of();
     }
 
@@ -73,26 +88,26 @@ public class CommandTest implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("test [mystery args]...");
+        return Text.of("test [mystery args]...");
     }
 
     /*
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Texts.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse parse = AdvCmdParse.builder().arguments(arguments).limit(2).build();
-        TextBuilder builder = Texts.builder();
-        builder.append(Texts.of(TextColors.GOLD, "-----------------------------\n"));
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(2).parse2();
+        Text.Builder builder = Text.builder();
+        builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
         int count = 0;
-        for (String str : parse.getArgs()) {
+        for (String str : parse.args) {
             count++;
-            builder.append(Texts.of(count + ": " + str + "\n"));
+            builder.append(Text.of(count + ": " + str + "\n"));
         }
-        for (Map.Entry<String, String> entry : parse.getFlagmap().entrySet()) {
-            builder.append(Texts.of(entry.getKey() + " : " + entry.getValue() + "\n"));
+        for (Map.Entry<String, String> entry : parse.flagmap.entrySet()) {
+            builder.append(Text.of(entry.getKey() + " : " + entry.getValue() + "\n"));
         }
         source.sendMessage(builder.build());
         return CommandResult.empty();
