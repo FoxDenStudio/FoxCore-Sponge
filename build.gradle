@@ -19,7 +19,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 group 'net.foxdenstudio.sponge.foxcore'
 version 'ALPHA-SNAPSHOT'
 
-ext.spongeVersion = "3.1.0-SNAPSHOT"
+apply from: project.file("sponge.gradle")
 
 
 sourceCompatibility = '1.8'
