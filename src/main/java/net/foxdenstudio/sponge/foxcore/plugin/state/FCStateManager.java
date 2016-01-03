@@ -29,13 +29,14 @@ import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.util.GuavaCollectors;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isAlias;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
 
 public final class FCStateManager {
 
@@ -67,7 +68,7 @@ public final class FCStateManager {
         for (StateMapping mapping : this.stateMappings) {
             if (mapping.identifier.equals(identifier)) return false;
             for (String alias : aliases) {
-                if (isAlias(mapping.aliases, alias)) return false;
+                if (isOn(mapping.aliases, alias)) return false;
             }
         }
         this.stateMappings.add(new StateMapping(factory, identifier, primaryAlias, aliases));
@@ -88,9 +89,9 @@ public final class FCStateManager {
         } else return null;
     }
 
-    public String[] getPrimaryAliases(){
+    public List<String> getPrimaryAliases(){
         String[] array = new String[this.stateMappings.size()];
-        return this.stateMappings.stream().map(stateMapping -> stateMapping.primaryAlias).collect(Collectors.toList()).toArray(array);
+        return this.stateMappings.stream().map(stateMapping -> stateMapping.primaryAlias).collect(GuavaCollectors.toImmutableList());
     }
 
     private StateMapping getMappingbyID(String identifier) {
@@ -102,7 +103,7 @@ public final class FCStateManager {
 
     private StateMapping getMappingbyAlias(String alias) {
         for (StateMapping mapping : this.stateMappings) {
-            if (isAlias(mapping.aliases, alias)) return mapping;
+            if (isOn(mapping.aliases, alias)) return mapping;
         }
         return null;
     }

@@ -46,7 +46,7 @@ public final class Aliases {
     public static final String[] CLEAR_ALIASES = {"clear", "erase", "reset", "remove", "default", "original"};
     public static final String[] PLAYER_ALIASES = {"player", "user", "username", "p", "u"};
 
-    public static boolean isAlias(String[] aliases, String input) {
+    public static boolean isOn(String[] aliases, String input) {
         for (String alias : aliases) {
             if (alias.equalsIgnoreCase(input)) return true;
         }
@@ -54,11 +54,11 @@ public final class Aliases {
     }
 
     public static Tristate tristateFrom(String name) {
-        if (isAlias(TRUE_ALIASES, name)) {
+        if (isOn(TRUE_ALIASES, name)) {
             return Tristate.TRUE;
-        } else if (isAlias(FALSE_ALIASES, name)) {
+        } else if (isOn(FALSE_ALIASES, name)) {
             return Tristate.FALSE;
-        } else if (isAlias(PASSTHROUGH_ALIASES, name)) {
+        } else if (isOn(PASSTHROUGH_ALIASES, name)) {
             return Tristate.UNDEFINED;
         } else {
             return null;

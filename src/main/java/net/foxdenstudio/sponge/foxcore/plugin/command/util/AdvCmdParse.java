@@ -124,134 +124,10 @@ public class AdvCmdParse {
         return this;
     }
 
-    @Deprecated
     public ParseResult parse() throws CommandException {
         ParseResult parseResult = new ParseResult();
         boolean inQuote = false;
-
-        // Regex Pattern for identifying arguments and flags. It respects quotation marks and escape characters.
-        Pattern pattern = Pattern.compile(regex);
-        // Check for unclosed quotes
-        {
-            String toStrip = arguments;
-            while (true) {
-                Matcher tempMatcher = pattern.matcher(toStrip);
-                if (!tempMatcher.find()) break;
-                toStrip = toStrip.substring(0, tempMatcher.start()) + toStrip.substring(tempMatcher.end());
-            }
-            Pattern pattern2 = Pattern.compile("[\"']");
-            Matcher matcher = pattern2.matcher(toStrip);
-            if (matcher.find()) {
-                if (autoCloseQuotes) {
-                    if (matcher.group().equals("\"")) arguments += "\"";
-                    else if (matcher.group().equals("'")) arguments += "'";
-                    inQuote = true;
-                } else {
-                    throw new CommandException(Text.of("You must close all quotes!"));
-                }
-            }
-        }
-
-        // List of string arguments that were not parsed as flags
-        List<String> argsList = new ArrayList<>();
-        // Matcher for identifying arguments and flags.
-        Matcher matcher = pattern.matcher(arguments);
-        // Iterate through matches
-        while (matcher.find()) {
-            String result = matcher.group();
-            if (excludeCurrent && matcher.end() == arguments.length() && (inQuote || !arguments.substring(arguments.length() - 1).matches("[\"']")))
-                break;
-            // Makes "---" mark the end of the command. Effectively allows command comments
-            // It also means that flag names cannot start with hyphens
-            if (!result.startsWith("---")) {
-                // Throws out any results that are empty
-                if (result.equals("--") || result.equals("-")) continue;
-                // Parses result as long flag.
-                // Format is --<flagname>:<value> Where value can be a quoted string. "=" is also a valid separator
-                // If a limit is specified, the flags will be cut out of the final string
-                // Setting extractSubFlags to true forces flags within the final string to be left as-is
-                // This is useful if the final string is it's own command and needs to be re-parsed
-                if (result.startsWith("--") && (extractSubFlags || limit == 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
-                    // Trims the prefix
-                    result = result.substring(2);
-                    // Splits once by ":" or "="
-                    String[] parts = result.split("[:=]", 2);
-                    // Throw an exception if the key contains a quote character, as that shouldn't be allowed
-                    if (parts[0].contains("\"") || parts[0].contains("'"))
-                        throw new CommandException(Text.of("You may not have quotes in long flag keys!"));
-                    // Default value in case a value isn't specified
-                    String value = "";
-                    // Retrieves value if it exists
-                    if (parts.length > 1) value = unescapeString(parts[1]);
-                    // Applies the flagMapper function.
-                    // This is a destructive function that takes 3 parameters and returns nothing. (Destructive consumer)
-                    flagMapper.apply(parseResult.flagmap)
-                            .apply(parts[0])
-                            .accept(value);
-
-                    // Parses result as a short flag. Limit behavior is the same as long flags
-                    // multiple letters are treated as multiple flags. Repeating letters add a second flag with a repetition
-                    // Example: "-aab" becomes flags "a", "aa", and "b"
-                } else if (result.startsWith("-") && result.substring(1, 2).matches("[\\D]")
-                        && (extractSubFlags || limit == 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
-                    // Trims prefix
-                    result = result.substring(1);
-                    // Iterates through each letter
-                    for (String str : result.split("")) {
-                        // Checks to make sure that the flag letter is alphabetic. Throw exception if it doesn't
-                        if (str.matches("[a-zA-Z]")) {
-                            // Checks if the flag already exists, and repeat the letter until it doesn't
-                            String temp = str;
-                            while (parseResult.flagmap.containsKey(temp)) {
-                                temp += str;
-                            }
-                            // Applies destructive flagMapper function.
-                            flagMapper.apply(parseResult.flagmap).apply(temp).accept("");
-                        } else if (str.matches("[:=-]")) {
-                            throw new CommandException(Text.of("You may only have alphabetic short flags! Did you mean to use a long flag (two dashes)?"));
-                        } else {
-                            throw new CommandException(Text.of("You may only have alphabetic short flags!"));
-                        }
-                    }
-
-                    // Simply adds the result to the argument list. Quotes are trimmed.
-                    // Fallback if the result isn't a flag.
-                } else {
-                    if (limit != 0 && argsList.size() >= limit && !unescapeLast) argsList.add(result);
-                    else argsList.add(unescapeString(result));
-                }
-            } else break;
-        }
-
-        // This part converts the argument list to the final argument array.
-        // A number of arguments are copied to a new list less than or equal to the limit.
-        // The rest of the arguments, if any, are concatenated together.
-        List<String> finalList = new ArrayList<>();
-        String finalString = "";
-        for (
-                int i = 0;
-                i < argsList.size(); i++)
-
-        {
-            if (limit == 0 || i < limit) {
-                finalList.add(argsList.get(i));
-            } else {
-                finalString += argsList.get(i);
-                if (i + 1 < argsList.size()) {
-                    finalString += " ";
-                }
-            }
-        }
-
-        // Converts final argument list to an array.
-        parseResult.args = finalList.toArray(new String[finalList.size()]);
-
-        return parseResult;
-    }
-
-    public ParseResult parse2() throws CommandException {
-        ParseResult parseResult = new ParseResult();
-        boolean inQuote = false;
+        String arguments = this.arguments;
 
         // Regex Pattern for identifying arguments and flags. It respects quotation marks and escape characters.
         Pattern pattern = Pattern.compile(regex);
@@ -281,9 +157,9 @@ public class AdvCmdParse {
         // Matcher for identifying arguments and flags.
         Matcher matcher = pattern.matcher(arguments);
         boolean lastIsCurrent = !(arguments.length() == 0) && (inQuote || !arguments.substring(arguments.length() - 1).matches("[\"' ]"));
-
         // Iterate through matches
         while (matcher.find()) {
+
             String result = matcher.group();
             boolean include = true;
             if (excludeCurrent && lastIsCurrent && matcher.end() == arguments.length())
@@ -306,9 +182,9 @@ public class AdvCmdParse {
                 // This is useful if the final string is it's own command and needs to be re-parsed
                 if (result.startsWith("--") && (extractSubFlags || limit == 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
                     // Trims the prefix
-                    result = result.substring(2);
+                    String trimmedResult = result.substring(2);
                     // Splits once by ":" or "="
-                    String[] parts = result.split("[:=]", 2);
+                    String[] parts = trimmedResult.split("[:=]", 2);
                     // Throw an exception if the key contains a quote character, as that shouldn't be allowed
                     if (parts[0].matches("^.*[^\\w-].*$"))
                         throw new CommandException(Text.of("Long flag keys must be alphanumeric (Includes underscores and hyphens)!"));
@@ -334,9 +210,9 @@ public class AdvCmdParse {
                 } else if (result.startsWith("-") && result.substring(1).matches("^.*[^\\d\\.].*$")
                         && (extractSubFlags || limit == 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
                     // Trims prefix
-                    result = result.substring(1);
+                    String trimmedResult = result.substring(1);
                     // Iterates through each letter
-                    for (String str : result.split("")) {
+                    for (String str : trimmedResult.split("")) {
                         // Checks to make sure that the flag letter is alphabetic. Throw exception if it doesn't
                         if (str.matches("[a-zA-Z]")) {
                             // Checks if the flag already exists, and repeat the letter until it doesn't
@@ -402,10 +278,21 @@ public class AdvCmdParse {
             finalList.add(finalString);
         }
 
-        if (parseResult.currentElement != null && parseResult.currentElement.type == CurrentElement.ElementType.ARGUMENT && parseResult.currentElement.index >= limit)
+        if (parseResult.currentElement != null && parseResult.currentElement.type == CurrentElement.ElementType.ARGUMENT && limit != 0 && parseResult.currentElement.index >= limit)
             parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (lastIsCurrent ? "" : " "), finalList.size() - 1, "");
         // Converts final argument list to an array.
         parseResult.args = finalList.toArray(new String[finalList.size()]);
+
+        // Prefix
+        String[] mcArgs = this.arguments.split(" +");
+        if (parseResult.currentElement.type.equals(CurrentElement.ElementType.ARGUMENT)
+                && parseResult.currentElement.index != 0
+                && parseResult.currentElement.token.isEmpty()
+                && !this.arguments.substring(this.arguments.length() - 1).matches(" ")) {
+            parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.COMPLETE, "", 0, "");
+        }
+        parseResult.currentElement = parseResult.currentElement.withPrefix(
+                mcArgs[mcArgs.length - 1].substring(0, mcArgs[mcArgs.length - 1].length() - parseResult.currentElement.token.length()));
 
         return parseResult;
     }
@@ -443,12 +330,22 @@ public class AdvCmdParse {
         public final String token;
         public final int index;
         public final String key;
+        public final String prefix;
 
         public CurrentElement(ElementType type, String token, int index, String key) {
+            this(type, token, index, key, "");
+        }
+
+        public CurrentElement(ElementType type, String token, int index, String key, String prefix) {
             this.type = type;
             this.token = token;
             this.index = index;
             this.key = key;
+            this.prefix = prefix;
+        }
+
+        public CurrentElement withPrefix(String prefix) {
+            return new CurrentElement(type, token, index, key, prefix);
         }
 
         public enum ElementType {
@@ -457,7 +354,8 @@ public class AdvCmdParse {
             LONGFLAGKEY,
             LONGFLAGVALUE,
             FINAL,
-            COMMENT
+            COMMENT,
+            COMPLETE
         }
     }
 }

@@ -46,7 +46,7 @@ public class CommandState implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parse();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
         Text.Builder output = Text.builder().append(Text.of(TextColors.GOLD, "-----------------------------------------------------\n"));
         int flag = 0;
         Collection<IStateField> fields;

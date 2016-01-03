@@ -64,7 +64,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     @Override
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse2();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
         
         int x, y, z;
         Vector3i pPos = null;
@@ -108,7 +108,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     @Override
     public ProcessResult subtract(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse2();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
         int index = this.list.size();
         if (parse.args.length > 0) {
             try {

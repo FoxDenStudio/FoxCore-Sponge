@@ -62,7 +62,7 @@ public class CommandTest implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).autoCloseQuotes(true).limit(2).parse2();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).autoCloseQuotes(true).limit(2).parse();
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
         builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
@@ -70,6 +70,7 @@ public class CommandTest implements CommandCallable {
         builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.currentElement.token, TextColors.GOLD, "\"\n"));
         builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.currentElement.index, TextColors.GOLD, "\n"));
         builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.currentElement.key, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Prefix: \"", TextColors.RESET, parse.currentElement.prefix, TextColors.GOLD, "\"\n"));
         source.sendMessage(builder.build());
         return ImmutableList.of();
     }
@@ -101,7 +102,7 @@ public class CommandTest implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(2).parse2();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(2).parse();
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
         int count = 0;

@@ -19,6 +19,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 group 'net.foxdenstudio.sponge.foxcore'
 version 'ALPHA-SNAPSHOT'
 
+ext.spongeVersion = "3.1.0-SNAPSHOT"
 
 
 sourceCompatibility = '1.8'
@@ -47,7 +48,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.spongepowered:spongeapi:2.1-SNAPSHOT"
+    compile "org.spongepowered:spongeapi:$spongeVersion"
     compile 'com.flowpowered:flow-math:1.0.1'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

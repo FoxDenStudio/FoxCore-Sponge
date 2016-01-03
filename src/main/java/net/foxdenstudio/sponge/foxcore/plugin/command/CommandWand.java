@@ -55,12 +55,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.PLAYER_ALIASES;
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isAlias;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
 
 public class CommandWand implements CommandCallable {
 
     private static final Function<Map<String, String>, Function<String, Consumer<String>>> MAPPER = map -> key -> value -> {
-        if (isAlias(PLAYER_ALIASES, key) && !map.containsKey("player")) {
+        if (isOn(PLAYER_ALIASES, key) && !map.containsKey("player")) {
             map.put("player", value);
         }
     };
@@ -71,7 +71,7 @@ public class CommandWand implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).flagMapper(MAPPER).parse2();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).flagMapper(MAPPER).parse();
 
         Player player = null;
         if (source instanceof Player) player = (Player) source;

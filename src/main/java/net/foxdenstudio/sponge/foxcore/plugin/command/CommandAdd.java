@@ -38,9 +38,13 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.List;
 import java.util.Optional;
+
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
 
 public class CommandAdd implements CommandCallable {
 
@@ -50,7 +54,7 @@ public class CommandAdd implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse2();
+        ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
         if (parse.args.length == 0) {
             source.sendMessage(Text.builder()
                     .append(Text.of(TextColors.GREEN, "Usage: "))
@@ -89,6 +93,16 @@ public class CommandAdd implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
+        if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
+            if (parse.currentElement.index == 0) {
+                return FCStateManager.instance().getPrimaryAliases().stream()
+                        .filter(alias -> !isOn(parse.args, alias))
+                        .filter(new StartsWithPredicate(parse.currentElement.token))
+                        .collect(GuavaCollectors.toImmutableList());
+            }
+        } else if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.currentElement.prefix + " ");
         return ImmutableList.of();
     }
 
@@ -109,6 +123,6 @@ public class CommandAdd implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("add <region [--w:<worldname>] | handler> <name>");
+        return Text.of("add <field> [args...]");
     }
 }

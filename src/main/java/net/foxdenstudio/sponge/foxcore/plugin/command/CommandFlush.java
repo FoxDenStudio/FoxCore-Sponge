@@ -34,9 +34,13 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.List;
 import java.util.Optional;
+
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
 
 public class CommandFlush implements CommandCallable {
 
@@ -50,7 +54,7 @@ public class CommandFlush implements CommandCallable {
         if (arguments.isEmpty()) {
             FCStateManager.instance().getStateMap().get(source).flush();
         } else {
-            AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse2();
+            AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
             for (String arg : parse.args) {
                 String id = FCStateManager.instance().getID(arg);
                 if (id == null) throw new CommandException(Text.of("\"" + arg + "\" is not a valid type!"));
@@ -63,6 +67,15 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
+        System.out.println(parse.currentElement.type);
+        if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
+            return FCStateManager.instance().getPrimaryAliases().stream()
+                    .filter(alias -> !isOn(parse.args, alias))
+                    .filter(new StartsWithPredicate(parse.currentElement.token))
+                    .collect(GuavaCollectors.toImmutableList());
+        else if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.currentElement.prefix + " ");
         return ImmutableList.of();
     }
 
