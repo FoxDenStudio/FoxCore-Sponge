@@ -169,10 +169,10 @@ public class AdvCmdParse {
             if (!result.startsWith("---")) {
                 // Throws out any results that are empty
                 if (result.equals("--")) {
-                    parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.LONGFLAGKEY, "", 0, "");
+                    parseResult.current = new CurrentElement(CurrentElement.ElementType.LONGFLAGKEY, "", 0, "");
                     continue;
                 } else if (result.equals("-")) {
-                    parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
+                    parseResult.current = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
                     continue;
                 }
                 // Parses result as long flag.
@@ -193,9 +193,9 @@ public class AdvCmdParse {
                     // Retrieves value if it exists
                     if (parts.length > 1) {
                         value = unescapeString(parts[1]);
-                        parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.LONGFLAGVALUE, value, 0, parts[0]);
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.LONGFLAGVALUE, value, 0, parts[0]);
                     } else {
-                        parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.LONGFLAGKEY, parts[0], 0, "");
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.LONGFLAGKEY, parts[0], 0, "");
                     }
                     if (include) {
                         // Applies the flagMapper function.
@@ -228,35 +228,35 @@ public class AdvCmdParse {
                             throw new CommandException(Text.of("You may only have alphabetic short flags!"));
                         }
                     }
-                    parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
+                    parseResult.current = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
 
                     // Simply adds the result to the argument list. Quotes are trimmed.
                     // Fallback if the result isn't a flag.
                 } else {
                     if (leaveFinalAsIs && limit != 0 && argsList.size() >= limit) {
                         String finalBlock = arguments.substring(matcher.start(), arguments.length() - (inQuote ? 1 : 0));
-                        parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.FINAL, finalBlock, argsList.size(), "");
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalBlock, argsList.size(), "");
                         argsList.add(finalBlock);
                         break;
                     }
 
                     if (limit != 0 && argsList.size() >= limit && !unescapeLast) {
-                        parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.ARGUMENT, result, argsList.size(), "");
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, result, argsList.size(), "");
                         argsList.add(result);
                     } else {
                         String arg = unescapeString(result);
-                        parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.ARGUMENT, arg, argsList.size(), "");
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, arg, argsList.size(), "");
                         argsList.add(arg);
                     }
                 }
             } else {
-                parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.COMMENT, arguments.substring(matcher.start() + 3), 0, "");
+                parseResult.current = new CurrentElement(CurrentElement.ElementType.COMMENT, arguments.substring(matcher.start() + 3), 0, "");
                 break;
             }
         }
 
-        if (!lastIsCurrent && (parseResult.currentElement == null || parseResult.currentElement.type != CurrentElement.ElementType.COMMENT)) {
-            parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.ARGUMENT, "", argsList.size(), "");
+        if (!lastIsCurrent && (parseResult.current == null || parseResult.current.type != CurrentElement.ElementType.COMMENT)) {
+            parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, "", argsList.size(), "");
         }
 
         // This part converts the argument list to the final argument array.
@@ -278,21 +278,22 @@ public class AdvCmdParse {
             finalList.add(finalString);
         }
 
-        if (parseResult.currentElement != null && parseResult.currentElement.type == CurrentElement.ElementType.ARGUMENT && limit != 0 && parseResult.currentElement.index >= limit)
-            parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (lastIsCurrent ? "" : " "), finalList.size() - 1, "");
+        if (parseResult.current != null && parseResult.current.type == CurrentElement.ElementType.ARGUMENT && limit != 0 && parseResult.current.index >= limit)
+            parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (finalString.isEmpty() || lastIsCurrent ? "" : " "), finalList.size() - 1, "");
         // Converts final argument list to an array.
         parseResult.args = finalList.toArray(new String[finalList.size()]);
 
         // Prefix
-        String[] mcArgs = this.arguments.split(" +");
-        if (parseResult.currentElement.type.equals(CurrentElement.ElementType.ARGUMENT)
-                && parseResult.currentElement.index != 0
-                && parseResult.currentElement.token.isEmpty()
+        String[] mcArgs = this.arguments.split(" +", -1);
+        if ((parseResult.current.type.equals(CurrentElement.ElementType.ARGUMENT) || parseResult.current.type.equals(CurrentElement.ElementType.FINAL))
+                && parseResult.current.index != 0
+                && parseResult.current.token.isEmpty()
                 && !this.arguments.substring(this.arguments.length() - 1).matches(" ")) {
-            parseResult.currentElement = new CurrentElement(CurrentElement.ElementType.COMPLETE, "", 0, "");
+            parseResult.current = new CurrentElement(CurrentElement.ElementType.COMPLETE, "", 0, "");
         }
-        parseResult.currentElement = parseResult.currentElement.withPrefix(
-                mcArgs[mcArgs.length - 1].substring(0, mcArgs[mcArgs.length - 1].length() - parseResult.currentElement.token.length()));
+        if (!parseResult.current.token.contains(" "))
+            parseResult.current = parseResult.current.withPrefix(
+                    mcArgs[mcArgs.length - 1].substring(0, mcArgs[mcArgs.length - 1].length() - parseResult.current.token.length()));
 
         return parseResult;
     }
@@ -322,7 +323,7 @@ public class AdvCmdParse {
     public static class ParseResult {
         public String[] args = {};
         public Map<String, String> flagmap = new CallbackHashMap<>((key, map) -> "");
-        public CurrentElement currentElement = null;
+        public CurrentElement current = null;
     }
 
     public static class CurrentElement {

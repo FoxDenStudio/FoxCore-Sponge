@@ -26,18 +26,24 @@
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.World;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
@@ -107,6 +113,20 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     }
 
     @Override
+    public List<String> addSuggestions(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .excludeCurrent(true)
+                .autoCloseQuotes(true)
+                .parse();
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT) && parse.current.index < 3 && parse.current.token.isEmpty()) {
+            return ImmutableList.of(parse.current.prefix + "~");
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
+        return ImmutableList.of();
+    }
+
+    @Override
     public ProcessResult subtract(CommandSource source, String arguments) throws CommandException {
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
         int index = this.list.size();
@@ -126,6 +146,11 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
         }
         return ProcessResult.of(true, Text.of("Successfully removed position from your state buffer!"));
+    }
+
+    @Override
+    public List<String> subtractSuggestions(CommandSource source, String arguments) {
+        return ImmutableList.of();
     }
 
     @Override

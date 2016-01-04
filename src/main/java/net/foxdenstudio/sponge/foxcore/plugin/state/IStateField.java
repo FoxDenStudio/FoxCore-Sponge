@@ -26,9 +26,12 @@
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
+
+import java.util.List;
 
 public interface IStateField {
 
@@ -38,7 +41,11 @@ public interface IStateField {
 
     ProcessResult add(CommandSource source, String arguments) throws CommandException;
 
+    List<String> addSuggestions(CommandSource source, String arguments) throws CommandException;
+
     ProcessResult subtract(CommandSource source, String arguments) throws CommandException;
+
+    List<String> subtractSuggestions(CommandSource source, String arguments) throws CommandException;
 
     void flush();
 

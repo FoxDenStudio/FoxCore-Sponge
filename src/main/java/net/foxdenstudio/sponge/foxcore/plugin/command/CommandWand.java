@@ -47,6 +47,9 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.World;
 
 import java.util.List;
 import java.util.Map;
@@ -55,12 +58,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.PLAYER_ALIASES;
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public class CommandWand implements CommandCallable {
 
     private static final Function<Map<String, String>, Function<String, Consumer<String>>> MAPPER = map -> key -> value -> {
-        if (isOn(PLAYER_ALIASES, key) && !map.containsKey("player")) {
+        map.put(key, value);
+        if (isIn(PLAYER_ALIASES, key) && !map.containsKey("player")) {
             map.put("player", value);
         }
     };
@@ -81,7 +85,7 @@ public class CommandWand implements CommandCallable {
         WandData wandData = Sponge.getDataManager().getManipulatorBuilder(WandData.class).get().create();
         if (parse.args.length > 0) {
             WandType type = WandType.from(parse.args[0]);
-            if(type == null) throw new CommandException(Text.of("Not a valid wand type!"));
+            if (type == null) throw new CommandException(Text.of("Not a valid wand type!"));
             wandData.setWandType(type);
         }
         LoreData loreData = Sponge.getDataManager().getManipulatorBuilder(LoreData.class).get().create();
@@ -108,6 +112,27 @@ public class CommandWand implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        if (!testPermission(source)) return ImmutableList.of();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .flagMapper(MAPPER)
+                .excludeCurrent(true)
+                .autoCloseQuotes(true)
+                .parse();
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.LONGFLAGKEY))
+            return ImmutableList.of("world").stream()
+                    .filter(new StartsWithPredicate(parse.current.token))
+                    .map(args -> parse.current.prefix + args)
+                    .collect(GuavaCollectors.toImmutableList());
+        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.LONGFLAGVALUE)) {
+            if (parse.current.key.equals("world"))
+                return Sponge.getGame().getServer().getWorlds().stream()
+                        .map(World::getName)
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 
@@ -128,7 +153,7 @@ public class CommandWand implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("wand <type>");
+        return Text.of("wand [--p:<player>]");
     }
 
 }

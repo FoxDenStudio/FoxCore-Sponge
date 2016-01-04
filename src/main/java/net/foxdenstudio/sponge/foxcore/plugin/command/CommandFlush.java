@@ -40,7 +40,7 @@ import org.spongepowered.api.util.StartsWithPredicate;
 import java.util.List;
 import java.util.Optional;
 
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public class CommandFlush implements CommandCallable {
 
@@ -67,15 +67,15 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
-        System.out.println(parse.currentElement.type);
-        if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
             return FCStateManager.instance().getPrimaryAliases().stream()
-                    .filter(alias -> !isOn(parse.args, alias))
-                    .filter(new StartsWithPredicate(parse.currentElement.token))
+                    .filter(new StartsWithPredicate(parse.current.token))
+                    .filter(alias -> !isIn(parse.args, alias))
                     .collect(GuavaCollectors.toImmutableList());
-        else if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
-            return ImmutableList.of(parse.currentElement.prefix + " ");
+        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 
@@ -96,6 +96,6 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("flush [regions] [handlers] [positions]");
+        return Text.of("flush [field]...");
     }
 }

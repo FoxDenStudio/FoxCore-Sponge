@@ -77,7 +77,9 @@ public class CommandPosition implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        return ImmutableList.of();
+        if (!testPermission(source)) return ImmutableList.of();
+        PositionsStateField positionsField = (PositionsStateField) FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID);
+        return positionsField.addSuggestions(source, arguments);
     }
 
     @Override

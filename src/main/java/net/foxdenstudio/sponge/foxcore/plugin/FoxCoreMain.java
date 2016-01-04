@@ -58,7 +58,7 @@ import java.io.File;
 @Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.VERSION)
 public final class FoxCoreMain {
 
-    public static final String VERSION = "0.3.0-SNAPSHOT";//VERSION
+    public static final String VERSION = "0.4.2-SNAPSHOT";//VERSION
 
     private static FoxCoreMain instance;
 

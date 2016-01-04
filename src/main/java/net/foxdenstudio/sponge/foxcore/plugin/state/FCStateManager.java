@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public final class FCStateManager {
 
@@ -68,7 +68,7 @@ public final class FCStateManager {
         for (StateMapping mapping : this.stateMappings) {
             if (mapping.identifier.equals(identifier)) return false;
             for (String alias : aliases) {
-                if (isOn(mapping.aliases, alias)) return false;
+                if (isIn(mapping.aliases, alias)) return false;
             }
         }
         this.stateMappings.add(new StateMapping(factory, identifier, primaryAlias, aliases));
@@ -103,7 +103,7 @@ public final class FCStateManager {
 
     private StateMapping getMappingbyAlias(String alias) {
         for (StateMapping mapping : this.stateMappings) {
-            if (isOn(mapping.aliases, alias)) return mapping;
+            if (isIn(mapping.aliases, alias)) return mapping;
         }
         return null;
     }

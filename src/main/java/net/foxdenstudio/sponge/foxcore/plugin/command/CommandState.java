@@ -35,8 +35,12 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.*;
+
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public class CommandState implements CommandCallable {
 
@@ -47,7 +51,7 @@ public class CommandState implements CommandCallable {
             return CommandResult.empty();
         }
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
-        Text.Builder output = Text.builder().append(Text.of(TextColors.GOLD, "-----------------------------------------------------\n"));
+        Text.Builder output = Text.builder().append(Text.of(TextColors.GOLD, "\n-----------------------------------------------------\n"));
         int flag = 0;
         Collection<IStateField> fields;
         if (parse.args.length == 0) {
@@ -79,6 +83,16 @@ public class CommandState implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        if (!testPermission(source)) return ImmutableList.of();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
+        System.out.println(parse.current.type);
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
+            return FCStateManager.instance().getPrimaryAliases().stream()
+                    .filter(new StartsWithPredicate(parse.current.token))
+                    .filter(alias -> !isIn(parse.args, alias))
+                    .collect(GuavaCollectors.toImmutableList());
+        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 
@@ -99,6 +113,6 @@ public class CommandState implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("state [fields]...");
+        return Text.of("state [field]...");
     }
 }

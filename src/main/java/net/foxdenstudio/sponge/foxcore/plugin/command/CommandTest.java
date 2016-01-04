@@ -62,15 +62,20 @@ public class CommandTest implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).autoCloseQuotes(true).limit(2).parse();
+        if (!testPermission(source)) return ImmutableList.of();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .autoCloseQuotes(true)
+                .limit(2)
+                .parse();
         Text.Builder builder = Text.builder();
-        builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
+        builder.append(Text.of(TextColors.GOLD, "\n-----------------------------\n"));
         builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
-        builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.currentElement.type, TextColors.GOLD, "\n"));
-        builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.currentElement.token, TextColors.GOLD, "\"\n"));
-        builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.currentElement.index, TextColors.GOLD, "\n"));
-        builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.currentElement.key, TextColors.GOLD, "\"\n"));
-        builder.append(Text.of(TextColors.GOLD, "Prefix: \"", TextColors.RESET, parse.currentElement.prefix, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.current.type, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.current.token, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.current.index, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.current.key, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Prefix: \"", TextColors.RESET, parse.current.prefix, TextColors.GOLD, "\"\n"));
         source.sendMessage(builder.build());
         return ImmutableList.of();
     }
@@ -104,7 +109,7 @@ public class CommandTest implements CommandCallable {
         }
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(2).parse();
         Text.Builder builder = Text.builder();
-        builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
+        builder.append(Text.of(TextColors.GOLD, "\n-----------------------------\n"));
         int count = 0;
         for (String str : parse.args) {
             count++;

@@ -47,12 +47,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.WORLD_ALIASES;
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public class CommandSubtract implements CommandCallable {
 
     private static final Function<Map<String, String>, Function<String, Consumer<String>>> MAPPER = map -> key -> value -> {
-        if (isOn(WORLD_ALIASES, key) && !map.containsKey("world")) {
+        if (isIn(WORLD_ALIASES, key) && !map.containsKey("world")) {
             map.put("world", value);
         }
     };
@@ -102,15 +102,29 @@ public class CommandSubtract implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
-        if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
-            if (parse.currentElement.index == 0)
+        if (!testPermission(source)) return ImmutableList.of();
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .limit(1)
+                .excludeCurrent(true)
+                .autoCloseQuotes(true)
+                .parseLastFlags(false)
+                .leaveFinalAsIs(true)
+                .parse();
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
+            if (parse.current.index == 0) {
                 return FCStateManager.instance().getPrimaryAliases().stream()
-                        .filter(alias -> !isOn(parse.args, alias))
-                        .filter(new StartsWithPredicate(parse.currentElement.token))
+                        .filter(new StartsWithPredicate(parse.current.token))
                         .collect(GuavaCollectors.toImmutableList());
-        } else if (parse.currentElement.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
-            return ImmutableList.of(parse.currentElement.prefix + " ");
+            }
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.FINAL)) {
+            IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(parse.args[0]);
+            if (field == null) return ImmutableList.of();
+            String extraArgs = "";
+            if (parse.args.length > 1) extraArgs = parse.args[1];
+            return field.subtractSuggestions(source, extraArgs);
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 

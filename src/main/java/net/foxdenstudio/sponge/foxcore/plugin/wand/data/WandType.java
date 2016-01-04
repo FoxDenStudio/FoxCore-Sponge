@@ -27,14 +27,14 @@ package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isOn;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public enum WandType {
     POSITION;
 
 
     public static WandType from(String name) {
-        if (isOn(Aliases.POSITIONS_ALIASES, name))
+        if (isIn(Aliases.POSITIONS_ALIASES, name))
             return POSITION;
         else return null;
     }
