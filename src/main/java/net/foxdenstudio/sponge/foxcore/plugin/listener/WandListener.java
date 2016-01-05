@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.event;
+package net.foxdenstudio.sponge.foxcore.plugin.listener;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.FCHelper;

@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
-import net.foxdenstudio.sponge.foxcore.plugin.event.WandListener;
+import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
