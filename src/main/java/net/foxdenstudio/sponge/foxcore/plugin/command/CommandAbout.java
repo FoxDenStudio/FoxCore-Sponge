@@ -52,6 +52,7 @@ public class CommandAbout implements CommandCallable {
             return CommandResult.empty();
         }
         Text.Builder builder = Text.builder();
+        builder.append(Text.of(TextColors.GOLD, "\n-----------------------------------------------------\n"));
         pluginTexts.forEach(builder::append);
         source.sendMessage(builder.build());
         return CommandResult.empty();
