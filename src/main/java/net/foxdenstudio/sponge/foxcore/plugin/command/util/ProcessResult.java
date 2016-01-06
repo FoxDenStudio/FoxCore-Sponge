@@ -29,7 +29,7 @@ import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
-public class ProcessResult {
+public final class ProcessResult {
 
     private static final ProcessResult SUCCESS = of(true);
     private static final ProcessResult FAILURE = of(false);

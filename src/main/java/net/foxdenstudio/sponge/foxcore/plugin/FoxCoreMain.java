@@ -100,7 +100,7 @@ public final class FoxCoreMain {
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Registering positions state field");
-        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.class, PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Initializing network packet manager");
         FCPacketManager.init();
         logger.info("Registering Wand DataManipulators");

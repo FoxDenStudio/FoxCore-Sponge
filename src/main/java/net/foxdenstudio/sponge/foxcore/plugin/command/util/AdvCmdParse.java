@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  * Created by Fox on 12/1/2015.
  * Project: SpongeForge
  */
-public class AdvCmdParse {
+public final class AdvCmdParse {
 
     public static final Function<Map<String, String>, Function<String, Consumer<String>>>
             DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
@@ -320,13 +320,13 @@ public class AdvCmdParse {
         return newStr;
     }
 
-    public static class ParseResult {
+    public static final class ParseResult {
         public String[] args = {};
         public Map<String, String> flagmap = new CallbackHashMap<>((key, map) -> "");
         public CurrentElement current = null;
     }
 
-    public static class CurrentElement {
+    public static final class CurrentElement {
         public final ElementType type;
         public final String token;
         public final int index;
