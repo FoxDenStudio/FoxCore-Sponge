@@ -78,6 +78,10 @@ shadowJar {
     }
 }
 
+reobf {
+    shadowJar { mappingType = 'SEARGE' }
+}
+
 artifacts {
     archives shadowJar
 }
