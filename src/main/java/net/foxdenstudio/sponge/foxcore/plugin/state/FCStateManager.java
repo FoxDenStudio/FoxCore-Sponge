@@ -25,7 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandSource;
@@ -64,14 +63,14 @@ public final class FCStateManager {
         return stateMap;
     }
 
-    public boolean registerStateFactory(IStateFieldFactory factory, Class<? extends IStateField> clazz, String identifier, String primaryAlias, String... aliases) {
+    public boolean registerStateFactory(IStateFieldFactory factory, String identifier, String primaryAlias, String... aliases) {
         for (StateMapping mapping : this.stateMappings) {
             if (mapping.identifier.equals(identifier)) return false;
             for (String alias : aliases) {
                 if (isIn(mapping.aliases, alias)) return false;
             }
         }
-        this.stateMappings.add(new StateMapping(factory, clazz, identifier, primaryAlias, aliases));
+        this.stateMappings.add(new StateMapping(factory, identifier, primaryAlias, aliases));
         return true;
     }
 
@@ -89,7 +88,7 @@ public final class FCStateManager {
         } else return null;
     }
 
-    public List<String> getPrimaryAliases(){
+    public List<String> getPrimaryAliases() {
         String[] array = new String[this.stateMappings.size()];
         return this.stateMappings.stream().map(stateMapping -> stateMapping.primaryAlias).collect(GuavaCollectors.toImmutableList());
     }
@@ -110,14 +109,12 @@ public final class FCStateManager {
 
     private static class StateMapping {
         public final IStateFieldFactory factory;
-        public final Class<?> clazz;
         public final String identifier;
         public final String primaryAlias;
         public final String[] aliases;
 
-        public StateMapping(IStateFieldFactory factory, Class<?> clazz, String identifier, String primaryAlias, String[] aliases) {
+        public StateMapping(IStateFieldFactory factory, String identifier, String primaryAlias, String[] aliases) {
             this.factory = factory;
-            this.clazz = clazz;
             this.identifier = identifier;
             this.primaryAlias = primaryAlias;
             this.aliases = aliases;

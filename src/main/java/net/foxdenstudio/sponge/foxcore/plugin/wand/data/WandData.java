@@ -77,7 +77,7 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     @Override
     public Optional<WandData> from(DataContainer container) {
-        if(container.contains(WANDTYPE.getQuery())){
+        if (container.contains(WANDTYPE.getQuery())) {
             set(WANDTYPE, WandType.valueOf((String) container.get(WANDTYPE.getQuery()).orElse(null)));
             Optional.of(this);
         }

@@ -59,8 +59,8 @@ public class CommandState implements CommandCallable {
         } else {
             fields = new ArrayList<>();
             for (String alias : parse.args) {
-                IStateField temp = FCStateManager.instance().getStateMap().get(source).getFromAlias(alias);
-                if (temp != null) fields.add(temp);
+                Optional<IStateField> temp = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(alias);
+                if (temp.isPresent()) fields.add(temp.get());
             }
             if (fields.isEmpty()) {
                 fields = FCStateManager.instance().getStateMap().get(source).getMap().values();

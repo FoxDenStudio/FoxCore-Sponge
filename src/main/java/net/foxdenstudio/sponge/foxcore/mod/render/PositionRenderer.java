@@ -79,7 +79,6 @@ public class PositionRenderer {
         glPopMatrix();
 
 
-
     }
 
     public void updateList(List<Vector3i> posList) {

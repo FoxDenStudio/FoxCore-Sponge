@@ -100,7 +100,7 @@ public final class FoxCoreMain {
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Registering positions state field");
-        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.class, PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Initializing network packet manager");
         FCPacketManager.init();
         logger.info("Registering Wand DataManipulators");
@@ -128,12 +128,12 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
     }
 
-    private void registerListeners(){
+    private void registerListeners() {
         logger.info("Registering event listeners");
         game.getEventManager().registerListener(this, InteractBlockEvent.class, new WandListener());
     }
 
-    private void registerData(){
+    private void registerData() {
         logger.info("Registering custom data manipulators");
         game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
     }

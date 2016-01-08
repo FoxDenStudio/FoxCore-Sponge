@@ -25,9 +25,9 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state.factory;
 
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 
 public class PositionStateFieldFactory implements IStateFieldFactory {
 

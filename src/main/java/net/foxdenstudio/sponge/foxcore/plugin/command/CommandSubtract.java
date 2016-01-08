@@ -71,7 +71,10 @@ public class CommandSubtract implements CommandCallable {
                     .build());
             return CommandResult.empty();
         }
-        IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(parse.args[0]);
+        Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
+        if (!optField.isPresent())
+            throw new CommandException(Text.of("\"" + parse.args[0] + "\" is not a valid category!"));
+        IStateField field = optField.get();
         if (field == null) throw new CommandException(Text.of("\"" + parse.args[0] + "\" is not a valid category!"));
         String extraArgs = "";
         if (parse.args.length > 1) extraArgs = parse.args[1];
@@ -118,8 +121,9 @@ public class CommandSubtract implements CommandCallable {
                         .collect(GuavaCollectors.toImmutableList());
             }
         } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.FINAL)) {
-            IStateField field = FCStateManager.instance().getStateMap().get(source).getFromAlias(parse.args[0]);
-            if (field == null) return ImmutableList.of();
+            Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
+            if (!optField.isPresent()) return ImmutableList.of();
+            IStateField field = optField.get();
             String extraArgs = "";
             if (parse.args.length > 1) extraArgs = parse.args[1];
             return field.subtractSuggestions(source, extraArgs);

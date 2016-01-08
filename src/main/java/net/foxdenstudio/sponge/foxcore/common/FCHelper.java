@@ -118,7 +118,7 @@ public final class FCHelper {
 
     @SuppressWarnings("unchecked")
     public static List<Vector3i> getPositions(CommandSource source) {
-        return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID)).getList();
+        return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionsStateField.ID).get()).getList();
     }
 
     public static Vector3f RGBfromHSV(double h, double s, double v) {

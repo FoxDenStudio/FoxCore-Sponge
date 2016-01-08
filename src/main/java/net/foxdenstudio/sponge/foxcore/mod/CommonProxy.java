@@ -39,7 +39,7 @@ public class CommonProxy {
 
     }
 
-    public void updatePositionsList(List<Vector3i> list){
+    public void updatePositionsList(List<Vector3i> list) {
 
     }
 }

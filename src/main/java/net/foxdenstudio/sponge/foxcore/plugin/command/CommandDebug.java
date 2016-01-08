@@ -42,8 +42,8 @@ import java.util.Optional;
 
 public class CommandDebug implements CommandCallable {
 
-    private Map<CommandSource, Boolean> debug = new CallbackHashMap<>((k, m) -> Boolean.FALSE);
     private static CommandDebug instance;
+    private Map<CommandSource, Boolean> debug = new CallbackHashMap<>((k, m) -> Boolean.FALSE);
 
     public CommandDebug() {
         if (instance == null) instance = this;

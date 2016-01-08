@@ -23,14 +23,13 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.command.util;
+package net.foxdenstudio.sponge.foxcore.plugin.state;
 
-import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
-import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
 import org.spongepowered.api.command.CommandSource;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class SourceState {
 
@@ -55,12 +54,24 @@ public class SourceState {
         return this.state;
     }
 
-    public IStateField get(String identifier) {
-        return this.state.get(identifier);
+    public Optional<IStateField> getOrCreate(String identifier) {
+        return Optional.ofNullable(this.state.get(identifier));
     }
 
-    public IStateField getFromAlias(String alias) {
-        return this.state.get(FCStateManager.instance().getID(alias));
+    public Optional<IStateField> get(Class<? extends IStateField> clazz) {
+        for (Map.Entry<String, IStateField> entry : this.state.entrySet()) {
+            if (clazz.isInstance(entry.getValue())) {
+                return Optional.of(entry.getValue());
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<IStateField> getOrCreateFromAlias(String alias) {
+        String id = FCStateManager.instance().getID(alias);
+        if (id != null) {
+            return Optional.of(this.state.get(id));
+        } else return Optional.empty();
     }
 
     public void flush() {

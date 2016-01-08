@@ -49,7 +49,7 @@ public class CommandPosition implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        PositionsStateField positionsField = (PositionsStateField)  FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID);
+        PositionsStateField positionsField = (PositionsStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionsStateField.ID).get();
         ProcessResult result = positionsField.add(source, arguments);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
@@ -78,7 +78,7 @@ public class CommandPosition implements CommandCallable {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        PositionsStateField positionsField = (PositionsStateField) FCStateManager.instance().getStateMap().get(source).get(PositionsStateField.ID);
+        PositionsStateField positionsField = (PositionsStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionsStateField.ID).get();
         return positionsField.addSuggestions(source, arguments);
     }
 

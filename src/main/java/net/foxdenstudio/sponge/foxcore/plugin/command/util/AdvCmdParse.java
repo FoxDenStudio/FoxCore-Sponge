@@ -47,11 +47,6 @@ public final class AdvCmdParse {
             DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
 
     private static final String regex = "(?:--[\\w-]*[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";
-
-    public static AdvCmdParse builder() {
-        return new AdvCmdParse();
-    }
-
     // Holds the raw input to be parsed
     private String arguments = "";
     // Designates how many separate arguments to parse. Flags do not count toward this number
@@ -75,8 +70,11 @@ public final class AdvCmdParse {
     // Determines whether to do any parsing after the limit is reached.
     // If set to true, all parsing is stopped as soon as the final block is reached. Comments are disabled as well.
     private boolean leaveFinalAsIs = false;
-
     private AdvCmdParse() {
+    }
+
+    public static AdvCmdParse builder() {
+        return new AdvCmdParse();
     }
 
     public AdvCmdParse arguments(String arguments) {
