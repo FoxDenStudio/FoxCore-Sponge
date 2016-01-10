@@ -47,6 +47,7 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     public WandData(WandType type) {
         this.type = type;
+        registerGettersAndSetters();
     }
 
     public WandData() {
@@ -77,11 +78,11 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     @Override
     public Optional<WandData> from(DataContainer container) {
+        set(WANDTYPE, WandType.POSITION);
         if (container.contains(WANDTYPE.getQuery())) {
             set(WANDTYPE, WandType.valueOf((String) container.get(WANDTYPE.getQuery()).orElse(null)));
-            Optional.of(this);
-        }
-        return Optional.empty();
+            return Optional.of(this);
+        } else return Optional.empty();
     }
 
     @Override
@@ -106,6 +107,7 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     @Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(WANDTYPE.getQuery(), this.type.name());
+
+        return super.toContainer().set(WANDTYPE.getQuery(), this.type.name());
     }
 }

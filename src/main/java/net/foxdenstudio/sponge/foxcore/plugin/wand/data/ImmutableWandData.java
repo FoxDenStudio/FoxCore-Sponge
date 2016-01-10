@@ -46,6 +46,7 @@ public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, 
 
     public ImmutableWandData(WandType type) {
         this.type = type;
+        registerGetters();
     }
 
     public ImmutableWandData() {
@@ -86,6 +87,6 @@ public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, 
 
     @Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(WANDTYPE.getQuery(), this.type.name());
+        return super.toContainer().set(WANDTYPE.getQuery(), this.type.name());
     }
 }
