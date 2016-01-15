@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Highlight implements IRenderable {
 
-    private static final float OFFSET = 0.005f;
+    private static final double OFFSET = 0.005;
     private static final int PERIOD = 2000;
     public transient double distance;
     boolean[][][] filled = new boolean[3][3][3];
@@ -68,99 +68,99 @@ public class Highlight implements IRenderable {
 
     public void drawBoxFaces() {
 
-        final float x1 = pos.getX() - OFFSET;
-        final float y1 = pos.getY() - OFFSET;
-        final float z1 = pos.getZ() - OFFSET;
-        final float x2 = pos.getX() + OFFSET + 1;
-        final float y2 = pos.getY() + OFFSET + 1;
-        final float z2 = pos.getZ() + OFFSET + 1;
+        final double x1 = pos.getX() - OFFSET;
+        final double y1 = pos.getY() - OFFSET;
+        final double z1 = pos.getZ() - OFFSET;
+        final double x2 = pos.getX() + OFFSET + 1;
+        final double y2 = pos.getY() + OFFSET + 1;
+        final double z2 = pos.getZ() + OFFSET + 1;
 
         glBegin(GL_QUADS);
         if (!filled[0][1][1]) {
-            glVertex3f(x1, y1, z1);
-            glVertex3f(x1, y1, z2);
-            glVertex3f(x1, y2, z2);
-            glVertex3f(x1, y2, z1);
+            glVertex3d(x1, y1, z1);
+            glVertex3d(x1, y1, z2);
+            glVertex3d(x1, y2, z2);
+            glVertex3d(x1, y2, z1);
         }
 
         if (!filled[1][0][1]) {
-            glVertex3f(x1, y1, z1);
-            glVertex3f(x2, y1, z1);
-            glVertex3f(x2, y1, z2);
-            glVertex3f(x1, y1, z2);
+            glVertex3d(x1, y1, z1);
+            glVertex3d(x2, y1, z1);
+            glVertex3d(x2, y1, z2);
+            glVertex3d(x1, y1, z2);
         }
 
         if (!filled[1][1][0]) {
-            glVertex3f(x1, y1, z1);
-            glVertex3f(x1, y2, z1);
-            glVertex3f(x2, y2, z1);
-            glVertex3f(x2, y1, z1);
+            glVertex3d(x1, y1, z1);
+            glVertex3d(x1, y2, z1);
+            glVertex3d(x2, y2, z1);
+            glVertex3d(x2, y1, z1);
         }
 
         if (!filled[2][1][1]) {
-            glVertex3f(x2, y1, z1);
-            glVertex3f(x2, y2, z1);
-            glVertex3f(x2, y2, z2);
-            glVertex3f(x2, y1, z2);
+            glVertex3d(x2, y1, z1);
+            glVertex3d(x2, y2, z1);
+            glVertex3d(x2, y2, z2);
+            glVertex3d(x2, y1, z2);
         }
 
         if (!filled[1][2][1]) {
-            glVertex3f(x1, y2, z1);
-            glVertex3f(x1, y2, z2);
-            glVertex3f(x2, y2, z2);
-            glVertex3f(x2, y2, z1);
+            glVertex3d(x1, y2, z1);
+            glVertex3d(x1, y2, z2);
+            glVertex3d(x2, y2, z2);
+            glVertex3d(x2, y2, z1);
         }
 
         if (!filled[1][1][2]) {
-            glVertex3f(x1, y1, z2);
-            glVertex3f(x2, y1, z2);
-            glVertex3f(x2, y2, z2);
-            glVertex3f(x1, y2, z2);
+            glVertex3d(x1, y1, z2);
+            glVertex3d(x2, y1, z2);
+            glVertex3d(x2, y2, z2);
+            glVertex3d(x1, y2, z2);
         }
 
         glEnd();
     }
 
     public void drawBoxLines() {
-        final float x1 = pos.getX() - OFFSET;
-        final float y1 = pos.getY() - OFFSET;
-        final float z1 = pos.getZ() - OFFSET;
-        final float x2 = pos.getX() + OFFSET + 1;
-        final float y2 = pos.getY() + OFFSET + 1;
-        final float z2 = pos.getZ() + OFFSET + 1;
+        final double x1 = pos.getX() - OFFSET;
+        final double y1 = pos.getY() - OFFSET;
+        final double z1 = pos.getZ() - OFFSET;
+        final double x2 = pos.getX() + OFFSET + 1;
+        final double y2 = pos.getY() + OFFSET + 1;
+        final double z2 = pos.getZ() + OFFSET + 1;
 
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
         glBegin(GL_LINES);
 
-        glVertex3f(x1, y1, z1);
-        glVertex3f(x2, y1, z1);
-        glVertex3f(x1, y1, z1);
-        glVertex3f(x1, y2, z1);
-        glVertex3f(x1, y1, z1);
-        glVertex3f(x1, y1, z2);
+        glVertex3d(x1, y1, z1);
+        glVertex3d(x2, y1, z1);
+        glVertex3d(x1, y1, z1);
+        glVertex3d(x1, y2, z1);
+        glVertex3d(x1, y1, z1);
+        glVertex3d(x1, y1, z2);
 
-        glVertex3f(x2, y1, z1);
-        glVertex3f(x2, y2, z1);
-        glVertex3f(x2, y1, z1);
-        glVertex3f(x2, y1, z2);
+        glVertex3d(x2, y1, z1);
+        glVertex3d(x2, y2, z1);
+        glVertex3d(x2, y1, z1);
+        glVertex3d(x2, y1, z2);
 
-        glVertex3f(x1, y2, z1);
-        glVertex3f(x2, y2, z1);
-        glVertex3f(x1, y2, z1);
-        glVertex3f(x1, y2, z2);
+        glVertex3d(x1, y2, z1);
+        glVertex3d(x2, y2, z1);
+        glVertex3d(x1, y2, z1);
+        glVertex3d(x1, y2, z2);
 
-        glVertex3f(x1, y1, z2);
-        glVertex3f(x2, y1, z2);
-        glVertex3f(x1, y1, z2);
-        glVertex3f(x1, y2, z2);
+        glVertex3d(x1, y1, z2);
+        glVertex3d(x2, y1, z2);
+        glVertex3d(x1, y1, z2);
+        glVertex3d(x1, y2, z2);
 
-        glVertex3f(x2, y2, z1);
-        glVertex3f(x2, y2, z2);
-        glVertex3f(x2, y1, z2);
-        glVertex3f(x2, y2, z2);
-        glVertex3f(x1, y2, z2);
-        glVertex3f(x2, y2, z2);
+        glVertex3d(x2, y2, z1);
+        glVertex3d(x2, y2, z2);
+        glVertex3d(x2, y1, z2);
+        glVertex3d(x2, y2, z2);
+        glVertex3d(x1, y2, z2);
+        glVertex3d(x2, y2, z2);
 
         glEnd();
     }
