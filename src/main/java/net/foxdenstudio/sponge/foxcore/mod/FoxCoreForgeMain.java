@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "foxcorecui", name = "FoxCoreCUI", version = FoxCoreMain.VERSION, acceptableRemoteVersions = "*")
+@Mod(modid = "foxcorecui", name = "FoxCoreCUI", version = FoxCoreMain.VERSION, clientSideOnly = true)
 public class FoxCoreForgeMain {
 
     @Mod.Instance("foxcorecui")
