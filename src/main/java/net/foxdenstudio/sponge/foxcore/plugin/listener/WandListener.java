@@ -47,27 +47,23 @@ public class WandListener implements EventListener<InteractBlockEvent> {
         Optional<Player> playerOptional = event.getCause().first(Player.class);
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
-            if (!event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
-                if (player.hasPermission("foxcore.wand.use")) {
-                    if (player.getItemInHand().isPresent()) {
-                        ItemStack item = player.getItemInHand().get();
-                        if (item.getItem().equals(ItemTypes.GOLDEN_AXE) /*item.get(WandData.class).isPresent()*/) {
-                            Vector3i pos = event.getTargetBlock().getPosition();
-                            List<Vector3i> positions = FCHelper.getPositions(player);
-                            if (event instanceof InteractBlockEvent.Primary) {
-                                if (positions.contains(pos)) {
-                                    positions.remove(positions.lastIndexOf(pos));
-                                    player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-                                    FCPacketManager.instance().sendPos(player, positions);
-                                }
-                            } else if (event instanceof InteractBlockEvent.Secondary) {
-                                positions.add(pos);
-                                player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-                                FCPacketManager.instance().sendPos(player, positions);
-                            }
-                            event.setCancelled(true);
+            if (!event.getTargetBlock().getState().getType().equals(BlockTypes.AIR) && player.hasPermission("foxcore.wand.use") && player.getItemInHand().isPresent()) {
+                ItemStack item = player.getItemInHand().get();
+                if (/*item.getItem().equals(ItemTypes.GOLDEN_AXE)*/ item.get(WandData.class).isPresent()) {
+                    Vector3i pos = event.getTargetBlock().getPosition();
+                    List<Vector3i> positions = FCHelper.getPositions(player);
+                    if (event instanceof InteractBlockEvent.Primary) {
+                        if (positions.contains(pos)) {
+                            positions.remove(positions.lastIndexOf(pos));
+                            player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                            FCPacketManager.instance().sendPos(player, positions);
                         }
+                    } else if (event instanceof InteractBlockEvent.Secondary) {
+                        positions.add(pos);
+                        player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                        FCPacketManager.instance().sendPos(player, positions);
                     }
+                    event.setCancelled(true);
                 }
             }
         }
