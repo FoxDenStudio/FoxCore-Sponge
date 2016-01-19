@@ -19,6 +19,7 @@ notifications:
 before_deploy:
   - for f in "./build/libs/FoxCore*SNAPSHOT.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT.jar"; done
   - for f in "./build/libs/FoxCore*SNAPSHOT-all.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT-all.jar"; done
+  - for f in "./build/libs/FoxCore*SNAPSHOT-server.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT-server.jar"; done
   - for f in "./build/libs/FoxCore*SNAPSHOT-sources.jar"; do mv ${f} "./build/libs/FoxCore-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}-SNAPSHOT-sources.jar"; done
 
 deploy:

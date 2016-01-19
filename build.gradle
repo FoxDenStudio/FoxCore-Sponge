@@ -78,10 +78,18 @@ shadowJar {
     }
 }
 
+task serverJar(type: Jar) {
+    classifier = 'server'
+    from(sourceSets.main.output) {
+        exclude "net/foxdenstudio/sponge/foxcore/mod"
+    }
+}
+
 reobf {
     shadowJar { mappingType = 'SEARGE' }
 }
 
 artifacts {
     archives shadowJar
+    archives serverJar
 }
