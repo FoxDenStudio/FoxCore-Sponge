@@ -78,6 +78,7 @@ public final class AdvCmdParse {
     }
 
     public AdvCmdParse arguments(String arguments) {
+        if(arguments == null) arguments = "";
         this.arguments = arguments;
         return this;
     }

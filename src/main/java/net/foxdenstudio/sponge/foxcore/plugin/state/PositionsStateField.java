@@ -36,6 +36,8 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +54,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     }
 
     @Override
-    public Text state() {
+    public Text currentState() {
         Text.Builder builder = Text.builder();
         int index = 1;
         for (Iterator<Vector3i> it = this.list.iterator(); it.hasNext(); ) {
@@ -64,6 +66,39 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     }
 
     @Override
+    public ProcessResult modify(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
+        String newArgs = parse.args.length > 1 ? parse.args[1] : "";
+        if (parse.args.length == 0 || parse.args[0].equalsIgnoreCase("add")) {
+            return add(source, newArgs);
+        } else if (parse.args[0].equalsIgnoreCase("remove")) {
+            return remove(source, newArgs);
+        }
+        return ProcessResult.of(false, Text.of("Not a valid"));
+    }
+
+    @Override
+    public List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .excludeCurrent(true)
+                .autoCloseQuotes(true)
+                .parse();
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
+            if (parse.current.index == 0) {
+                return ImmutableList.of("add", "remove").stream()
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .collect(GuavaCollectors.toImmutableList());
+            } else if (parse.current.index < 4 && parse.args[0].equals("add")) {
+                if (parse.current.token.isEmpty())
+                    return ImmutableList.of(parse.current.prefix + "~");
+                else return ImmutableList.of(parse.current.prefix + parse.current.token + " ");
+            }
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
+        return ImmutableList.of();
+    }
+
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
 
@@ -107,7 +142,6 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
 
-    @Override
     public List<String> addSuggestions(CommandSource source, String arguments) throws CommandException {
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
                 .arguments(arguments)
@@ -121,8 +155,8 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         return ImmutableList.of();
     }
 
-    @Override
-    public ProcessResult subtract(CommandSource source, String arguments) throws CommandException {
+    public ProcessResult remove(CommandSource source, String arguments) throws CommandException {
+        if(this.list.size() == 0) throw new CommandException(Text.of("No elements to remove!"));
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
         int index = this.list.size();
         if (parse.args.length > 0) {
@@ -141,11 +175,6 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
         }
         return ProcessResult.of(true, Text.of("Successfully removed position from your state buffer!"));
-    }
-
-    @Override
-    public List<String> subtractSuggestions(CommandSource source, String arguments) {
-        return ImmutableList.of();
     }
 
     @Override

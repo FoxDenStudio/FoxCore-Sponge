@@ -116,10 +116,9 @@ public final class FoxCoreMain {
         builder.append(Text.of("Author: gravityfox\n"));
 
         this.fcDispatcher = new FCCommandDispatcher("/foxcore", "Core commands for state and selections.");
-        fcDispatcher.register(new CommandState(), "state", "current", "cur");
+        fcDispatcher.register(new CommandCurrent(), "current", "cur", "c");
+        fcDispatcher.register(new CommandState(), "state", "buffer", "set", "s");
         fcDispatcher.register(new CommandPosition(), "position", "pos", "p");
-        fcDispatcher.register(new CommandAdd(), "add", "push");
-        fcDispatcher.register(new CommandSubtract(), "subtract", "sub", "pop");
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
         fcDispatcher.register(new CommandWand(), "wand", "tool", "stick", "w");
         fcDispatcher.register(new CommandTest(), "test");

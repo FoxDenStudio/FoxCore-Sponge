@@ -26,7 +26,10 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.sponge.foxcore.common.FCHelper;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse.ParseResult;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import org.spongepowered.api.command.CommandCallable;
@@ -38,9 +41,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
 
-import java.util.*;
-
-import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
+import java.util.List;
+import java.util.Optional;
 
 public class CommandState implements CommandCallable {
 
@@ -50,55 +52,77 @@ public class CommandState implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
-        Text.Builder output = Text.builder().append(Text.of(TextColors.GOLD, "\n-----------------------------------------------------\n"));
-        int flag = 0;
-        Collection<IStateField> fields;
+        ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
         if (parse.args.length == 0) {
-            fields = FCStateManager.instance().getStateMap().get(source).getMap().values();
+            source.sendMessage(Text.builder()
+                    .append(Text.of(TextColors.GREEN, "Usage: "))
+                    .append(getUsage(source))
+                    .build());
+            return CommandResult.empty();
+        }
+        Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
+        if (!optField.isPresent())
+            throw new CommandException(Text.of("\"" + parse.args[0] + "\" is not a valid category!"));
+        IStateField field = optField.get();
+        String extraArgs = "";
+        if (parse.args.length > 1) extraArgs = parse.args[1];
+        ProcessResult result = field.modify(source, extraArgs);
+        if (result.isSuccess()) {
+            if (result.getMessage().isPresent()) {
+                if (!FCHelper.hasColor(result.getMessage().get())) {
+                    source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.GREEN).build());
+                } else {
+                    source.sendMessage(result.getMessage().get());
+                }
+            } else {
+                source.sendMessage(Text.of(TextColors.GREEN, "Successfully modified the " + field.getName() + " field!"));
+            }
         } else {
-            fields = new ArrayList<>();
-            for (String alias : parse.args) {
-                Optional<IStateField> temp = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(alias);
-                if (temp.isPresent()) fields.add(temp.get());
-            }
-            if (fields.isEmpty()) {
-                fields = FCStateManager.instance().getStateMap().get(source).getMap().values();
-            }
-        }
-        IStateField field;
-        for (Iterator<IStateField> it = fields.iterator(); it.hasNext(); ) {
-            field = it.next();
-            if (field != null && !field.isEmpty()) {
-                output.append(Text.of(TextColors.GREEN, field.getName() + ":\n"));
-                output.append(field.state());
-                if (it.hasNext()) output.append(Text.of("\n"));
-                flag++;
+            if (result.getMessage().isPresent()) {
+                if (!FCHelper.hasColor(result.getMessage().get())) {
+                    source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.RED).build());
+                } else {
+                    source.sendMessage(result.getMessage().get());
+                }
+            } else {
+                source.sendMessage(Text.of(TextColors.RED, "Failed to add data to the " + field.getName() + " field!"));
             }
         }
-        if (flag == 0) source.sendMessage(Text.of("Your current state buffer is clear!"));
-        else source.sendMessage(output.build());
         return CommandResult.empty();
     }
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
-        System.out.println(parse.current.type);
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
-            return FCStateManager.instance().getPrimaryAliases().stream()
-                    .filter(new StartsWithPredicate(parse.current.token))
-                    .filter(alias -> !isIn(parse.args, alias))
-                    .collect(GuavaCollectors.toImmutableList());
-        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .limit(1)
+                .excludeCurrent(true)
+                .autoCloseQuotes(true)
+                .parseLastFlags(false)
+                .leaveFinalAsIs(true)
+                .parse();
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
+            if (parse.current.index == 0) {
+                return FCStateManager.instance().getPrimaryAliases().stream()
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .collect(GuavaCollectors.toImmutableList());
+            }
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.FINAL)) {
+            Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
+            if (!optField.isPresent()) return ImmutableList.of();
+            IStateField field = optField.get();
+            String extraArgs = "";
+            if (parse.args.length > 1) extraArgs = parse.args[1];
+            return field.modifySuggestions(source, extraArgs);
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.state");
+        return source.hasPermission("foxcore.command.state.add");
     }
 
     @Override
@@ -113,6 +137,6 @@ public class CommandState implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("state [field]...");
+        return Text.of("state <field> [args...]");
     }
 }

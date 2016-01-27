@@ -36,15 +36,11 @@ public interface IStateField {
 
     String getName();
 
-    Text state();
+    Text currentState();
 
-    ProcessResult add(CommandSource source, String arguments) throws CommandException;
+    ProcessResult modify(CommandSource source, String arguments) throws CommandException;
 
-    List<String> addSuggestions(CommandSource source, String arguments) throws CommandException;
-
-    ProcessResult subtract(CommandSource source, String arguments) throws CommandException;
-
-    List<String> subtractSuggestions(CommandSource source, String arguments) throws CommandException;
+    List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException;
 
     void flush();
 
