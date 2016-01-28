@@ -142,6 +142,19 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
 
+    public List<String> addSuggestions(CommandSource source, String arguments) throws CommandException {
+        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+                .arguments(arguments)
+                .excludeCurrent(true)
+                .autoCloseQuotes(true)
+                .parse();
+        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT) && parse.current.index < 3 && parse.current.token.isEmpty()) {
+            return ImmutableList.of(parse.current.prefix + "~");
+        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
+        return ImmutableList.of();
+    }
+
     public ProcessResult remove(CommandSource source, String arguments) throws CommandException {
         if(this.list.size() == 0) throw new CommandException(Text.of("No elements to remove!"));
         AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
