@@ -98,7 +98,7 @@ public class CommandCurrent implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.state");
+        return source.hasPermission("foxcore.command.state.current");
     }
 
     @Override
@@ -113,6 +113,6 @@ public class CommandCurrent implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("state [field]...");
+        return Text.of("current [field]...");
     }
 }

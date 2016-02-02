@@ -122,7 +122,7 @@ public class CommandState implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.add");
+        return source.hasPermission("foxcore.command.state.state");
     }
 
     @Override
