@@ -89,12 +89,12 @@ public class CommandPosition implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Shorthand command for working with the positions field."));
     }
 
     @Override
     public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Adds positions from the positions state field. You can specify coordinates."));
     }
 
     @Override

@@ -103,12 +103,12 @@ public class CommandCurrent implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Displays the current contents of your state buffer."));
     }
 
     @Override
     public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("If fields are specified, this command will only print out the data of those particular fields."));
     }
 
     @Override

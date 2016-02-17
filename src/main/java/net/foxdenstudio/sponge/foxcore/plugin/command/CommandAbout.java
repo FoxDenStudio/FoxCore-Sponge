@@ -70,7 +70,7 @@ public class CommandAbout implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Displays information about this plugin."));
     }
 
     @Override

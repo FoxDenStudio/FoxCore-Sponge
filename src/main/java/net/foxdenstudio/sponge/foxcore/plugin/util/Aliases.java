@@ -32,6 +32,7 @@ public final class Aliases {
     public static final String[] WORLD_ALIASES = {"world", "w", "dimension", "d"};
     public static final String[] REGIONS_ALIASES = {"regions", "region", "reg", "rg", "r"};
     public static final String[] HANDLERS_ALIASES = {"handlers", "handler", "handles", "handle", "hands", "hand", "hn", "h", "flagsets", "flagset", "flags", "flag", "f"};
+    public static final String[] CONTROLLERS_ALIASES = {"controllers", "controller", "controls", "control", "switch", "con", "c"};
     public static final String[] POSITIONS_ALIASES = {"positions", "position", "points", "point", "locations", "location", "pos", "loc", "locs", "p"};
     public static final String[] OWNER_GROUP_ALIASES = {"owners", "owner", "masters", "master", "creators", "creator",
             "admins", "admin", "administrators", "administrator", "mods", "mod"};
@@ -45,6 +46,7 @@ public final class Aliases {
     public static final String[] PASSTHROUGH_ALIASES = {"passthrough", "pass", "p", "undefined", "undef", "un", "u"};
     public static final String[] CLEAR_ALIASES = {"clear", "erase", "reset", "remove", "default", "original"};
     public static final String[] PLAYER_ALIASES = {"player", "user", "username", "p", "u"};
+    public static final String[] ALL_ALIASES = {"all", "a", "everything"};
 
     public static boolean isIn(String[] aliases, String input) {
         for (String alias : aliases) {

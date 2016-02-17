@@ -86,12 +86,12 @@ public class CommandFlush implements CommandCallable {
 
     @Override
     public Optional<? extends Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Clears your state buffer."));
     }
 
     @Override
     public Optional<? extends Text> getHelp(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("If no fields are specified, all fields are cleared. You can optionally specify which fields to clear."));
     }
 
     @Override
