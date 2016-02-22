@@ -23,10 +23,11 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.state;
+package net.foxdenstudio.sponge.foxcore.plugin.state.selection;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import net.foxdenstudio.sponge.foxcore.plugin.state.StateFieldBase;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
@@ -39,7 +40,10 @@ import java.util.List;
  */
 public class SelectionStateField extends StateFieldBase {
 
-    protected SelectionStateField() {
+    private List<ISelection> selections;
+    private ISelection currentSelection;
+
+    public SelectionStateField() {
         super("Current Selection");
     }
 
@@ -66,5 +70,13 @@ public class SelectionStateField extends StateFieldBase {
     @Override
     public boolean isEmpty() {
         return true;
+    }
+
+    public List<ISelection> getSelections() {
+        return selections;
+    }
+
+    public ISelection getCurrentSelection() {
+        return currentSelection;
     }
 }
