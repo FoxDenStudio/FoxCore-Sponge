@@ -2,23 +2,23 @@ package net.foxdenstudio.sponge.foxcore.plugin.state.selection;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox2;
+import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
 import org.spongepowered.api.text.Text;
 
 import java.util.Iterator;
 
-public class RectangularSelection implements ISelection {
+public class CubloidSelection implements ISelection {
 
-    Vector3i lower;
-    Vector3i upper;
+    BoundingBox3 boundingBox;
 
-    public RectangularSelection(Vector3i lower, Vector3i upper) {
-        this.lower = lower;
-        this.upper = upper;
+    public CubloidSelection(BoundingBox3 boundingBox) {
+        this.boundingBox = boundingBox;
     }
 
     @Override
     public Iterator<Vector3i> iterator() {
-        return new RectIterator();
+        return new SelectionIterator();
     }
 
     @Override
@@ -43,12 +43,12 @@ public class RectangularSelection implements ISelection {
 
     @Override
     public Text details() {
-        return Text.of(lower + ", " + upper);
+        return Text.of(boundingBox);
     }
 
-    private class RectIterator implements Iterator<Vector3i> {
-        Vector3i a = lower;
-        Vector3i b = upper;
+    private class SelectionIterator implements Iterator<Vector3i> {
+        Vector3i a = boundingBox.a;
+        Vector3i b = boundingBox.b;
 
         int x = a.getX(), y = a.getY(), z = a.getZ();
 
@@ -59,10 +59,10 @@ public class RectangularSelection implements ISelection {
 
         @Override
         public Vector3i next() {
-            if(hasNext()){
-                Vector3i v = new Vector3i(x,y,z);
+            if (hasNext()) {
+                Vector3i v = new Vector3i(x, y, z);
                 x++;
-                if(x > b.getX()){
+                if (x > b.getX()) {
                     x = a.getX();
                     z++;
                 }
