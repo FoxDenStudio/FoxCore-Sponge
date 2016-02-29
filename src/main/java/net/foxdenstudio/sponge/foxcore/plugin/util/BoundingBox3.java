@@ -88,6 +88,9 @@ public class BoundingBox3 implements Serializable {
                 y >= this.a.getY() && y <= this.b.getY() + 1);
     }
 
+    public long size(){
+        return (b.getX() - a.getX() + 1) * (b.getY() - a.getY() + 1)* (b.getY() - a.getY() + 1);
+    }
 
     @Override
     public String toString() {

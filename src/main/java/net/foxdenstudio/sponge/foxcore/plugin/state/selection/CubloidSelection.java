@@ -23,27 +23,22 @@ public class CubloidSelection implements ISelection {
 
     @Override
     public boolean contains(int x, int y, int z) {
-        return false;
-    }
-
-    @Override
-    public boolean contains(Vector3i vec) {
-        return false;
+        return boundingBox.contains(x,y,z);
     }
 
     @Override
     public boolean contains(double x, double y, double z) {
-        return false;
-    }
-
-    @Override
-    public boolean contains(Vector3d vec) {
-        return false;
+        return boundingBox.contains(x, y, z);
     }
 
     @Override
     public Text details() {
         return Text.of(boundingBox);
+    }
+
+    @Override
+    public int size() {
+        return 0;
     }
 
     private class SelectionIterator implements Iterator<Vector3i> {

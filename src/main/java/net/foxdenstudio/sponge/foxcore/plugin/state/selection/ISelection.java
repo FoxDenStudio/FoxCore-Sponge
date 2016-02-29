@@ -8,4 +8,6 @@ public interface ISelection extends Iterable<Vector3i>, IBounded {
 
     Text details();
 
+    int size();
+
 }
