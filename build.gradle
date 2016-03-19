@@ -93,3 +93,7 @@ artifacts {
     archives shadowJar
     archives serverJar
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+}

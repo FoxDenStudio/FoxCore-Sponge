@@ -25,7 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
-import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
+import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.command.CommandSource;
 
 import java.util.Map;
@@ -35,7 +35,7 @@ public class SourceState {
 
     private CommandSource source;
 
-    private Map<String, IStateField> state = new CallbackHashMap<>((key, map) -> {
+    private Map<String, IStateField> state = new CacheMap<>((key, map) -> {
         if (key instanceof String) {
             IStateField field = FCStateManager.instance().newStateField((String) key, this);
             if (field != null) {

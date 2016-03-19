@@ -27,8 +27,8 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.common.FCHelper;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse.ParseResult;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser.ParseResult;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
@@ -52,7 +52,7 @@ public class CommandState implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
+        ParseResult parse = AdvCmdParser.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
         if (parse.args.length == 0) {
             source.sendMessage(Text.builder()
                     .append(Text.of(TextColors.GREEN, "Usage: "))
@@ -94,7 +94,7 @@ public class CommandState implements CommandCallable {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .limit(1)
                 .excludeCurrent(true)
@@ -102,20 +102,20 @@ public class CommandState implements CommandCallable {
                 .parseLastFlags(false)
                 .leaveFinalAsIs(true)
                 .parse();
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT)) {
             if (parse.current.index == 0) {
                 return FCStateManager.instance().getPrimaryAliases().stream()
                         .filter(new StartsWithPredicate(parse.current.token))
                         .collect(GuavaCollectors.toImmutableList());
             }
-        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.FINAL)) {
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.FINAL)) {
             Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
             if (!optField.isPresent()) return ImmutableList.of();
             IStateField field = optField.get();
             String extraArgs = "";
             if (parse.args.length > 1) extraArgs = parse.args[1];
             return field.modifySuggestions(source, extraArgs);
-        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }

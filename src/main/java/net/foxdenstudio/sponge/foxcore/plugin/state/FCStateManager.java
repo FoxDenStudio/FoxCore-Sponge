@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
-import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
+import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.util.GuavaCollectors;
 
@@ -41,7 +41,7 @@ public final class FCStateManager {
 
     private static FCStateManager instance;
 
-    private final Map<CommandSource, SourceState> stateMap = new CallbackHashMap<>((o, m) -> {
+    private final Map<CommandSource, SourceState> stateMap = new CacheMap<>((o, m) -> {
         if (o instanceof CommandSource) {
             SourceState state = new SourceState((CommandSource) o);
             m.put((CommandSource) o, state);

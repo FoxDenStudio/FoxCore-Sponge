@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandType;
 import org.spongepowered.api.Sponge;
@@ -43,6 +43,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -75,7 +76,7 @@ public class CommandWand implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).flagMapper(MAPPER).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).flagMapper(MAPPER).parse();
 
         Player player = null;
         if (source instanceof Player) player = (Player) source;
@@ -100,7 +101,7 @@ public class CommandWand implements CommandCallable {
         if (player.getItemInHand().isPresent()) {
             Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition()).get();
             entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
-            player.getWorld().spawnEntity(entity, Cause.of(FoxCoreMain.instance()));
+            player.getWorld().spawnEntity(entity, Cause.builder().named("plugin", FoxCoreMain.instance()).build());
         } else {
             player.setItemInHand(stack);
         }
@@ -113,25 +114,25 @@ public class CommandWand implements CommandCallable {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .flagMapper(MAPPER)
                 .excludeCurrent(true)
                 .autoCloseQuotes(true)
                 .parse();
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.LONGFLAGKEY))
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
             return ImmutableList.of("world").stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
-        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.LONGFLAGVALUE)) {
+        else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGVALUE)) {
             if (parse.current.key.equals("world"))
                 return Sponge.getGame().getServer().getWorlds().stream()
                         .map(World::getName)
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
-        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }

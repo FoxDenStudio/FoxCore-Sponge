@@ -25,7 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.command.util;
 
-import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
+import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.text.Text;
 
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  * Created by Fox on 12/1/2015.
  * Project: SpongeForge
  */
-public final class AdvCmdParse {
+public final class AdvCmdParser {
 
     public static final Function<Map<String, String>, Function<String, Consumer<String>>>
             DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
@@ -70,55 +70,55 @@ public final class AdvCmdParse {
     // Determines whether to do any parsing after the limit is reached.
     // If set to true, all parsing is stopped as soon as the final block is reached. Comments are disabled as well.
     private boolean leaveFinalAsIs = false;
-    private AdvCmdParse() {
+    private AdvCmdParser() {
     }
 
-    public static AdvCmdParse builder() {
-        return new AdvCmdParse();
+    public static AdvCmdParser builder() {
+        return new AdvCmdParser();
     }
 
-    public AdvCmdParse arguments(String arguments) {
+    public AdvCmdParser arguments(String arguments) {
         if(arguments == null) arguments = "";
         this.arguments = arguments;
         return this;
     }
 
-    public AdvCmdParse limit(int limit) {
+    public AdvCmdParser limit(int limit) {
         this.limit = limit;
         return this;
     }
 
-    public AdvCmdParse extractSubFlags(boolean subFlags) {
+    public AdvCmdParser extractSubFlags(boolean subFlags) {
         this.extractSubFlags = subFlags;
         return this;
     }
 
-    public AdvCmdParse unescapeLast(boolean unescapeLast) {
+    public AdvCmdParser unescapeLast(boolean unescapeLast) {
         this.unescapeLast = unescapeLast;
         return this;
     }
 
-    public AdvCmdParse autoCloseQuotes(boolean autoCloseQuotes) {
+    public AdvCmdParser autoCloseQuotes(boolean autoCloseQuotes) {
         this.autoCloseQuotes = autoCloseQuotes;
         return this;
     }
 
-    public AdvCmdParse parseLastFlags(boolean parseLastFlags) {
+    public AdvCmdParser parseLastFlags(boolean parseLastFlags) {
         this.parseLastFlags = parseLastFlags;
         return this;
     }
 
-    public AdvCmdParse flagMapper(Function<Map<String, String>, Function<String, Consumer<String>>> flagMapper) {
+    public AdvCmdParser flagMapper(Function<Map<String, String>, Function<String, Consumer<String>>> flagMapper) {
         this.flagMapper = flagMapper;
         return this;
     }
 
-    public AdvCmdParse excludeCurrent(boolean excludeCurrent) {
+    public AdvCmdParser excludeCurrent(boolean excludeCurrent) {
         this.excludeCurrent = excludeCurrent;
         return this;
     }
 
-    public AdvCmdParse leaveFinalAsIs(boolean leaveFinalAsIs) {
+    public AdvCmdParser leaveFinalAsIs(boolean leaveFinalAsIs) {
         this.leaveFinalAsIs = leaveFinalAsIs;
         return this;
     }
@@ -179,7 +179,7 @@ public final class AdvCmdParse {
                 // If a limit is specified, the flags will be cut out of the final string
                 // Setting extractSubFlags to true forces flags within the final string to be left as-is
                 // This is useful if the final string is it's own command and needs to be re-parsed
-                if (result.startsWith("--") && (extractSubFlags || limit == 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
+                if (result.startsWith("--") && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
                     // Trims the prefix
                     String trimmedResult = result.substring(2);
                     // Splits once by ":" or "="
@@ -207,7 +207,7 @@ public final class AdvCmdParse {
                     // multiple letters are treated as multiple flags. Repeating letters add a second flag with a repetition
                     // Example: "-aab" becomes flags "a", "aa", and "b"
                 } else if (result.startsWith("-") && result.substring(1).matches("^.*[^\\d\\.].*$")
-                        && (extractSubFlags || limit == 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
+                        && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
                     // Trims prefix
                     String trimmedResult = result.substring(1);
                     // Iterates through each letter
@@ -232,14 +232,14 @@ public final class AdvCmdParse {
                     // Simply adds the result to the argument list. Quotes are trimmed.
                     // Fallback if the result isn't a flag.
                 } else {
-                    if (leaveFinalAsIs && limit != 0 && argsList.size() >= limit) {
+                    if (leaveFinalAsIs && limit > 0 && argsList.size() >= limit) {
                         String finalBlock = arguments.substring(matcher.start(), arguments.length() - (inQuote ? 1 : 0));
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalBlock, argsList.size(), "");
                         argsList.add(finalBlock);
                         break;
                     }
 
-                    if (limit != 0 && argsList.size() >= limit && !unescapeLast) {
+                    if (limit > 0 && argsList.size() >= limit && !unescapeLast) {
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, result, argsList.size(), "");
                         argsList.add(result);
                     } else {
@@ -264,7 +264,7 @@ public final class AdvCmdParse {
         List<String> finalList = new ArrayList<>();
         String finalString = "";
         for (int i = 0; i < argsList.size(); i++) {
-            if (limit == 0 || i < limit) {
+            if (limit <= 0 || i < limit) {
                 finalList.add(argsList.get(i));
             } else {
                 finalString += argsList.get(i);
@@ -277,7 +277,7 @@ public final class AdvCmdParse {
             finalList.add(finalString);
         }
 
-        if (parseResult.current != null && parseResult.current.type == CurrentElement.ElementType.ARGUMENT && limit != 0 && parseResult.current.index >= limit)
+        if (parseResult.current != null && parseResult.current.type == CurrentElement.ElementType.ARGUMENT && limit > 0 && parseResult.current.index >= limit)
             parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (finalString.isEmpty() || lastIsCurrent ? "" : " "), finalList.size() - 1, "");
         // Converts final argument list to an array.
         parseResult.args = finalList.toArray(new String[finalList.size()]);
@@ -321,7 +321,7 @@ public final class AdvCmdParse {
 
     public static final class ParseResult {
         public String[] args = {};
-        public Map<String, String> flagmap = new CallbackHashMap<>((key, map) -> "");
+        public Map<String, String> flagmap = new CacheMap<>((key, map) -> "");
         public CurrentElement current = null;
     }
 

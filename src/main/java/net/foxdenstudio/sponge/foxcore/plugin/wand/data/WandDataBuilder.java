@@ -28,7 +28,6 @@ package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
-import org.spongepowered.api.util.persistence.InvalidDataException;
 
 import java.util.Optional;
 
@@ -45,7 +44,7 @@ public class WandDataBuilder implements DataManipulatorBuilder<WandData, Immutab
     }
 
     @Override
-    public Optional<WandData> build(DataView container) throws InvalidDataException {
+    public Optional<WandData> build(DataView container){
         if (!container.contains(WandKeys.WANDTYPE.getQuery())) return Optional.empty();
         WandData data = create();
         data.setWandType(WandType.valueOf((String) container.get(WandKeys.WANDTYPE.getQuery()).get()));

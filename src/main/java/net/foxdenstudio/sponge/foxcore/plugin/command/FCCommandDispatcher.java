@@ -25,7 +25,11 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.spongepowered.api.command.CommandMessageFormatting.SPACE_TEXT;
+
 import com.google.common.collect.*;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import org.spongepowered.api.command.*;
 import org.spongepowered.api.command.dispatcher.Disambiguator;
 import org.spongepowered.api.command.dispatcher.Dispatcher;
@@ -39,9 +43,6 @@ import org.spongepowered.api.util.StartsWithPredicate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spongepowered.api.command.CommandMessageFormatting.SPACE_TEXT;
-
 public class FCCommandDispatcher implements Dispatcher {
 
     protected final Disambiguator disambiguator;
@@ -49,7 +50,8 @@ public class FCCommandDispatcher implements Dispatcher {
     protected String dispatcherPrefix;
     protected Text shortDescription;
 
-    public FCCommandDispatcher(String dispatcherPrefix, String shortDescription, Disambiguator disambiguator) {
+    public FCCommandDispatcher(String dispatcherPrefix, String shortDescription, Disambiguator
+            disambiguator) {
         this.dispatcherPrefix = dispatcherPrefix;
         if (shortDescription == null || shortDescription.isEmpty()) {
             this.shortDescription = null;
@@ -91,13 +93,15 @@ public class FCCommandDispatcher implements Dispatcher {
         }
     }
 
-    public Optional<CommandMapping> register(CommandCallable callable, String primaryAlias, List<String> secondaryAliases) {
+    public Optional<CommandMapping> register(CommandCallable callable, String primaryAlias,
+                                             List<String> secondaryAliases) {
         checkNotNull(primaryAlias, "aliases");
         checkNotNull(callable, "callable");
 
         if (!primaryAlias.isEmpty()) {
             if (secondaryAliases == null) secondaryAliases = new ArrayList<>();
-            CommandMapping mapping = new ImmutableCommandMapping(callable, primaryAlias, secondaryAliases);
+            CommandMapping mapping = new ImmutableCommandMapping(callable, primaryAlias,
+                    secondaryAliases);
 
             this.commands.put(primaryAlias.toLowerCase(), mapping);
             for (String alias : secondaryAliases) {
@@ -117,7 +121,8 @@ public class FCCommandDispatcher implements Dispatcher {
 
     @Override
     public Set<String> getPrimaryAliases() {
-        Set<String> aliases = this.commands.values().stream().map(CommandMapping::getPrimaryAlias).collect(Collectors.toSet());
+        Set<String> aliases = this.commands.values().stream().map
+                (CommandMapping::getPrimaryAlias).collect(Collectors.toSet());
         return Collections.unmodifiableSet(aliases);
     }
 
@@ -175,9 +180,11 @@ public class FCCommandDispatcher implements Dispatcher {
     }
 
     @Override
-    public CommandResult process(CommandSource source, String inputArguments) throws CommandException {
+    public CommandResult process(CommandSource source, String inputArguments) throws
+            CommandException {
         if (!testPermission(source)) {
-            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this " +
+                    "command!"));
             return CommandResult.empty();
         }
         if (!inputArguments.isEmpty()) {
@@ -193,18 +200,22 @@ public class FCCommandDispatcher implements Dispatcher {
                     }
                     CommandCallable command = optCommand.get().getCallable();
                     if (!command.testPermission(source)) {
-                        source.sendMessage(Text.of(TextColors.RED, "You don't have permission to view help for this command!"));
+                        source.sendMessage(Text.of(TextColors.RED, "You don't have permission to " +
+                                "view help for this command!"));
                         return CommandResult.empty();
                     }
                     @SuppressWarnings("unchecked")
                     final Optional<Text> helpText = (Optional<Text>) command.getHelp(source);
                     Text.Builder builder = Text.builder();
-                    if (helpText.isPresent()) builder.append(Text.of(TextColors.GREEN, "----------"),
-                            Text.of(TextColors.GOLD, "Command \""),
-                            Text.of(TextColors.GOLD, optCommand.get().getPrimaryAlias()),
-                            Text.of(TextColors.GOLD, "\" Help"),
-                            Text.of(TextColors.GREEN, "----------\n"));
-                    source.sendMessage(builder.append(helpText.orElse(Text.of("Usage: " + dispatcherPrefix + " ").toBuilder().append(command.getUsage(source)).build())).build());
+                    if (helpText.isPresent())
+                        builder.append(Text.of(TextColors.GREEN, "----------"),
+                                Text.of(TextColors.GOLD, "Command \""),
+                                Text.of(TextColors.GOLD, optCommand.get().getPrimaryAlias()),
+                                Text.of(TextColors.GOLD, "\" Help"),
+                                Text.of(TextColors.GREEN, "----------\n"));
+                    source.sendMessage(builder.append(helpText.orElse(Text.of("Usage: " +
+                            dispatcherPrefix + " ").toBuilder().append(command.getUsage(source))
+                            .build())).build());
                     return CommandResult.empty();
                 } else {
                     source.sendMessage(this.getHelp(source).get());
@@ -220,10 +231,12 @@ public class FCCommandDispatcher implements Dispatcher {
                 try {
                     return command.process(source, arguments);
                 } catch (CommandNotFoundException e) {
-                    throw new CommandException(Text.of("No such child command: %s" + e.getCommand()));
+                    throw new CommandException(Text.of("No such child command: %s" + e.getCommand
+                            ()));
                 } catch (CommandException e) {
                     Text text = e.getText();
-                    if (text == null) text = Text.of("There was an error processing command: " + args[0]);
+                    if (text == null)
+                        text = Text.of("There was an error processing command: " + args[0]);
                     source.sendMessage(text.toBuilder().color(TextColors.RED).build());
                     source.sendMessage(Text.of("Usage: " + dispatcherPrefix + " ").toBuilder()
                             .append(command.getUsage(source)).color(TextColors.RED).build());
@@ -240,27 +253,38 @@ public class FCCommandDispatcher implements Dispatcher {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        final String[] args = arguments.split(" +", 2);
-        Optional<CommandMapping> cmdOptional = get(args[0], source);
-        if (args.length == 1) {
-            List<String> potentialCommands = filterCommandMappings(source).stream().map(CommandMapping::getPrimaryAlias)
+    public List<String> getSuggestions(CommandSource source, String arguments) throws
+            CommandException {
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
+                .arguments(arguments)
+                .limit(1)
+                .leaveFinalAsIs(true)
+                .parseLastFlags(false)
+                .parse();
+        if (parse.args.length == 1) {
+            List<String> potentialCommands = filterCommandMappings(source).stream().map
+                    (CommandMapping::getPrimaryAlias)
                     .collect(Collectors.toList());
             potentialCommands.add("help");
-            return potentialCommands.stream().filter(new StartsWithPredicate(args[0])).collect(GuavaCollectors.toImmutableList());
-        } else if (!cmdOptional.isPresent()) {
-            return ImmutableList.of();
-        }
-        return cmdOptional.get().getCallable().getSuggestions(source, args[1]);
+            return potentialCommands.stream().filter(new StartsWithPredicate(parse.args[0]))
+                    .collect(GuavaCollectors.toImmutableList());
+        } else if (parse.args.length == 2) {
+            Optional<CommandMapping> cmdOptional = get(parse.args[0], source);
+            if (!cmdOptional.isPresent()) {
+                return ImmutableList.of();
+            } else return cmdOptional.get().getCallable().getSuggestions(source, parse.args[1]);
+        } else return ImmutableList.of();
     }
 
     private Set<String> filterCommands(final CommandSource src) {
-        return Multimaps.filterValues(this.commands, input -> input.getCallable().testPermission(src)).keys().elementSet();
+        return Multimaps.filterValues(this.commands, input -> input.getCallable().testPermission
+                (src)).keys().elementSet();
     }
 
     private Set<CommandMapping> filterCommandMappings(final CommandSource src) {
         return new HashSet<>(
-                Multimaps.filterValues(this.commands, input -> input.getCallable().testPermission(src)).values());
+                Multimaps.filterValues(this.commands, input -> input.getCallable().testPermission
+                        (src)).values());
     }
 
     @Override
@@ -284,14 +308,17 @@ public class FCCommandDispatcher implements Dispatcher {
             return Optional.empty();
         }
         Text.Builder build = Text.of(TextColors.GREEN, "Available commands:\n").toBuilder();
-        for (Iterator<CommandMapping> it = filterCommandMappings(source).iterator(); it.hasNext(); ) {
+        for (Iterator<CommandMapping> it = filterCommandMappings(source).iterator(); it.hasNext()
+                ; ) {
 
             CommandMapping mapping = it.next();
             @SuppressWarnings("unchecked")
-            final Optional<Text> description = (Optional<Text>) mapping.getCallable().getShortDescription(source);
+            final Optional<Text> description = (Optional<Text>) mapping.getCallable()
+                    .getShortDescription(source);
             build.append(Text.builder(mapping.getPrimaryAlias() + ":")
                             .color(TextColors.GOLD)
-                            .onClick(TextActions.suggestCommand(this.dispatcherPrefix + " " + mapping.getPrimaryAlias())).build(),
+                            .onClick(TextActions.suggestCommand(this.dispatcherPrefix + " " +
+                                    mapping.getPrimaryAlias())).build(),
                     SPACE_TEXT, description.orElse(mapping.getCallable().getUsage(source)));
             if (it.hasNext()) {
                 build.append(Text.of("\n"));

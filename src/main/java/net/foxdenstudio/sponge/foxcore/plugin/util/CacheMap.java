@@ -30,10 +30,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class CallbackHashMap<K, V> extends HashMap<K, V> {
+public class CacheMap<K, V> extends HashMap<K, V> {
     final private BiFunction<Object, Map<K, V>, V> callback;
 
-    public CallbackHashMap(BiFunction<Object, Map<K, V>, V> callback) {
+    public CacheMap(BiFunction<Object, Map<K, V>, V> callback) {
         this.callback = callback;
     }
 

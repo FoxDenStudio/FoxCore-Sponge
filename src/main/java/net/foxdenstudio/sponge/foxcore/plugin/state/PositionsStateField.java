@@ -28,7 +28,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.common.FCHelper;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
 import org.spongepowered.api.command.CommandException;
@@ -67,7 +67,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     @Override
     public ProcessResult modify(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).limit(1).parseLastFlags(false).parse();
         String newArgs = parse.args.length > 1 ? parse.args[1] : "";
         if (parse.args.length == 0 || parse.args[0].equalsIgnoreCase("add")) {
             return add(source, newArgs);
@@ -79,12 +79,12 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     @Override
     public List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .excludeCurrent(true)
                 .autoCloseQuotes(true)
                 .parse();
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT)) {
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT)) {
             if (parse.current.index == 0) {
                 return ImmutableList.of("add", "remove").stream()
                         .filter(new StartsWithPredicate(parse.current.token))
@@ -94,13 +94,13 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
                     return ImmutableList.of(parse.current.prefix + "~");
                 else return ImmutableList.of(parse.current.prefix + parse.current.token + " ");
             }
-        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
 
         int x, y, z;
         Vector3i pPos = null;
@@ -143,21 +143,21 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     }
 
     public List<String> addSuggestions(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .excludeCurrent(true)
                 .autoCloseQuotes(true)
                 .parse();
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT) && parse.current.index < 3 && parse.current.token.isEmpty()) {
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT) && parse.current.index < 3 && parse.current.token.isEmpty()) {
             return ImmutableList.of(parse.current.prefix + "~");
-        } else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }
 
     public ProcessResult remove(CommandSource source, String arguments) throws CommandException {
         if(this.list.size() == 0) throw new CommandException(Text.of("No elements to remove!"));
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
         int index = this.list.size();
         if (parse.args.length > 0) {
             try {

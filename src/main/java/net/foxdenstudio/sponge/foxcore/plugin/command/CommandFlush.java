@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -54,7 +54,7 @@ public class CommandFlush implements CommandCallable {
         if (arguments.isEmpty()) {
             FCStateManager.instance().getStateMap().get(source).flush();
         } else {
-            AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
+            AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
             for (String arg : parse.args) {
                 String id = FCStateManager.instance().getID(arg);
                 if (id == null) throw new CommandException(Text.of("\"" + arg + "\" is not a valid type!"));
@@ -68,13 +68,13 @@ public class CommandFlush implements CommandCallable {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
             return FCStateManager.instance().getPrimaryAliases().stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .filter(alias -> !isIn(parse.args, alias))
                     .collect(GuavaCollectors.toImmutableList());
-        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }

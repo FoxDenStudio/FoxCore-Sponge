@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import org.spongepowered.api.command.CommandCallable;
@@ -50,7 +50,7 @@ public class CommandCurrent implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
         Text.Builder output = Text.builder().append(Text.of(TextColors.GOLD, "\n-----------------------------------------------------\n"));
         int flag = 0;
         Collection<IStateField> fields;
@@ -84,14 +84,14 @@ public class CommandCurrent implements CommandCallable {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
         System.out.println(parse.current.type);
-        if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.ARGUMENT))
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
             return FCStateManager.instance().getPrimaryAliases().stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .filter(alias -> !isIn(parse.args, alias))
                     .collect(GuavaCollectors.toImmutableList());
-        else if (parse.current.type.equals(AdvCmdParse.CurrentElement.ElementType.COMPLETE))
+        else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
     }

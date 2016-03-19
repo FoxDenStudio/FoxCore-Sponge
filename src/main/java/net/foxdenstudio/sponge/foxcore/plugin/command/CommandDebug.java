@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.util.CallbackHashMap;
+import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -43,7 +43,7 @@ import java.util.Optional;
 public class CommandDebug implements CommandCallable {
 
     private static CommandDebug instance;
-    private Map<CommandSource, Boolean> debug = new CallbackHashMap<>((k, m) -> Boolean.FALSE);
+    private Map<CommandSource, Boolean> debug = new CacheMap<>((k, m) -> Boolean.FALSE);
 
     public CommandDebug() {
         if (instance == null) instance = this;

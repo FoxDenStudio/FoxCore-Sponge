@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParse;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -63,7 +63,7 @@ public class CommandTest implements CommandCallable {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder()
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .autoCloseQuotes(true)
                 .limit(2)
@@ -107,7 +107,7 @@ public class CommandTest implements CommandCallable {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(2).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).limit(2).parse();
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "\n-----------------------------\n"));
         int count = 0;
