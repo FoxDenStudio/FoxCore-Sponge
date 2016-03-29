@@ -100,7 +100,6 @@ public class BoundingBox2 implements Serializable {
                 y >= this.a.getY() && y <= this.b.getY() + 1);
     }
 
-
     @Override
     public String toString() {
         return "{(" + a.getX() + ", " + a.getY() + "), ("

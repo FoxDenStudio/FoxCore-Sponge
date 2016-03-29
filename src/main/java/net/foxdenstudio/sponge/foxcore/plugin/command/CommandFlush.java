@@ -73,6 +73,7 @@ public class CommandFlush implements CommandCallable {
             return FCStateManager.instance().getPrimaryAliases().stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .filter(alias -> !isIn(parse.args, alias))
+                    .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");

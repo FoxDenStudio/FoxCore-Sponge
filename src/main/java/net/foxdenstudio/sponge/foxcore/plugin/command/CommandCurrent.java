@@ -85,11 +85,11 @@ public class CommandCurrent implements CommandCallable {
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
-        System.out.println(parse.current.type);
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
             return FCStateManager.instance().getPrimaryAliases().stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .filter(alias -> !isIn(parse.args, alias))
+                    .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");

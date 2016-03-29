@@ -26,14 +26,13 @@
 package net.foxdenstudio.sponge.foxcore.plugin.listener;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
+import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -49,9 +48,10 @@ public class WandListener implements EventListener<InteractBlockEvent> {
             Player player = playerOptional.get();
             if (!event.getTargetBlock().getState().getType().equals(BlockTypes.AIR) && player.hasPermission("foxcore.wand.use") && player.getItemInHand().isPresent()) {
                 ItemStack item = player.getItemInHand().get();
+
                 if (/*item.getItem().equals(ItemTypes.GOLDEN_AXE)*/ item.get(WandData.class).isPresent()) {
                     Vector3i pos = event.getTargetBlock().getPosition();
-                    List<Vector3i> positions = FCHelper.getPositions(player);
+                    List<Vector3i> positions = FCUtil.getPositions(player);
                     if (event instanceof InteractBlockEvent.Primary) {
                         if (positions.contains(pos)) {
                             positions.remove(positions.lastIndexOf(pos));

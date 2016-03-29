@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
+import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
@@ -118,17 +118,17 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             if (pPos == null)
                 pPos = Vector3i.ZERO;
             try {
-                x = (int) FCHelper.parseCoordinate(pPos.getX(), parse.args[0]);
+                x = (int) FCUtil.parseCoordinate(pPos.getX(), parse.args[0]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[0] + "\"!"), e, parse.args[0], 0);
             }
             try {
-                y = (int) FCHelper.parseCoordinate(pPos.getY(), parse.args[1]);
+                y = (int) FCUtil.parseCoordinate(pPos.getY(), parse.args[1]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[1] + "\"!"), e, parse.args[1], 1);
             }
             try {
-                z = (int) FCHelper.parseCoordinate(pPos.getZ(), parse.args[2]);
+                z = (int) FCUtil.parseCoordinate(pPos.getZ(), parse.args[2]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[2] + "\"!"), e, parse.args[2], 2);
             }
@@ -137,7 +137,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         }
         this.list.add(new Vector3i(x, y, z));
         if (source instanceof Player) {
-            FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
+            FCPacketManager.instance().sendPos((Player) source, FCUtil.getPositions(source));
         }
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
@@ -172,7 +172,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             throw new ArgumentParseException(Text.of("Index out of bounds! (1 - " + this.list.size()), parse.args[0], 0);
         }
         if (source instanceof Player) {
-            FCPacketManager.instance().sendPos((Player) source, FCHelper.getPositions(source));
+            FCPacketManager.instance().sendPos((Player) source, FCUtil.getPositions(source));
         }
         return ProcessResult.of(true, Text.of("Successfully removed position from your state buffer!"));
     }
@@ -181,7 +181,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     public void flush() {
         super.flush();
         if (sourceState.getSource() instanceof Player) {
-            FCPacketManager.instance().sendPos((Player) sourceState.getSource(), FCHelper.getPositions(sourceState.getSource()));
+            FCPacketManager.instance().sendPos((Player) sourceState.getSource(), FCUtil.getPositions(sourceState.getSource()));
         }
 
     }

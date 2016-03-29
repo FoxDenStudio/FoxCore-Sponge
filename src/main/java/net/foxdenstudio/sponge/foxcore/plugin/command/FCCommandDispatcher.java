@@ -259,20 +259,31 @@ public class FCCommandDispatcher implements Dispatcher {
                 .arguments(arguments)
                 .limit(1)
                 .leaveFinalAsIs(true)
+                .autoCloseQuotes(true)
                 .parseLastFlags(false)
                 .parse();
-        if (parse.args.length == 1) {
-            List<String> potentialCommands = filterCommandMappings(source).stream().map
-                    (CommandMapping::getPrimaryAlias)
-                    .collect(Collectors.toList());
-            potentialCommands.add("help");
-            return potentialCommands.stream().filter(new StartsWithPredicate(parse.args[0]))
-                    .collect(GuavaCollectors.toImmutableList());
-        } else if (parse.args.length == 2) {
+        if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.ARGUMENT) {
+            if (parse.current.index == 0) {
+                List<String> potentialCommands = filterCommandMappings(source).stream()
+                        .map(CommandMapping::getPrimaryAlias)
+                        .collect(Collectors.toList());
+                potentialCommands.add("help");
+                return potentialCommands.stream()
+                        .filter(new StartsWithPredicate(parse.args[0]))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            } else return ImmutableList.of();
+        } else if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.FINAL) {
             Optional<CommandMapping> cmdOptional = get(parse.args[0], source);
             if (!cmdOptional.isPresent()) {
                 return ImmutableList.of();
-            } else return cmdOptional.get().getCallable().getSuggestions(source, parse.args[1]);
+            } else return cmdOptional.get().getCallable()
+                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "")
+                    .stream()
+                    .map(args -> parse.current.prefix + args)
+                    .collect(GuavaCollectors.toImmutableList());
+        } else if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.COMPLETE) {
+            return ImmutableList.of(parse.current.prefix + " ");
         } else return ImmutableList.of();
     }
 

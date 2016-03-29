@@ -348,6 +348,17 @@ public final class AdvCmdParser {
             return new CurrentElement(type, token, index, key, prefix);
         }
 
+        @Override
+        public String toString() {
+            return "CurrentElement{" +
+                    "type=" + type +
+                    ", token='" + token + '\'' +
+                    ", index=" + index +
+                    ", key='" + key + '\'' +
+                    ", prefix='" + prefix + '\'' +
+                    '}';
+        }
+
         public enum ElementType {
             ARGUMENT,
             SHORTFLAG,

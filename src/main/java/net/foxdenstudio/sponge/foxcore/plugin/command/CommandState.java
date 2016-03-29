@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.common.FCHelper;
+import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser.ParseResult;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
@@ -69,7 +69,7 @@ public class CommandState implements CommandCallable {
         ProcessResult result = field.modify(source, extraArgs);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
+                if (!FCUtil.hasColor(result.getMessage().get())) {
                     source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.GREEN).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
@@ -79,7 +79,7 @@ public class CommandState implements CommandCallable {
             }
         } else {
             if (result.getMessage().isPresent()) {
-                if (!FCHelper.hasColor(result.getMessage().get())) {
+                if (!FCUtil.hasColor(result.getMessage().get())) {
                     source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.RED).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
@@ -106,6 +106,7 @@ public class CommandState implements CommandCallable {
             if (parse.current.index == 0) {
                 return FCStateManager.instance().getPrimaryAliases().stream()
                         .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
             }
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.FINAL)) {
@@ -114,7 +115,9 @@ public class CommandState implements CommandCallable {
             IStateField field = optField.get();
             String extraArgs = "";
             if (parse.args.length > 1) extraArgs = parse.args[1];
-            return field.modifySuggestions(source, extraArgs);
+            return field.modifySuggestions(source, extraArgs).stream()
+                    .map(args -> parse.current.prefix + args)
+                    .collect(GuavaCollectors.toImmutableList());
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();
