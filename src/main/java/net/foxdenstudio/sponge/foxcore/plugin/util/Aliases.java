@@ -31,6 +31,7 @@ public final class Aliases {
 
     public static final String[] WORLD_ALIASES = {"world", "w", "dimension", "d"};
     public static final String[] REGIONS_ALIASES = {"regions", "region", "reg", "rg", "r"};
+    public static final String[] WORLDREGIONS_ALIASES = {"worldregions","wregions", "worldregion", "wregion", "worldreg", "wreg", "worldrg", "wrg", "worldr", "wr"};
     public static final String[] HANDLERS_ALIASES = {"handlers", "handler", "handles", "handle", "hands", "hand", "hn", "h", "flagsets", "flagset", "flags", "flag", "f"};
     public static final String[] CONTROLLERS_ALIASES = {"controllers", "controller", "controls", "control", "switch", "con", "c"};
     public static final String[] POSITIONS_ALIASES = {"positions", "position", "points", "point", "locations", "location", "pos", "loc", "locs", "p"};
