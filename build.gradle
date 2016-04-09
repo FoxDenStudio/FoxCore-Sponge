@@ -24,8 +24,11 @@ apply plugin: 'com.github.johnrengelman.shadow'
 group 'net.foxdenstudio.sponge.foxcore'
 version 'ALPHA-SNAPSHOT'
 
-apply from: project.file("sponge.gradle")
+if (System.env.TRAVIS) {
+    version = "$System.env.TRAVIS_TAG-$System.env.TRAVIS_BUILD_NUMBER"
+}
 
+apply from: project.file("sponge.gradle")
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
