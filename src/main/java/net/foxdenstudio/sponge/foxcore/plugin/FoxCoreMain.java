@@ -51,6 +51,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.Text;
@@ -59,10 +60,8 @@ import org.spongepowered.api.util.Tristate;
 
 import java.io.File;
 
-@Plugin(id = "foxcore", name = "FoxCore", version = FoxCoreMain.VERSION)
+@Plugin(id = "foxcore", name = "FoxCore")
 public final class FoxCoreMain {
-
-    public static final String VERSION = "0.6.0-SNAPSHOT";//VERSION
 
     private static FoxCoreMain instance;
 
@@ -75,6 +74,8 @@ public final class FoxCoreMain {
     @Inject
     @ConfigDir(sharedRoot = true)
     private File configDirectory;
+    @Inject
+    private PluginContainer container;
 
     private FCCommandDispatcher fcDispatcher;
 
@@ -116,7 +117,7 @@ public final class FoxCoreMain {
     private void registerCommands() {
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "FoxCore\n"));
-        builder.append(Text.of("Version: " + FoxCoreMain.VERSION + "\n"));
+        builder.append(Text.of("Version: " + container.getVersion().orElse("Unknown") + "\n"));
         builder.append(Text.of("Author: gravityfox\n"));
 
         this.fcDispatcher = new FCCommandDispatcher("/foxcore", "Core commands for state and selections.");
