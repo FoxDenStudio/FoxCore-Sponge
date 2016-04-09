@@ -14,7 +14,10 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
+plugins {
+  id 'org.spongepowered.plugin' version '0.5.1'
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -27,6 +30,9 @@ apply from: project.file("sponge.gradle")
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
+sponge.plugin {
+    id = 'foxcore'
+}
 
 minecraft {
     version = "1.8.9-11.15.0.1694"
@@ -50,6 +56,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+/* TODO: This is broken, but was never replacing anything anyway
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
@@ -67,7 +74,7 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
-}
+}*/
 
 shadowJar {
     classifier = ''

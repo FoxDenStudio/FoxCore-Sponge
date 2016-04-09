@@ -25,7 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.mod;
 
-import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -34,7 +33,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "foxcorecui", name = "FoxCoreCUI", version = FoxCoreMain.VERSION, clientSideOnly = true)
+@Mod(modid = "foxcorecui", name = "FoxCoreCUI", clientSideOnly = true)
 public class FoxCoreForgeMain {
 
     @Mod.Instance("foxcorecui")
