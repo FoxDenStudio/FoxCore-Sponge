@@ -71,7 +71,7 @@ public class CommandCurrent implements CommandCallable {
             field = it.next();
             if (field != null && !field.isEmpty()) {
                 output.append(Text.of(TextColors.GREEN, field.getName() + ":\n"));
-                output.append(field.currentState());
+                output.append(field.currentState(source));
                 if (it.hasNext()) output.append(Text.of("\n"));
                 flag++;
             }

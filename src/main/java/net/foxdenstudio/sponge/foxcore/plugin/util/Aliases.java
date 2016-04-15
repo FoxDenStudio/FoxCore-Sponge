@@ -50,6 +50,7 @@ public final class Aliases {
     public static final String[] ALL_ALIASES = {"all", "a", "everything"};
 
     public static boolean isIn(String[] aliases, String input) {
+        if(input == null || input.isEmpty()) return false;
         for (String alias : aliases) {
             if (alias.equalsIgnoreCase(input)) return true;
         }

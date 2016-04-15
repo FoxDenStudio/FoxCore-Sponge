@@ -32,13 +32,14 @@ public abstract class SetStateFieldBase<T> extends StateFieldBase {
 
     protected Set<T> set = new HashSet<>();
 
-    protected SetStateFieldBase(String name) {
-        super(name);
+    protected SetStateFieldBase(String name, SourceState sourceState) {
+        super(name, sourceState);
     }
 
     @Override
     public void flush() {
         set.clear();
+        sourceState.updateScoreboard();
     }
 
     @Override

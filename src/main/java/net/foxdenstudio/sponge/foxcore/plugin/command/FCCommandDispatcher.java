@@ -269,7 +269,7 @@ public class FCCommandDispatcher implements Dispatcher {
                         .collect(Collectors.toList());
                 potentialCommands.add("help");
                 return potentialCommands.stream()
-                        .filter(new StartsWithPredicate(parse.args[0]))
+                        .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
             } else return ImmutableList.of();

@@ -28,9 +28,11 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 public abstract class StateFieldBase implements IStateField {
 
     protected final String name;
+    protected final SourceState sourceState;
 
-    protected StateFieldBase(String name) {
+    protected StateFieldBase(String name, SourceState sourceState) {
         this.name = name;
+        this.sourceState = sourceState;
     }
 
     @Override

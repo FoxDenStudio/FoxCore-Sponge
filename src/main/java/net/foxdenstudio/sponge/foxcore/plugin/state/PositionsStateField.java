@@ -36,25 +36,25 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PositionsStateField extends ListStateFieldBase<Vector3i> {
 
     public static final String ID = "position";
 
-    private SourceState sourceState;
-
     public PositionsStateField(String name, SourceState sourceState) {
-        super(name);
-        this.sourceState = sourceState;
+        super(name, sourceState);
     }
 
     @Override
-    public Text currentState() {
+    public Text currentState(CommandSource source) {
         Text.Builder builder = Text.builder();
         int index = 1;
         for (Iterator<Vector3i> it = this.list.iterator(); it.hasNext(); ) {
@@ -99,6 +99,31 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         return ImmutableList.of();
     }
 
+
+    @Override
+    public Optional<Text> getScoreboardTitle() {
+        return Optional.of(Text.of(TextColors.GREEN, this.name,
+                TextColors.YELLOW, " (", this.list.size(), ")"));
+    }
+
+    @Override
+    public List<Text> getScoreboardText() {
+        int[] index = {1};
+        return this.list.stream()
+                .map(vector3i -> Text.of("  " + index[0]++ + ": " + vector3i.toString()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean showScoreboard() {
+        return !list.isEmpty();
+    }
+
+    @Override
+    public boolean prioritizeLast() {
+        return false;
+    }
+
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
 
@@ -139,6 +164,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         if (source instanceof Player) {
             FCPacketManager.instance().sendPos((Player) source, FCUtil.getPositions(source));
         }
+        sourceState.updateScoreboard();
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
 
@@ -156,7 +182,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     }
 
     public ProcessResult remove(CommandSource source, String arguments) throws CommandException {
-        if(this.list.size() == 0) throw new CommandException(Text.of("No elements to remove!"));
+        if (this.list.size() == 0) throw new CommandException(Text.of("No elements to remove!"));
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
         int index = this.list.size();
         if (parse.args.length > 0) {
@@ -183,6 +209,5 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         if (sourceState.getSource() instanceof Player) {
             FCPacketManager.instance().sendPos((Player) sourceState.getSource(), FCUtil.getPositions(sourceState.getSource()));
         }
-
     }
 }

@@ -32,13 +32,14 @@ public abstract class ListStateFieldBase<T> extends StateFieldBase {
 
     protected List<T> list = new ArrayList<>();
 
-    protected ListStateFieldBase(String name) {
-        super(name);
+    protected ListStateFieldBase(String name, SourceState sourceState) {
+        super(name, sourceState);
     }
 
     @Override
     public void flush() {
         list.clear();
+        sourceState.updateScoreboard();
     }
 
     @Override

@@ -28,6 +28,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.listener;
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -63,6 +64,7 @@ public class WandListener implements EventListener<InteractBlockEvent> {
                         player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
                         FCPacketManager.instance().sendPos(player, positions);
                     }
+                    FCStateManager.instance().getStateMap().get(player).updateScoreboard();
                     event.setCancelled(true);
                 }
             }

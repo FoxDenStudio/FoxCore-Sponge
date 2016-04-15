@@ -36,6 +36,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public final class FCUtil {
@@ -97,7 +98,7 @@ public final class FCUtil {
         }
     }
 
-    public static boolean isUserOnList(List<User> list, User user) {
+    public static boolean isUserInCollection(Collection<User> list, User user) {
         //System.out.println(user.getUniqueId());
         for (User u : list) {
             //System.out.println(u.getUniqueId());

@@ -27,6 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.state.selection;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.StateFieldBase;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
@@ -43,12 +44,12 @@ public class SelectionStateField extends StateFieldBase {
     private List<ISelection> selections;
     private ISelection currentSelection;
 
-    public SelectionStateField() {
-        super("Current Selection");
+    public SelectionStateField(SourceState sourceState) {
+        super("Current Selection", sourceState);
     }
 
     @Override
-    public Text currentState() {
+    public Text currentState(CommandSource source) {
         return Text.of();
     }
 
@@ -59,6 +60,11 @@ public class SelectionStateField extends StateFieldBase {
 
     @Override
     public List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public List<Text> getScoreboardText() {
         return ImmutableList.of();
     }
 

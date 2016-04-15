@@ -25,22 +25,40 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
+import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IStateField {
 
     String getName();
 
-    Text currentState();
+    Text currentState(CommandSource source);
 
     ProcessResult modify(CommandSource source, String arguments) throws CommandException;
 
     List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException;
+
+    default Optional<Text> getScoreboardTitle() {
+        return Optional.empty();
+    }
+
+    default List<Text> getScoreboardText() {
+        return ImmutableList.of();
+    }
+
+    default boolean showScoreboard() {
+        return false;
+    }
+
+    default boolean prioritizeLast(){
+        return false;
+    }
 
     void flush();
 

@@ -27,9 +27,20 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scoreboard.Score;
+import org.spongepowered.api.scoreboard.Scoreboard;
+import org.spongepowered.api.scoreboard.critieria.Criteria;
+import org.spongepowered.api.scoreboard.displayslot.DisplaySlots;
+import org.spongepowered.api.scoreboard.objective.Objective;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SourceState {
 
@@ -90,5 +101,64 @@ public class SourceState {
 
     public CommandSource getSource() {
         return source;
+    }
+
+    public void updateScoreboard() {
+        Scoreboard scoreboard = Scoreboard.builder().build();
+        Objective objective = Objective.builder().displayName(Text.of(TextColors.GOLD, "    Foxguard State    ")).name("foxguardstate").criterion(Criteria.DUMMY).build();
+        scoreboard.addObjective(objective);
+        objective.getScores().values().forEach(objective::removeScore);
+        Map<IStateField, List<Text>> stateText = new HashMap<>();
+        this.state.values().stream().filter(IStateField::showScoreboard).forEach(field -> stateText.put(field, field.getScoreboardText()));
+        int entries = stateText.values().stream().mapToInt(List::size).sum();
+        int available = 15 - stateText.size();
+        if (available < 1) {
+            int index = 15;
+            for (IStateField field : stateText.keySet()) {
+                Score score = objective.getOrCreateScore(field.getScoreboardTitle().orElse(Text.of(TextColors.GREEN, field.getName())));
+                score.setScore(index--);
+                if (index < 1) break;
+            }
+        } else if (entries > available) {
+            Map<IStateField, Double> score = new HashMap<>();
+            for (Map.Entry<IStateField, List<Text>> entry : stateText.entrySet()) {
+                score.put(entry.getKey(), ((double) entry.getValue().size()) * available / entries);
+            }
+            Map<IStateField, Integer> count = new HashMap<>();
+            for (Map.Entry<IStateField, Double> entry : score.entrySet()) {
+                count.put(entry.getKey(), (int) Math.floor(entry.getValue()));
+                entry.setValue(entry.getValue() % 1);
+            }
+            int left = available - count.values().stream().mapToInt(Integer::intValue).sum();
+            List<IStateField> priorityList = score.keySet().stream().sorted((o1, o2) -> -score.get(o1).compareTo(score.get(o2))).collect(Collectors.toList());
+            for (int i = 0; i < left; i++) {
+                IStateField field = priorityList.get(i);
+                count.put(field, count.get(field) + 1);
+            }
+            int index = 15;
+            for (Map.Entry<IStateField, List<Text>> entry : stateText.entrySet()) {
+                Score fieldScore = objective.getOrCreateScore(entry.getKey().getScoreboardTitle().orElse(Text.of(TextColors.GREEN, entry.getKey().getName())));
+                fieldScore.setScore(index--);
+                final int end = entry.getKey().prioritizeLast() ? entry.getValue().size() : count.get(entry.getKey());
+                for (int i = (entry.getKey().prioritizeLast() ? entry.getValue().size() - count.get(entry.getKey()) : 0); i < end; i++) {
+                    Score lineScore = objective.getOrCreateScore(entry.getValue().get(i));
+                    lineScore.setScore(index--);
+                }
+            }
+        } else {
+            int index = entries + (int) (stateText.values().stream().filter(list -> list.size() > 0).count());
+            for (Map.Entry<IStateField, List<Text>> entry : stateText.entrySet()) {
+                Score fieldScore = objective.getOrCreateScore(entry.getKey().getScoreboardTitle().orElse(Text.of(TextColors.GREEN, entry.getKey().getName())));
+                fieldScore.setScore(index--);
+                for (Text line : entry.getValue()) {
+                    Score lineScore = objective.getOrCreateScore(line);
+                    lineScore.setScore(index--);
+                }
+            }
+        }
+        scoreboard.updateDisplaySlot(objective, DisplaySlots.SIDEBAR);
+        if (source instanceof Player) {
+            ((Player) source).setScoreboard(scoreboard);
+        }
     }
 }

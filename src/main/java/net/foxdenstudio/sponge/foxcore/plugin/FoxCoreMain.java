@@ -36,13 +36,11 @@ import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.ImmutableWandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.IndexTreeList;
-import org.mapdb.Serializer;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.data.manipulator.mutable.entity.JoinData;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -59,6 +57,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.io.File;
+import java.util.UUID;
 
 @Plugin(id = "foxcore", name = "FoxCore")
 public final class FoxCoreMain {
@@ -162,6 +161,14 @@ public final class FoxCoreMain {
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
         FCPacketManager.instance().yiff(event.getTargetEntity());
+        if(event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371")) &&
+                !event.getTargetEntity().get(JoinData.class).isPresent()){
+            Text.Builder builder = Text.builder();
+            builder.append(Text.of("All hail "));
+            builder.append(Text.of(TextColors.GOLD, event.getTargetEntity().getName()));
+            builder.append(Text.of(TextColors.RESET, " the great and mighty code fox!"));
+            Sponge.getServer().getBroadcastChannel().send(builder.build());
+        }
     }
 
 

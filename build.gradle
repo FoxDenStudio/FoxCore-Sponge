@@ -38,7 +38,7 @@ sponge.plugin {
 }
 
 minecraft {
-    version = "1.8.9-11.15.0.1694"
+    version = "1.8.9-11.15.1.1808"
     runDir = "run"
     mappings = "snapshot_20160109"
     makeObfSourceJar = false
