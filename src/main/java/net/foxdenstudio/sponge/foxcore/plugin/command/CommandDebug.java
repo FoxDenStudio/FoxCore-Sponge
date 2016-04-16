@@ -55,6 +55,10 @@ public class CommandDebug implements CommandCallable {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
+        if (!testPermission(source)) {
+            source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
+            return CommandResult.empty();
+        }
         if (debug.get(source).equals(Boolean.FALSE)) {
             debug.put(source, Boolean.TRUE);
             source.sendMessage(Text.of(TextColors.GREEN, "Debug mode enabled!"));

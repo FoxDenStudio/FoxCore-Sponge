@@ -57,6 +57,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.UUID;
 
 @Plugin(id = "foxcore", name = "FoxCore")
@@ -72,7 +73,7 @@ public final class FoxCoreMain {
     private EventManager eventManager;
     @Inject
     @ConfigDir(sharedRoot = true)
-    private File configDirectory;
+    private Path configDirectory;
     @Inject
     private PluginContainer container;
 
@@ -123,10 +124,11 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandCurrent(), "current", "cur", "c");
         fcDispatcher.register(new CommandState(), "state", "buffer", "set", "s");
         fcDispatcher.register(new CommandPosition(), "position", "pos", "p");
-        fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe");
+        fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe", "f");
         fcDispatcher.register(new CommandWand(), "wand", "tool", "stick", "w");
         fcDispatcher.register(new CommandTest(), "test");
         fcDispatcher.register(new CommandDebug(), "debug");
+        fcDispatcher.register(new CommandHUD(), "hud", "scoreboard");
 
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
     }
@@ -161,8 +163,8 @@ public final class FoxCoreMain {
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
         FCPacketManager.instance().yiff(event.getTargetEntity());
-        if(event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371")) &&
-                !event.getTargetEntity().get(JoinData.class).isPresent()){
+        if (event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371")) &&
+                !event.getTargetEntity().get(JoinData.class).isPresent()) {
             Text.Builder builder = Text.builder();
             builder.append(Text.of("All hail "));
             builder.append(Text.of(TextColors.GOLD, event.getTargetEntity().getName()));
@@ -171,6 +173,8 @@ public final class FoxCoreMain {
         }
     }
 
-
+    public Path getConfigDirectory() {
+        return configDirectory;
+    }
 
 }
