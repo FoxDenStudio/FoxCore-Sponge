@@ -3,6 +3,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.FCConfigManager;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
+import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
@@ -23,9 +24,12 @@ import java.util.Optional;
  */
 public class CommandHUD implements CommandCallable {
 
+    private static final String[] RESET_ALIASES = {"reset", "r", "clear"};
+
     private static CommandHUD instance;
 
-    private Map<Player, Boolean> isHUDEnabled = new CacheMap<>((k, m) -> FCConfigManager.getInstance().isDefaultHUDOn());
+    private Map<Player, Boolean> isHUDEnabled = new CacheMap<>((k, m) -> FCConfigManager.getInstance().isDefaultHUDOn() &&
+            (!(k instanceof Player) || testPermission((Player) k)));
 
     public CommandHUD() {
         if (instance == null) instance = this;
@@ -49,9 +53,11 @@ public class CommandHUD implements CommandCallable {
                 if (isHUDEnabled.get(source)) builder.append(Text.of(TextColors.GREEN, "on"));
                 else builder.append(Text.of(TextColors.RED, "off"));
                 builder.append(Text.of(TextColors.RESET, "!"));
+                source.sendMessage(builder.build());
             } else {
                 if (parse.args[0].equalsIgnoreCase("on")) {
                     isHUDEnabled.put((Player) source, true);
+                    source.sendMessage(Text.of("Turned ", TextColors.GREEN, "on", TextColors.RESET, " the HUD!"));
                 } else if (parse.args[0].equalsIgnoreCase("off")) {
                     isHUDEnabled.put((Player) source, false);
                     if (Sponge.getServer().getServerScoreboard().isPresent()) {
@@ -59,13 +65,15 @@ public class CommandHUD implements CommandCallable {
                     } else {
                         ((Player) source).setScoreboard(Scoreboard.builder().build());
                     }
-                } else if (parse.args[0].equalsIgnoreCase("reset")) {
+                    source.sendMessage(Text.of("Turned ", TextColors.RED, "off", TextColors.RESET, " the HUD!"));
+                } else if (Aliases.isIn(RESET_ALIASES, parse.args[0])) {
                     if (Sponge.getServer().getServerScoreboard().isPresent()) {
                         ((Player) source).setScoreboard(Sponge.getServer().getServerScoreboard().get());
                     } else {
                         ((Player) source).setScoreboard(Scoreboard.builder().build());
                     }
-                }
+                    source.sendMessage(Text.of("HUD reset!"));
+                } else throw new CommandException(Text.of("Not a valid HUD command!"));
             }
         } else source.sendMessage(Text.of("HUD controls are only available for players!"));
         return CommandResult.empty();

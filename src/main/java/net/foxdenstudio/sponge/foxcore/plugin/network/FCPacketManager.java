@@ -44,7 +44,6 @@ public class FCPacketManager {
     private FCPacketManager() {
 
         channel = FoxCoreMain.instance().game().getChannelRegistrar().createRawChannel(FoxCoreMain.instance(), "foxcore");
-        //channel.registerMessage(YiffMessage.class, 69);
     }
 
     public static void init() {
@@ -55,11 +54,11 @@ public class FCPacketManager {
         return instance;
     }
 
-    public void yiff(Player player) {
-        FoxCoreMain.instance().logger().info("Yiffing " + player.getName());
+    public void yerf(Player player) {
+        FoxCoreMain.instance().logger().debug("Saying hi to " + player.getName());
         channel.sendTo(player, load -> {
             load.writeInteger(PRINTSTRING.ID);
-            load.writeString("Yiff. (stupid Tzk told me to change it x3)");
+            load.writeString("Yerf. ^^ (I got told to change it. Again. x3)");
         });
     }
 

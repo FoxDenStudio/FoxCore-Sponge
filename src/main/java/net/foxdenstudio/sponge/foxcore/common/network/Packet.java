@@ -26,6 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.common.network;
 
 public enum Packet {
+    HANDSHAKE(0),
     PRINTSTRING(1),
     POSITION(2);
 

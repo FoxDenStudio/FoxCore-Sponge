@@ -162,14 +162,10 @@ public final class FoxCoreMain {
 
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
-        FCPacketManager.instance().yiff(event.getTargetEntity());
+        FCPacketManager.instance().yerf(event.getTargetEntity());
         if (event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371")) &&
                 !event.getTargetEntity().get(JoinData.class).isPresent()) {
-            Text.Builder builder = Text.builder();
-            builder.append(Text.of("All hail "));
-            builder.append(Text.of(TextColors.GOLD, event.getTargetEntity().getName()));
-            builder.append(Text.of(TextColors.RESET, " the great and mighty code fox!"));
-            Sponge.getServer().getBroadcastChannel().send(builder.build());
+            FoxCoreMain.instance().logger().info("A code fox has slipped into the server.");
         }
     }
 
