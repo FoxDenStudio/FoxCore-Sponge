@@ -30,7 +30,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
-import net.foxdenstudio.sponge.foxcore.common.network.Packet;
+import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPackets;
 import net.foxdenstudio.sponge.foxcore.mod.FoxCoreForgeMain;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
@@ -43,7 +43,7 @@ public class StringPrinter extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FMLProxyPacket) {
             ByteBuf data = ((FMLProxyPacket) msg).payload();
-            if (data.isReadable(4) && data.getInt(0) == Packet.PRINTSTRING.ID) {
+            if (data.isReadable(4) && data.getInt(0) == ServerPackets.PRINTSTRING.ID) {
                 data.skipBytes(4);
                 try {
                     while (data.isReadable()) {

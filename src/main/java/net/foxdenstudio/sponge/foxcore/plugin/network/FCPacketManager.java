@@ -27,13 +27,14 @@ package net.foxdenstudio.sponge.foxcore.plugin.network;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
+import org.spongepowered.api.Platform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.network.ChannelBinding;
 
 import java.util.List;
 
-import static net.foxdenstudio.sponge.foxcore.common.network.Packet.POSITION;
-import static net.foxdenstudio.sponge.foxcore.common.network.Packet.PRINTSTRING;
+import static net.foxdenstudio.sponge.foxcore.common.network.server.ServerPackets.POSITION;
+import static net.foxdenstudio.sponge.foxcore.common.network.server.ServerPackets.PRINTSTRING;
 
 public class FCPacketManager {
 
@@ -55,7 +56,7 @@ public class FCPacketManager {
     }
 
     public void yerf(Player player) {
-        FoxCoreMain.instance().logger().debug("Saying hi to " + player.getName());
+        FoxCoreMain.instance().logger().info("Saying hi to " + player.getName());
         channel.sendTo(player, load -> {
             load.writeInteger(PRINTSTRING.ID);
             load.writeString("Yerf. ^^ (I got told to change it. Again. x3)");
@@ -63,7 +64,6 @@ public class FCPacketManager {
     }
 
     public void sendPos(Player player, List<Vector3i> pos) {
-        //FoxCoreMain.instance().logger().info("Sending positions to " + player.getName());
         channel.sendTo(player, load -> {
             load.writeInteger(POSITION.ID);
             pos.forEach(vec -> load.writeInteger(vec.getX()).writeInteger(vec.getY()).writeInteger(vec.getZ()));
