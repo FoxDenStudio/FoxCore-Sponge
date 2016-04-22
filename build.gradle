@@ -22,7 +22,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'net.foxdenstudio.sponge.foxcore'
-version 'ALPHA-SNAPSHOT'
+version '0.8.0'
 
 if (System.env.TRAVIS) {
     String tempVersion = ''
@@ -31,9 +31,10 @@ if (System.env.TRAVIS) {
         if(tempVersion.startsWith("v")){
             tempVersion = tempVersion.substring(1)
         }
-        tempVersion += "-"
+        tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
+    } else {
+        tempVersion = version + "-$System.env.TRAVIS_BUILD_NUMBER-SNAPSHOT"
     }
-    tempVersion += "$System.env.TRAVIS_BUILD_NUMBER"
     version tempVersion
 }
 
