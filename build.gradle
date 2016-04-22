@@ -15,7 +15,7 @@ buildscript {
 }
 
 plugins {
-  id 'org.spongepowered.plugin' version '0.5.1'
+    id 'org.spongepowered.plugin' version '0.5.1'
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -25,7 +25,16 @@ group 'net.foxdenstudio.sponge.foxcore'
 version 'ALPHA-SNAPSHOT'
 
 if (System.env.TRAVIS) {
-    version = "$System.env.TRAVIS_TAG-$System.env.TRAVIS_BUILD_NUMBER"
+    String tempVersion = ''
+    if (System.env.TRAVIS_TAG) {
+        tempVersion = System.env.TRAVIS_TAG;
+        if(tempVersion.startsWith("v")){
+            tempVersion = tempVersion.substring(1)
+        }
+        tempVersion += "-"
+    }
+    tempVersion += "$System.env.TRAVIS_BUILD_NUMBER"
+    version tempVersion
 }
 
 apply from: project.file("sponge.gradle")
@@ -87,15 +96,20 @@ shadowJar {
         include dependency('org.mapdb:mapdb')
     }
     relocate 'com.flowpowered.math', 'net.foxdenstudio.shadow.flowmath'
-    //relocate 'org.mapdb'
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
 }
 
 task serverJar(type: ShadowJar) {
     classifier = 'server'
+    dependencies {
+        include dependency('org.mapdb:mapdb')
+    }
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     from(sourceSets.main.output) {
         exclude "net/foxdenstudio/sponge/foxcore/mod"
     }
-    configurations = [ configurations.runtime ]
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
 reobf {
