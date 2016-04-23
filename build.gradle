@@ -67,8 +67,8 @@ repositories {
 dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"
     compile 'com.flowpowered:flow-math:1.0.1'
-    compile 'org.mapdb:mapdb:3.0.0-M5'
-	compile 'org.mapdb:elsa:3.0.0-M2'
+    compile 'org.mapdb:mapdb:3.0.0-M6'
+//	compile 'org.mapdb:elsa:3.0.0-M2'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
@@ -99,6 +99,7 @@ shadowJar {
         include dependency('com.flowpowered:flow-math')
         include dependency('org.mapdb:mapdb')
 		include dependency('org.mapdb:elsa')
+//        include dependency('')
     }
     relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
 }
@@ -107,6 +108,7 @@ task serverJar(type: ShadowJar) {
     classifier = 'server'
     dependencies {
         include dependency('org.mapdb:mapdb')
+        include dependency('org.mapdb:elsa')
     }
     relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     from(sourceSets.main.output) {
@@ -114,6 +116,21 @@ task serverJar(type: ShadowJar) {
     }
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+}
+
+task libJar(type: ShadowJar){
+    classifier = 'lib'
+    dependencies{
+        include dependency('com.flowpowered:flow-math')
+        include dependency('org.mapdb:mapdb')
+        include dependency('org.mapdb:elsa')
+        include dependency('org.eclipse.collections:eclipse-collections')
+        include dependency('org.eclipse.collections:eclipse-collections-api')
+        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
+        include dependency('org.jetbrains.kotlin:kotlin-runtime')
+        include dependency('net.jpountz.lz4:lz4')
+    }
 }
 
 reobf {

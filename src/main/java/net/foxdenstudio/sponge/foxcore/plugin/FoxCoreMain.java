@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
@@ -39,8 +40,12 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.manipulator.mutable.entity.JoinData;
+import org.spongepowered.api.effect.Viewer;
+import org.spongepowered.api.effect.particle.BlockParticle;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
