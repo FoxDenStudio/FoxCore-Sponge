@@ -98,10 +98,15 @@ shadowJar {
     dependencies {
         include dependency('com.flowpowered:flow-math')
         include dependency('org.mapdb:mapdb')
-		include dependency('org.mapdb:elsa')
-//        include dependency('')
+        include dependency('org.mapdb:elsa')
+        include dependency('org.eclipse.collections:eclipse-collections')
+        include dependency('org.eclipse.collections:eclipse-collections-api')
+        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
+        include dependency('org.jetbrains.kotlin:kotlin-runtime')
+        include dependency('net.jpountz.lz4:lz4')
+        include dependency('com.google.guava:guava:19.0')
     }
-    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
 }
 
 task serverJar(type: ShadowJar) {
@@ -109,13 +114,31 @@ task serverJar(type: ShadowJar) {
     dependencies {
         include dependency('org.mapdb:mapdb')
         include dependency('org.mapdb:elsa')
+        include dependency('org.eclipse.collections:eclipse-collections')
+        include dependency('org.eclipse.collections:eclipse-collections-api')
+        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
+        include dependency('org.jetbrains.kotlin:kotlin-runtime')
+        include dependency('net.jpountz.lz4:lz4')
+        include dependency('com.google.guava:guava:19.0')
     }
-    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     from(sourceSets.main.output) {
         exclude "net/foxdenstudio/sponge/foxcore/mod"
     }
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+}
+
+task liteJar(type: Jar) {
+    classifier = 'lite'
+    from sourceSets.main.output
+}
+
+task serverLiteJar(type: Jar) {
+    classifier = 'server-lite'
+    from(sourceSets.main.output) {
+        exclude "net/foxdenstudio/sponge/foxcore/mod"
+    }
 }
 
 task libJar(type: ShadowJar){
@@ -130,7 +153,27 @@ task libJar(type: ShadowJar){
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
         include dependency('net.jpountz.lz4:lz4')
+        include dependency('com.google.guava:guava:19.0')
     }
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+}
+
+task serverLibJar(type: ShadowJar){
+    classifier = 'server-lib'
+    dependencies{
+        include dependency('org.mapdb:mapdb')
+        include dependency('org.mapdb:elsa')
+        include dependency('org.eclipse.collections:eclipse-collections')
+        include dependency('org.eclipse.collections:eclipse-collections-api')
+        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
+        include dependency('org.jetbrains.kotlin:kotlin-runtime')
+        include dependency('net.jpountz.lz4:lz4')
+        include dependency('com.google.guava:guava:19.0')
+    }
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
 reobf {
@@ -140,6 +183,10 @@ reobf {
 artifacts {
     archives shadowJar
     archives serverJar
+    archives liteJar
+    archives serverLiteJar
+    archives libJar
+    archives serverLibJar
 }
 
 task wrapper(type: Wrapper) {
