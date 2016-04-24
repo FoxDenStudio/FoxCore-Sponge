@@ -105,6 +105,7 @@ shadowJar {
         include dependency('net.jpountz.lz4:lz4')
         include dependency('com.google.guava:guava:19.0')
     }
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
 }
 
 task serverJar(type: ShadowJar) {
@@ -124,6 +125,7 @@ task serverJar(type: ShadowJar) {
         exclude "net/foxdenstudio/sponge/foxcore/mod"
     }
     configurations = [project.configurations.runtime]
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
@@ -153,6 +155,7 @@ task libJar(type: ShadowJar){
         include dependency('com.google.guava:guava:19.0')
     }
     configurations = [project.configurations.runtime]
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
@@ -170,6 +173,7 @@ task serverLibJar(type: ShadowJar){
         include dependency('com.google.guava:guava:19.0')
     }
     configurations = [project.configurations.runtime]
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
