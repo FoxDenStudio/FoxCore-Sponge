@@ -66,7 +66,6 @@ repositories {
 
 dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"
-    compile 'com.flowpowered:flow-math:1.0.1'
     compile 'org.mapdb:mapdb:3.0.0-M6'
 //	compile 'org.mapdb:elsa:3.0.0-M2'
     testCompile group: 'junit', name: 'junit', version: '4.11'
@@ -96,7 +95,6 @@ shadowJar {
     classifier = ''
     dependsOn reobfJar
     dependencies {
-        include dependency('com.flowpowered:flow-math')
         include dependency('org.mapdb:mapdb')
         include dependency('org.mapdb:elsa')
         include dependency('org.eclipse.collections:eclipse-collections')
@@ -107,6 +105,7 @@ shadowJar {
         include dependency('net.jpountz.lz4:lz4')
         include dependency('com.google.guava:guava:19.0')
     }
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
 }
 
 task serverJar(type: ShadowJar) {
@@ -126,6 +125,7 @@ task serverJar(type: ShadowJar) {
         exclude "net/foxdenstudio/sponge/foxcore/mod"
     }
     configurations = [project.configurations.runtime]
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
@@ -144,7 +144,6 @@ task serverLiteJar(type: Jar) {
 task libJar(type: ShadowJar){
     classifier = 'lib'
     dependencies{
-        include dependency('com.flowpowered:flow-math')
         include dependency('org.mapdb:mapdb')
         include dependency('org.mapdb:elsa')
         include dependency('org.eclipse.collections:eclipse-collections')
@@ -156,6 +155,7 @@ task libJar(type: ShadowJar){
         include dependency('com.google.guava:guava:19.0')
     }
     configurations = [project.configurations.runtime]
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
@@ -173,6 +173,7 @@ task serverLibJar(type: ShadowJar){
         include dependency('com.google.guava:guava:19.0')
     }
     configurations = [project.configurations.runtime]
+    relocate 'org.mapdb', 'net.foxdenstudio.shadow.mapdb'
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
