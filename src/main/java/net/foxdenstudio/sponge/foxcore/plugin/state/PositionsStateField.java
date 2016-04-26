@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
-import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -162,7 +162,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         }
         this.list.add(new Vector3i(x, y, z));
         if (source instanceof Player) {
-            FCPacketManager.instance().sendPos((Player) source, FCUtil.getPositions(source));
+            FCUtil.updatePositions((Player) source);
         }
         sourceState.updateScoreboard();
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
@@ -198,7 +198,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             throw new ArgumentParseException(Text.of("Index out of bounds! (1 - " + this.list.size()), parse.args[0], 0);
         }
         if (source instanceof Player) {
-            FCPacketManager.instance().sendPos((Player) source, FCUtil.getPositions(source));
+            FCUtil.updatePositions((Player) source);
         }
         return ProcessResult.of(true, Text.of("Successfully removed position from your state buffer!"));
     }
@@ -207,7 +207,7 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
     public void flush() {
         super.flush();
         if (sourceState.getSource() instanceof Player) {
-            FCPacketManager.instance().sendPos((Player) sourceState.getSource(), FCUtil.getPositions(sourceState.getSource()));
+            FCUtil.updatePositions((Player) sourceState.getSource());
         }
     }
 }

@@ -11,6 +11,7 @@ import org.spongepowered.api.network.ChannelBuf;
  */
 public class ServerPrintStringPacket implements IServerPacket {
 
+    public static final String ID = "serverprintstring";
     private final String[] toPrint;
 
     public ServerPrintStringPacket(String... toPrint) {
@@ -30,4 +31,8 @@ public class ServerPrintStringPacket implements IServerPacket {
             buf.writeString(str);
     }
 
+    @Override
+    public String id() {
+        return ID;
+    }
 }

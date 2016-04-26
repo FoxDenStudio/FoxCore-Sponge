@@ -25,21 +25,32 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
+import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.client.ClientPackets;
+import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPackets;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
+import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class PacketManager {
+public class FCClientNetworkManager {
 
-    public static PacketManager instance;
+    private static FCClientNetworkManager instance;
 
-    public final FMLEmbeddedChannel channelInstance;
+    private final FMLEmbeddedChannel channelInstance;
+    private final Map<Integer, ServerPackets> packetMapping;
 
-    private PacketManager() {
-
+    private FCClientNetworkManager() {
+        packetMapping = new HashMap<>();
         if (NetworkRegistry.INSTANCE.hasChannel("foxcore", Side.CLIENT)) {
             String inboundHandlerName = null;
             this.channelInstance = NetworkRegistry.INSTANCE.getChannel("foxcore", Side.CLIENT);
@@ -51,13 +62,12 @@ public class PacketManager {
                 }
             }
             if (inboundHandlerName != null) {
-                channelInstance.pipeline().addBefore(inboundHandlerName, "FCPositionHandler", new PositionHandler());
-                channelInstance.pipeline().addBefore(inboundHandlerName, "StringPrinter", new StringPrinter());
+                channelInstance.pipeline().addBefore(inboundHandlerName, "FCPacketHandler", new PacketHandler());
             } else {
-                channelInstance.pipeline().addLast(new PositionHandler(), new StringPrinter());
+                channelInstance.pipeline().addLast(new PacketHandler());
             }
         } else {
-            this.channelInstance = NetworkRegistry.INSTANCE.newChannel("foxcore", new PositionHandler(), new StringPrinter()).get(Side.CLIENT);
+            this.channelInstance = NetworkRegistry.INSTANCE.newChannel("foxcore", new PacketHandler()).get(Side.CLIENT);
         }
         System.out.println("------------------------------------------------------------");
         System.out.println(channelInstance.pipeline().toMap());
@@ -66,10 +76,19 @@ public class PacketManager {
         System.out.println("------------------------------------------------------------");*/
     }
 
-    public static PacketManager instance() {
-        if (instance == null) instance = new PacketManager();
+    public static FCClientNetworkManager instance() {
+        if (instance == null) instance = new FCClientNetworkManager();
         return instance;
     }
 
+    public Map<Integer, ServerPackets> getPacketMapping() {
+        return packetMapping;
+    }
 
+    public void sendPacket(IClientPacket clientPacket){
+        ByteBuf byteBuf = Unpooled.buffer();
+        clientPacket.write(byteBuf);
+        channelInstance.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+        channelInstance.writeAndFlush(new FMLProxyPacket(new PacketBuffer(byteBuf), "foxcore"));
+    }
 }

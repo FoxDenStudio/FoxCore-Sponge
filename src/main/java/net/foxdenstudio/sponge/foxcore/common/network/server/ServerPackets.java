@@ -27,18 +27,28 @@ package net.foxdenstudio.sponge.foxcore.common.network.server;
 
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacket;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public enum ServerPackets {
-    HANDSHAKE(0, ServerHandshakePacket::new),
-    PRINTSTRING(1, ServerPrintStringPacket::new),
-    POSITION(2, ServerPositionPacket::new);
+    HANDSHAKE(ServerHandshakePacket.ID, ServerHandshakePacket::new),
+    PRINTSTRING(ServerPrintStringPacket.ID, ServerPrintStringPacket::new),
+    POSITION(ServerPositionPacket.ID, ServerPositionPacket::new);
 
-    public final int ID;
+    public static final Map<String, ServerPackets> map = new HashMap<>();
+
+    public final String id;
     public final Supplier<IServerPacket> supplier;
 
-    ServerPackets(int id, Supplier<IServerPacket> supplier) {
-        ID = id;
+    ServerPackets(String id, Supplier<IServerPacket> supplier) {
+        this.id = id;
         this.supplier = supplier;
+    }
+
+    static {
+        for (ServerPackets sp : ServerPackets.values()) {
+            map.put(sp.id, sp);
+        }
     }
 }

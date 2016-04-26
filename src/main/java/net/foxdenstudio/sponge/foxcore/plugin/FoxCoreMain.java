@@ -25,11 +25,11 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
+import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
-import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.PositionStateFieldFactory;
@@ -39,13 +39,7 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.data.manipulator.mutable.entity.JoinData;
-import org.spongepowered.api.effect.Viewer;
-import org.spongepowered.api.effect.particle.BlockParticle;
-import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -61,7 +55,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -112,7 +105,7 @@ public final class FoxCoreMain {
         logger.info("Registering positions state field");
         FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Initializing network packet manager");
-        FCPacketManager.init();
+        FCServerNetworkManager.init();
         logger.info("Registering Wand DataManipulators");
         registerData();
         logger.info("Registering event listeners");
@@ -167,7 +160,8 @@ public final class FoxCoreMain {
 
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
-        FCPacketManager.instance().yerf(event.getTargetEntity());
+        FoxCoreMain.instance().logger().info("Saying hi to " + event.getTargetEntity().getName());
+        FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerPrintStringPacket("Yerf. ^^ (I got told to change it. Again. x3)"));
         if (event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371"))) {
             FoxCoreMain.instance().logger().info("A code fox has slipped into the server.");
         }

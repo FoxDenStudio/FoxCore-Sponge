@@ -27,9 +27,12 @@ package net.foxdenstudio.sponge.foxcore.common;
 
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
+import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPositionPacket;
+import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -120,6 +123,11 @@ public final class FCUtil {
     @SuppressWarnings("unchecked")
     public static List<Vector3i> getPositions(CommandSource source) {
         return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionsStateField.ID).get()).getList();
+    }
+
+    public static void updatePositions(Player player){
+        FCServerNetworkManager.instance().sendPacket(player, new ServerPositionPacket(FCUtil.getPositions(player)));
+
     }
 
     public static Vector3f RGBfromHSV(double h, double s, double v) {

@@ -13,7 +13,15 @@ import java.util.List;
  */
 public class ServerPositionPacket implements IServerPacket {
 
+    public static final String ID = "serverpositionpacket";
     List<Vector3i> positionList;
+
+    public ServerPositionPacket(List<Vector3i> positionList) {
+        this.positionList = positionList;
+    }
+
+    public ServerPositionPacket() {
+    }
 
     @Override
     public void read(ByteBuf payload) {
@@ -29,4 +37,8 @@ public class ServerPositionPacket implements IServerPacket {
         positionList.forEach(vec -> buf.writeInteger(vec.getX()).writeInteger(vec.getY()).writeInteger(vec.getZ()));
     }
 
+    @Override
+    public String id() {
+        return ID;
+    }
 }

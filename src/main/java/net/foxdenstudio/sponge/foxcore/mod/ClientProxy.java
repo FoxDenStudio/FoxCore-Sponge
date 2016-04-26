@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.mod;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.mod.network.PacketManager;
+import net.foxdenstudio.sponge.foxcore.mod.network.FCClientNetworkManager;
 import net.foxdenstudio.sponge.foxcore.mod.render.PositionRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,7 +44,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerNetworkHandlers() {
-        PacketManager.instance();
+        FCClientNetworkManager.instance();
     }
 
     @Override

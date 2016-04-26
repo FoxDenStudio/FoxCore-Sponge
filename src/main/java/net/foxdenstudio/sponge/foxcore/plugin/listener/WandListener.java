@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.listener;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.FCUtil;
-import net.foxdenstudio.sponge.foxcore.plugin.network.FCPacketManager;
+import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import org.spongepowered.api.block.BlockTypes;
@@ -57,12 +57,12 @@ public class WandListener implements EventListener<InteractBlockEvent> {
                         if (positions.contains(pos)) {
                             positions.remove(positions.lastIndexOf(pos));
                             player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-                            FCPacketManager.instance().sendPos(player, positions);
+                            FCUtil.updatePositions(player);
                         }
                     } else if (event instanceof InteractBlockEvent.Secondary) {
                         positions.add(pos);
                         player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-                        FCPacketManager.instance().sendPos(player, positions);
+                        FCUtil.updatePositions(player);
                     }
                     FCStateManager.instance().getStateMap().get(player).updateScoreboard();
                     event.setCancelled(true);
