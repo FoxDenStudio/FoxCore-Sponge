@@ -30,7 +30,6 @@ import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
-import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;

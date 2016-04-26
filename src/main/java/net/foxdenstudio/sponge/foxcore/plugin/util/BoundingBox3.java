@@ -30,7 +30,6 @@ import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.world.Location;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 public class BoundingBox3 implements Serializable {
 
@@ -88,8 +87,8 @@ public class BoundingBox3 implements Serializable {
                 y >= this.a.getY() && y <= this.b.getY() + 1);
     }
 
-    public long size(){
-        return (b.getX() - a.getX() + 1) * (b.getY() - a.getY() + 1)* (b.getY() - a.getY() + 1);
+    public long size() {
+        return (b.getX() - a.getX() + 1) * (b.getY() - a.getY() + 1) * (b.getY() - a.getY() + 1);
     }
 
     @Override

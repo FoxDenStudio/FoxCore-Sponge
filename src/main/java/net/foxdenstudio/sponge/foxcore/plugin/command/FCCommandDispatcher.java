@@ -25,9 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spongepowered.api.command.CommandMessageFormatting.SPACE_TEXT;
-
 import com.google.common.collect.*;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import org.spongepowered.api.command.*;
@@ -42,6 +39,9 @@ import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.spongepowered.api.command.CommandMessageFormatting.SPACE_TEXT;
 
 public class FCCommandDispatcher implements Dispatcher {
 

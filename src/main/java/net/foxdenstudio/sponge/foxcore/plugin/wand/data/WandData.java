@@ -28,7 +28,6 @@ package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractData;
 import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.value.ValueFactory;

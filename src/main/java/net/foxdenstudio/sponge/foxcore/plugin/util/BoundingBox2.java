@@ -31,7 +31,6 @@ import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.world.Location;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 public class BoundingBox2 implements Serializable {
 

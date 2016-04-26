@@ -1,8 +1,6 @@
 package net.foxdenstudio.sponge.foxcore.plugin.state.selection;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox2;
 import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
 import org.spongepowered.api.text.Text;
 
@@ -23,7 +21,7 @@ public class CubloidSelection implements ISelection {
 
     @Override
     public boolean contains(int x, int y, int z) {
-        return boundingBox.contains(x,y,z);
+        return boundingBox.contains(x, y, z);
     }
 
     @Override

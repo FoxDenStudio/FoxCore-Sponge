@@ -2,7 +2,9 @@ package net.foxdenstudio.sponge.foxcore.common.network.server;
 
 import io.netty.buffer.ByteBuf;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.client.ClientHandshakePacket;
 import net.foxdenstudio.sponge.foxcore.mod.network.FCClientNetworkManager;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.spongepowered.api.network.ChannelBuf;
 
@@ -48,6 +50,7 @@ public class ServerHandshakePacket implements IServerPacket {
             serverMap.put(entry.getKey(), ServerPackets.map.get(entry.getValue()));
         }
 
+        FCClientNetworkManager.instance().sendPacket(new ClientHandshakePacket("foxcore", Loader.instance().getIndexedModList().get("foxcore").getVersion()));
     }
 
     @Override

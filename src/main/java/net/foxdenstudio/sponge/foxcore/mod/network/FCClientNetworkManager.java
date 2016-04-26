@@ -26,8 +26,8 @@
 package net.foxdenstudio.sponge.foxcore.mod.network;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.client.ClientPackets;
@@ -69,10 +69,8 @@ public class FCClientNetworkManager {
         } else {
             this.channelInstance = NetworkRegistry.INSTANCE.newChannel("foxcore", new PacketHandler()).get(Side.CLIENT);
         }
-        System.out.println("------------------------------------------------------------");
+        /*System.out.println("------------------------------------------------------------");
         System.out.println(channelInstance.pipeline().toMap());
-        System.out.println("------------------------------------------------------------");
-        /*System.out.println(NetworkRegistry.INSTANCE.newChannel("asdftest", new StringPrinter()).get(Side.CLIENT).pipeline().toMap());
         System.out.println("------------------------------------------------------------");*/
     }
 
@@ -85,10 +83,11 @@ public class FCClientNetworkManager {
         return packetMapping;
     }
 
-    public void sendPacket(IClientPacket clientPacket){
+    public void sendPacket(IClientPacket clientPacket) {
         ByteBuf byteBuf = Unpooled.buffer();
+        byteBuf.writeInt(ClientPackets.map.get(clientPacket.id()).ordinal());
         clientPacket.write(byteBuf);
         channelInstance.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-        channelInstance.writeAndFlush(new FMLProxyPacket(new PacketBuffer(byteBuf), "foxcore"));
+        channelInstance.writeAndFlush(new FMLProxyPacket(new PacketBuffer(byteBuf), "foxcore")).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 }

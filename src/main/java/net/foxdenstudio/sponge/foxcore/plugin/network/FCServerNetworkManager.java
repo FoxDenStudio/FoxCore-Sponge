@@ -29,6 +29,7 @@ import net.foxdenstudio.sponge.foxcore.common.network.IServerPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.client.ClientPackets;
 import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPackets;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
+import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -49,7 +50,7 @@ public class FCServerNetworkManager {
 
     private FCServerNetworkManager() {
         packetMapping = new HashMap<>();
-        clientModPresent = new HashMap<>();
+        clientModPresent = new CacheMap<>((k, v) -> false);
         channel = Sponge.getGame().getChannelRegistrar().createRawChannel(FoxCoreMain.instance(), "foxcore");
         channel.addListener(Platform.Type.SERVER, (data, connection, side) -> {
             if (connection instanceof PlayerConnection) {
@@ -58,7 +59,9 @@ public class FCServerNetworkManager {
                 if (id == 0) {
                     ClientPackets.HANDSHAKE.supplier.get().read(data, player);
                 } else {
-                    packetMapping.get(player).get(data.readInteger()).supplier.get().read(data, player);
+                    Map<Integer, ClientPackets> map = packetMapping.get(player);
+                    if (map.containsKey(id))
+                        map.get(id).supplier.get().read(data, player);
                 }
             }
         });
@@ -76,14 +79,20 @@ public class FCServerNetworkManager {
         return packetMapping;
     }
 
+    public Map<Player, Boolean> getClientModPresent() {
+        return clientModPresent;
+    }
+
     public void sendPacket(Player player, IServerPacket serverPacket) {
-        if (clientModPresent.get(player)) {
+        sendPacket(player, serverPacket, false);
+    }
+
+    public void sendPacket(Player player, IServerPacket serverPacket, boolean force) {
+        if (force || clientModPresent.get(player)) {
             channel.sendTo(player, load -> {
                 load.writeInteger(ServerPackets.map.get(serverPacket.id()).ordinal());
                 serverPacket.write(load);
             });
         }
     }
-
-
 }

@@ -125,9 +125,8 @@ public final class FCUtil {
         return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionsStateField.ID).get()).getList();
     }
 
-    public static void updatePositions(Player player){
+    public static void updatePositions(Player player) {
         FCServerNetworkManager.instance().sendPacket(player, new ServerPositionPacket(FCUtil.getPositions(player)));
-
     }
 
     public static Vector3f RGBfromHSV(double h, double s, double v) {

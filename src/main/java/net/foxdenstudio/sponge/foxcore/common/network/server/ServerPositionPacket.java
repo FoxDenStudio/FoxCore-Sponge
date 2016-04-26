@@ -3,6 +3,7 @@ package net.foxdenstudio.sponge.foxcore.common.network.server;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacket;
+import net.foxdenstudio.sponge.foxcore.mod.FoxCoreForgeMain;
 import org.spongepowered.api.network.ChannelBuf;
 
 import java.util.ArrayList;
@@ -28,8 +29,9 @@ public class ServerPositionPacket implements IServerPacket {
         positionList = new ArrayList<>();
         while (payload.isReadable(12)) {
             Vector3i pos = new Vector3i(payload.readInt(), payload.readInt(), payload.readInt());
-            pos.add(pos);
+            positionList.add(pos);
         }
+        FoxCoreForgeMain.proxy.updatePositionsList(positionList);
     }
 
     @Override

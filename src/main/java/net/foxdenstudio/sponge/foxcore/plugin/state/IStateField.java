@@ -56,7 +56,7 @@ public interface IStateField {
         return false;
     }
 
-    default boolean prioritizeLast(){
+    default boolean prioritizeLast() {
         return false;
     }
 

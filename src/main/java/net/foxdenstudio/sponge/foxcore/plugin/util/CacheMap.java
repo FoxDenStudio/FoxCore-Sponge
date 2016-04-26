@@ -25,7 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.util;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;

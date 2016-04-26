@@ -26,6 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
+import net.foxdenstudio.sponge.foxcore.common.network.server.ServerHandshakePacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
@@ -56,6 +57,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.UUID;
 
 @Plugin(id = "foxcore", name = "FoxCore")
@@ -160,8 +162,10 @@ public final class FoxCoreMain {
 
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
+        FCServerNetworkManager.instance().getPacketMapping().put(event.getTargetEntity(), new HashMap<>());
         FoxCoreMain.instance().logger().info("Saying hi to " + event.getTargetEntity().getName());
-        FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerPrintStringPacket("Yerf. ^^ (I got told to change it. Again. x3)"));
+        FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerHandshakePacket(container.getId(), container.getVersion().orElse("unknown")), true);
+        FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerPrintStringPacket("Yerf. ^^ (I got told to change it. Again. x3)"), true);
         if (event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371"))) {
             FoxCoreMain.instance().logger().info("A code fox has slipped into the server.");
         }
@@ -171,4 +175,7 @@ public final class FoxCoreMain {
         return configDirectory;
     }
 
+    public PluginContainer getContainer() {
+        return container;
+    }
 }

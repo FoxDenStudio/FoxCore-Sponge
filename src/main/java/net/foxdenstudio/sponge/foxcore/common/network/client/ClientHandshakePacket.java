@@ -2,8 +2,6 @@ package net.foxdenstudio.sponge.foxcore.common.network.client;
 
 import io.netty.buffer.ByteBuf;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
-import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPackets;
-import net.foxdenstudio.sponge.foxcore.mod.network.FCClientNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.spongepowered.api.entity.living.player.Player;
@@ -46,10 +44,12 @@ public class ClientHandshakePacket implements IClientPacket {
             packetMap.put(payload.readInteger(), payload.readString());
         }
 
-        Map<Integer, ClientPackets> clientMap = FCServerNetworkManager.instance().getPacketMapping().get(player);
+        Map<Integer, ClientPackets> clientMap = new HashMap<>();
         for (Map.Entry<Integer, String> entry : packetMap.entrySet()) {
             clientMap.put(entry.getKey(), ClientPackets.map.get(entry.getValue()));
         }
+        FCServerNetworkManager.instance().getPacketMapping().put(player, clientMap);
+        FCServerNetworkManager.instance().getClientModPresent().put(player, true);
     }
 
     @Override

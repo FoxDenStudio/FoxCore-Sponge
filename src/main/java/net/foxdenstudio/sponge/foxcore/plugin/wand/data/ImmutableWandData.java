@@ -27,7 +27,6 @@ package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableData;
 import org.spongepowered.api.data.value.BaseValue;

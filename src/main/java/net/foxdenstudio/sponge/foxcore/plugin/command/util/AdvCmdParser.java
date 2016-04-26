@@ -70,6 +70,7 @@ public final class AdvCmdParser {
     // Determines whether to do any parsing after the limit is reached.
     // If set to true, all parsing is stopped as soon as the final block is reached. Comments are disabled as well.
     private boolean leaveFinalAsIs = false;
+
     private AdvCmdParser() {
     }
 
@@ -78,7 +79,7 @@ public final class AdvCmdParser {
     }
 
     public AdvCmdParser arguments(String arguments) {
-        if(arguments == null) arguments = "";
+        if (arguments == null) arguments = "";
         this.arguments = arguments;
         return this;
     }

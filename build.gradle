@@ -105,7 +105,6 @@ shadowJar {
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
         include dependency('net.jpountz.lz4:lz4')
-        include dependency('com.google.guava:guava:19.0')
     }
 }
 
@@ -120,7 +119,6 @@ task serverJar(type: ShadowJar) {
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
         include dependency('net.jpountz.lz4:lz4')
-        include dependency('com.google.guava:guava:19.0')
     }
     from(sourceSets.main.output) {
         exclude "net/foxdenstudio/sponge/foxcore/mod"
@@ -153,7 +151,6 @@ task libJar(type: ShadowJar){
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
         include dependency('net.jpountz.lz4:lz4')
-        include dependency('com.google.guava:guava:19.0')
     }
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
@@ -170,7 +167,6 @@ task serverLibJar(type: ShadowJar){
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
         include dependency('net.jpountz.lz4:lz4')
-        include dependency('com.google.guava:guava:19.0')
     }
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')

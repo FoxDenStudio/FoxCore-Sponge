@@ -44,7 +44,7 @@ public class WandDataBuilder implements DataManipulatorBuilder<WandData, Immutab
     }
 
     @Override
-    public Optional<WandData> build(DataView container){
+    public Optional<WandData> build(DataView container) {
         if (!container.contains(WandKeys.WANDTYPE.getQuery())) return Optional.empty();
         WandData data = create();
         data.setWandType(WandType.valueOf((String) container.get(WandKeys.WANDTYPE.getQuery()).get()));
