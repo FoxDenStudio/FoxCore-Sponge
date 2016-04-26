@@ -2,6 +2,8 @@ package net.foxdenstudio.sponge.foxcore.common.network.client;
 
 import io.netty.buffer.ByteBuf;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPrintStringPacket;
+import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.spongepowered.api.entity.living.player.Player;
@@ -50,6 +52,8 @@ public class ClientHandshakePacket implements IClientPacket {
         }
         FCServerNetworkManager.instance().getPacketMapping().put(player, clientMap);
         FCServerNetworkManager.instance().getClientModPresent().put(player, true);
+        FoxCoreMain.instance().logger().info("Saying hi to " + player.getName());
+        FCServerNetworkManager.instance().sendPacket(player, new ServerPrintStringPacket("Yerf. ^^ (I got told to change it. Again. x3)"));
     }
 
     @Override

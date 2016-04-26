@@ -163,9 +163,7 @@ public final class FoxCoreMain {
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
         FCServerNetworkManager.instance().getPacketMapping().put(event.getTargetEntity(), new HashMap<>());
-        FoxCoreMain.instance().logger().info("Saying hi to " + event.getTargetEntity().getName());
         FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerHandshakePacket(container.getId(), container.getVersion().orElse("unknown")), true);
-        FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerPrintStringPacket("Yerf. ^^ (I got told to change it. Again. x3)"), true);
         if (event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371"))) {
             FoxCoreMain.instance().logger().info("A code fox has slipped into the server.");
         }
