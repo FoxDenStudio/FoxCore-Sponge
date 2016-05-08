@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
+import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.key.Key;

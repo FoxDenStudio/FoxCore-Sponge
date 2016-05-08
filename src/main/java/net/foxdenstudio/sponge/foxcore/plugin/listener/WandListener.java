@@ -25,31 +25,53 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.listener;
 
-import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.common.FCUtil;
-import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-
-import java.util.List;
-import java.util.Optional;
 
 public class WandListener implements EventListener<InteractBlockEvent> {
+
     @Override
+    public void handle(InteractBlockEvent event) throws Exception {
+        Object root = event.getCause().root();
+        if (root instanceof Player) {
+            Player player = (Player) root;
+            if (player.getItemInHand().isPresent()) {
+                ItemStack item = player.getItemInHand().get();
+                if (item.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
+                    IWand wand = null;
+                    if (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
+                        if (event instanceof InteractBlockEvent.Primary) {
+                            wand.leftClickAir(player);
+                        } else if (event instanceof InteractBlockEvent.Secondary) {
+                            wand.rightClickAir(player);
+                        }
+                    } else {
+                        if (event instanceof InteractBlockEvent.Primary) {
+                            wand.leftClickBlock(player, event.getTargetBlock());
+                        } else if (event instanceof InteractBlockEvent.Secondary) {
+                            wand.rightClickBlock(player, event.getTargetBlock());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*@Override
     public void handle(InteractBlockEvent event) throws Exception {
         Optional<Player> playerOptional = event.getCause().first(Player.class);
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
-            if (!event.getTargetBlock().getState().getType().equals(BlockTypes.AIR) && player.hasPermission("foxcore.wand.use") && player.getItemInHand().isPresent()) {
+            if (!event.getTargetBlock().getState().getType().equals(BlockTypes.AIR) && player.getItemInHand().isPresent()) {
                 ItemStack item = player.getItemInHand().get();
 
-                if (/*item.getItem().equals(ItemTypes.GOLDEN_AXE)*/ item.get(WandData.class).isPresent()) {
+                if (item.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
                     Vector3i pos = event.getTargetBlock().getPosition();
                     List<Vector3i> positions = FCUtil.getPositions(player);
                     if (event instanceof InteractBlockEvent.Primary) {
@@ -68,5 +90,7 @@ public class WandListener implements EventListener<InteractBlockEvent> {
                 }
             }
         }
-    }
+    }*/
+
+
 }

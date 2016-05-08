@@ -37,29 +37,17 @@ import java.util.Set;
 import static org.lwjgl.opengl.GL11.*;
 
 
-public class PositionRenderer {
+public class RenderHandler {
 
     private Minecraft mc;
     private HighlightList list;
 
     private byte red = 0;
 
-    public PositionRenderer(Minecraft mc) {
+    public RenderHandler(Minecraft mc) {
         super();
         this.mc = mc;
         list = new HighlightList(mc);
-        /*
-        float mx = 5;
-        float my = 79;
-        float mz = -20;
-
-        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 0, 0), 0f / 6f));
-        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 1, 0), 1f / 6f));
-        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 1, 0), 2f / 6f));
-        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 1, 1), 3f / 6f));
-        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(0, 0, 1), 4f / 6f));
-        list.add(new Highlight(new Vector3i(mx, my, mz++), new Vector3f(1, 0, 1), 5f / 6f));
-        */
     }
 
     @SubscribeEvent

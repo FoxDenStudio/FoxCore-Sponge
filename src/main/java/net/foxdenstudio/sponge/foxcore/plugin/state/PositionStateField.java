@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -44,11 +45,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PositionsStateField extends ListStateFieldBase<Vector3i> {
+public class PositionStateField extends ListStateFieldBase<Vector3i> {
 
     public static final String ID = "position";
 
-    public PositionsStateField(String name, SourceState sourceState) {
+    public PositionStateField(String name, SourceState sourceState) {
         super(name, sourceState);
     }
 
@@ -62,6 +63,11 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
             if (it.hasNext()) builder.append(Text.of("\n"));
         }
         return builder.build();
+    }
+
+    @Override
+    public Text detailedState(CommandSource source, String args) {
+        return currentState(source);
     }
 
     @Override
@@ -207,6 +213,14 @@ public class PositionsStateField extends ListStateFieldBase<Vector3i> {
         super.flush();
         if (sourceState.getSource() instanceof Player) {
             FCUtil.updatePositions((Player) sourceState.getSource());
+        }
+    }
+
+    public static class Factory implements IStateFieldFactory {
+
+        @Override
+        public IStateField createStateField(SourceState sourceState) {
+            return new PositionStateField("Positions", sourceState);
         }
     }
 }

@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
+import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;

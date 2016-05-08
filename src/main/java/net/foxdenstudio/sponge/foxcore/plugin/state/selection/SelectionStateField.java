@@ -41,17 +41,25 @@ import java.util.List;
  */
 public class SelectionStateField extends StateFieldBase {
 
+    public static final String ID = "selection";
+
     private List<ISelection> selections;
     private ISelection currentSelection;
 
     public SelectionStateField(SourceState sourceState) {
-        super("Current Selection", sourceState);
+        super("Selection", sourceState);
     }
 
     @Override
     public Text currentState(CommandSource source) {
         return Text.of();
     }
+
+    @Override
+    public Text detailedState(CommandSource source, String args) {
+        return currentState(source);
+    }
+
 
     @Override
     public ProcessResult modify(CommandSource source, String arguments) throws CommandException {

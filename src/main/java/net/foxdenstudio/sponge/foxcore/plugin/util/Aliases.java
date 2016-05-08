@@ -48,6 +48,10 @@ public final class Aliases {
     public static final String[] CLEAR_ALIASES = {"clear", "erase", "reset", "remove", "default", "original"};
     public static final String[] PLAYER_ALIASES = {"player", "user", "username", "p", "u"};
     public static final String[] ALL_ALIASES = {"all", "a", "everything"};
+    public static final String[] SUPER_ALIASES = {"super", "sup", "s"};
+    public static final String[] PAGE_ALIASES = {"page", "pag", "p"};
+    public static final String[] QUERY_ALIASES = {"query", "que", "q", "search", "match"};
+    public static final String[] NUMBER_ALIASES = {"number", "num", "count", "n"};
 
     public static boolean isIn(String[] aliases, String input) {
         if (input == null || input.isEmpty()) return false;

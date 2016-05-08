@@ -27,7 +27,7 @@ package net.foxdenstudio.sponge.foxcore.mod;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.mod.network.FCClientNetworkManager;
-import net.foxdenstudio.sponge.foxcore.mod.render.PositionRenderer;
+import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -35,11 +35,11 @@ import java.util.List;
 
 public class ClientProxy extends CommonProxy {
 
-    PositionRenderer positionRenderer;
+    RenderHandler renderHandler;
 
     @Override
     public void registerRenderers() {
-        MinecraftForge.EVENT_BUS.register(positionRenderer = new PositionRenderer(Minecraft.getMinecraft()));
+        MinecraftForge.EVENT_BUS.register(renderHandler = new RenderHandler(Minecraft.getMinecraft()));
     }
 
     @Override
@@ -49,6 +49,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void updatePositionsList(List<Vector3i> list) {
-        this.positionRenderer.updateList(list);
+        this.renderHandler.updateList(list);
     }
 }

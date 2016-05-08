@@ -6,11 +6,11 @@ import org.spongepowered.api.text.Text;
 
 import java.util.Iterator;
 
-public class CubloidSelection implements ISelection {
+public class CuboidSelection implements ISelection {
 
     BoundingBox3 boundingBox;
 
-    public CubloidSelection(BoundingBox3 boundingBox) {
+    public CuboidSelection(BoundingBox3 boundingBox) {
         this.boundingBox = boundingBox;
     }
 
@@ -37,6 +37,11 @@ public class CubloidSelection implements ISelection {
     @Override
     public int size() {
         return 0;
+    }
+
+    @Override
+    public BoundingBox3 bounds() {
+        return boundingBox;
     }
 
     private class SelectionIterator implements Iterator<Vector3i> {

@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
+import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -106,7 +107,6 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     @Override
     public DataContainer toContainer() {
-
         return super.toContainer().set(WANDTYPE.getQuery(), this.type.name());
     }
 }

@@ -27,13 +27,11 @@ package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
 import net.foxdenstudio.sponge.foxcore.common.network.server.ServerHandshakePacket;
-import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
-import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
-import net.foxdenstudio.sponge.foxcore.plugin.state.factory.PositionStateFieldFactory;
+import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.ImmutableWandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
@@ -60,7 +58,12 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.UUID;
 
-@Plugin(id = "foxcore", name = "FoxCore")
+@Plugin(id = "foxcore",
+        name = "FoxCore",
+        description = "Core plugin for Fox plugins. This plugin also contains some core functionality that other plugins may wish to use.",
+        authors = {"gravityfox"},
+        url = "https://github.com/FoxDenStudio/FoxCore"
+)
 public final class FoxCoreMain {
 
     private static FoxCoreMain instance;
@@ -90,7 +93,8 @@ public final class FoxCoreMain {
 
     @Listener
     public void gamePreInit(GamePreInitializationEvent event) {
-        logger.info("Starting FoxCore initialization");
+        logger.info("Beginning FoxCore initialization");
+        logger.info("Version: " + container.getVersion().orElse("Unknown"));
         logger.info("Initializing state manager");
         FCStateManager.init();
         logger.info("Configuring commands");
@@ -105,7 +109,7 @@ public final class FoxCoreMain {
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Registering positions state field");
-        FCStateManager.instance().registerStateFactory(new PositionStateFieldFactory(), PositionsStateField.ID, PositionsStateField.ID, Aliases.POSITIONS_ALIASES);
+        FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Initializing network packet manager");
         FCServerNetworkManager.init();
         logger.info("Registering Wand DataManipulators");

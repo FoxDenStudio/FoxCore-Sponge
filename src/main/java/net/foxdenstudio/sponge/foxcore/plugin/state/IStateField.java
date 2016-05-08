@@ -40,6 +40,8 @@ public interface IStateField {
 
     Text currentState(CommandSource source);
 
+    Text detailedState(CommandSource source, String args);
+
     ProcessResult modify(CommandSource source, String arguments) throws CommandException;
 
     List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException;

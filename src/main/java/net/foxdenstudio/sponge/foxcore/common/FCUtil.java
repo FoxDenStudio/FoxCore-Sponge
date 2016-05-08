@@ -30,17 +30,22 @@ import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
-import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
+import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class FCUtil {
     public static double parseCoordinate(double sPos, String arg) throws NumberFormatException {
@@ -122,7 +127,7 @@ public final class FCUtil {
 
     @SuppressWarnings("unchecked")
     public static List<Vector3i> getPositions(CommandSource source) {
-        return ((PositionsStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionsStateField.ID).get()).getList();
+        return ((PositionStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionStateField.ID).get()).getList();
     }
 
     public static void updatePositions(Player player) {
@@ -175,6 +180,98 @@ public final class FCUtil {
                 break;
         }
         return new Vector3f(dr, dg, db);
+    }
+
+    public static FCPattern parseUserRegex(String regex) throws CommandException {
+        String[] split = regex.split("(?<!\\\\)/", -1);
+        if (split.length > 2) {
+            String flagsString = split[split.length - 1];
+            regex = regex.substring(1, regex.lastIndexOf("/"));
+            int flags = 0;
+            if (flagsString.contains("i")) flags |= Pattern.CASE_INSENSITIVE;
+            return new FCPattern(Pattern.compile(regex, flags), flagsString.contains("a"));
+        } else throw new CommandException(Text.of("Regex missing a second slash!"));
+    }
+
+    public static Text pageFooter(int currentPage, int maxPage, String command, String finalString) {
+        Pattern pattern = Pattern.compile("--[\\w]+[:=]([\"'])(?:\\\\.|[^\\\\])*?\\1|--[\\w]+[:=][\\w]*");
+        Matcher matcher = pattern.matcher(command);
+        String start = null, end = null;
+        while (matcher.find()) {
+            String match = matcher.group();
+            String key = match.split("[:=]")[0].substring(2);
+            if (Aliases.isIn(Aliases.PAGE_ALIASES, key)) {
+                start = command.substring(0, matcher.start());
+                if (matcher.end() == command.length()) end = "";
+                else end = command.substring(matcher.end(), command.length() - 1);
+                break;
+            }
+        }
+        if (start == null) {
+            start = command;
+        }
+        if (end == null) {
+            if (finalString != null) end = finalString;
+            else end = "";
+        }
+        Text space = Text.of(TextColors.RESET, " ");
+        Text.Builder builder = Text.builder();
+        builder.append(Text.of(TextColors.GREEN, "-------"));
+        builder.append(space);
+        if (currentPage != 1) {
+            builder.append(Text.of(
+                    TextColors.LIGHT_PURPLE,
+                    TextActions.showText(Text.of("First Page")),
+                    TextActions.runCommand(start + " --p=1 " + end),
+                    "<<"));
+            builder.append(space);
+            builder.append(Text.of(
+                    TextColors.AQUA,
+                    TextActions.showText(Text.of("Previous Page")),
+                    TextActions.runCommand(start + " --p=" + (currentPage - 1) + " " + end),
+                    "<"));
+        } else {
+            builder.append(Text.of(TextColors.GRAY, "<< <"));
+        }
+        builder.append(space);
+        int digits = Integer.toString(maxPage).length();
+        builder.append(Text.of(TextColors.YELLOW, String.format("%0" + digits + "d", currentPage)));
+        builder.append(Text.of(TextColors.GREEN, " / "));
+        builder.append(Text.of(TextColors.GOLD, maxPage));
+        builder.append(space);
+        if (currentPage != maxPage) {
+            builder.append(Text.of(
+                    TextColors.AQUA,
+                    TextActions.showText(Text.of("Next Page")),
+                    TextActions.runCommand(start + " --p=" + (currentPage + 1) + " " + end),
+                    ">"));
+            builder.append(space);
+            builder.append(Text.of(
+                    TextColors.LIGHT_PURPLE,
+                    TextActions.showText(Text.of("Last Page")),
+                    TextActions.runCommand(start + " --p=" + maxPage + " " + end),
+                    ">>"));
+        } else {
+            builder.append(Text.of(TextColors.GRAY, "> >>"));
+        }
+        builder.append(space);
+        builder.append(Text.of(TextColors.GREEN, "-------"));
+        return builder.build();
+    }
+
+    public static class FCPattern {
+        public Pattern pattern;
+        public boolean matchAny;
+
+        public FCPattern(Pattern pattern, boolean matchAny) {
+            this.pattern = pattern;
+            this.matchAny = matchAny;
+        }
+
+        public boolean matches(String string) {
+            if (matchAny) return pattern.matcher(string).find();
+            else return pattern.matcher(string).matches();
+        }
     }
 
 }

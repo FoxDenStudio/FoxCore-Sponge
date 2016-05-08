@@ -23,16 +23,21 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.state.factory;
+package net.foxdenstudio.sponge.foxcore.plugin.wand;
 
-import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
-import net.foxdenstudio.sponge.foxcore.plugin.state.PositionsStateField;
-import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
+import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 
-public class PositionStateFieldFactory implements IStateFieldFactory {
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
-    @Override
-    public IStateField createStateField(SourceState sourceState) {
-        return new PositionsStateField("Positions", sourceState);
+public enum WandType {
+
+    POSITION, SELECTION;
+
+    public static WandType from(String name) {
+        if (isIn(Aliases.POSITIONS_ALIASES, name))
+            return POSITION;
+        else return null;
     }
+
+
 }

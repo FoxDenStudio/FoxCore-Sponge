@@ -46,7 +46,7 @@ public final class AdvCmdParser {
     public static final Function<Map<String, String>, Function<String, Consumer<String>>>
             DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
 
-    private static final String regex = "(?:--[\\w-]*[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";
+    private static final String regex = "(?:--[\\w-]+[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";
     // Holds the raw input to be parsed
     private String arguments = "";
     // Designates how many separate arguments to parse. Flags do not count toward this number
