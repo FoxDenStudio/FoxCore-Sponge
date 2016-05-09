@@ -27,6 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.listener;
 
 import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -44,20 +45,22 @@ public class WandListener implements EventListener<InteractBlockEvent> {
             if (player.getItemInHand().isPresent()) {
                 ItemStack item = player.getItemInHand().get();
                 if (item.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
-                    IWand wand = null;
+                    IWand wand = PositionWand.WAND;
+                    boolean cancel = false;
                     if (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
                         if (event instanceof InteractBlockEvent.Primary) {
-                            wand.leftClickAir(player);
+                            cancel = wand.leftClickAir(player);
                         } else if (event instanceof InteractBlockEvent.Secondary) {
-                            wand.rightClickAir(player);
+                            cancel = wand.rightClickAir(player);
                         }
                     } else {
                         if (event instanceof InteractBlockEvent.Primary) {
-                            wand.leftClickBlock(player, event.getTargetBlock());
+                            cancel = wand.leftClickBlock(player, event.getTargetBlock());
                         } else if (event instanceof InteractBlockEvent.Secondary) {
-                            wand.rightClickBlock(player, event.getTargetBlock());
+                            cancel = wand.rightClickBlock(player, event.getTargetBlock());
                         }
                     }
+                    if (cancel) event.setCancelled(true);
                 }
             }
         }
