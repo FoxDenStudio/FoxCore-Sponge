@@ -26,6 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
+import net.foxdenstudio.sponge.foxcore.common.addons.ClassFinder;
 import net.foxdenstudio.sponge.foxcore.common.network.server.ServerHandshakePacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
@@ -82,6 +83,8 @@ public final class FoxCoreMain {
 
     private FCCommandDispatcher fcDispatcher;
 
+    private ClassFinder classFinderInstance;
+
     public static FoxCoreMain instance() {
         return instance;
     }
@@ -106,6 +109,12 @@ public final class FoxCoreMain {
         logger.info("Setting default player permissions");
         configurePermissions();
         logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
+
+        logger.info("Loading Addons");
+        classFinderInstance = new ClassFinder();
+        classFinderInstance.initialize();
+        logger.info("Addons Loaded");
+
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Registering positions state field");
