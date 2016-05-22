@@ -68,7 +68,7 @@ dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"
     compile 'com.flowpowered:flow-math:1.0.2'
     compile 'org.mapdb:mapdb:3.0.0-M6'
-    //testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
 /* TODO: This is broken, but was never replacing anything anyway

@@ -24,23 +24,38 @@
  *
  */
 
-package net.foxdenstudio.sponge.foxcore.common.addons.annotations;
+package net.foxdenstudio.sponge.foxcore.common.addons;
 
-import kotlin.annotation.AnnotationRetention;
-import kotlin.annotation.AnnotationTarget;
+import net.foxdenstudio.sponge.foxcore.common.addons.annotations.Addon;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by d4rkfly3r on 5/22/2016.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@Target(ElementType.FIELD)
-@kotlin.annotation.Target(allowedTargets = AnnotationTarget.FIELD)
-public @interface Addon{
+public final class ClassFinderTest {
 
+    ClassFinder classFinder;
+
+    @Before
+    public void setUp() throws Exception {
+        classFinder = new ClassFinder();
+        classFinder.initialize();
+    }
+
+    @Test
+    public void testGetClasses() throws Exception {
+        final ArrayList<Class<?>> allClasses = classFinder.getAllClasses();
+        Assert.assertNotNull(allClasses);
+    }
+
+    @Test
+    public void testGetAllClasses() throws Exception {
+        final List<Class<?>> classes = classFinder.getClasses(Addon.class);
+        Assert.assertNotNull(classes);
+    }
 }

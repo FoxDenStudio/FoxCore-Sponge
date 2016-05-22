@@ -45,6 +45,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+/**
+ * Created by d4rkfly3r on 5/22/2016.
+ */
 public final class ClassFinder {
 
     private static final String ADDON_DIR = "fcaddons";
@@ -137,10 +140,18 @@ public final class ClassFinder {
         Path addonDir = Paths.get(ADDON_DIR); // TODO URGENT - Get Addons dir from config
         if (Files.notExists(addonDir)) {
             try {
-                FoxCoreMain.instance().logger().info("Creating Addon Directory ( " + addonDir.toAbsolutePath() + " )!");
+                if (FoxCoreMain.instance() != null) {
+                    FoxCoreMain.instance().logger().info("Creating Addon Directory ( " + addonDir.toAbsolutePath() + " )!");
+                }else{
+                    System.out.println("Creating Addon Directory ( " + addonDir.toAbsolutePath() + " )!");
+                }
                 Files.createDirectories(addonDir);
             } catch (IOException e) {
-                FoxCoreMain.instance().logger().error("Addon Directory ( " + addonDir.toAbsolutePath() + " ) could not be created!");
+                if (FoxCoreMain.instance() != null) {
+                    FoxCoreMain.instance().logger().error("Addon Directory ( " + addonDir.toAbsolutePath() + " ) could not be created!");
+                }else{
+                    System.err.println("Addon Directory ( " + addonDir.toAbsolutePath() + " ) could not be created!");
+                }
                 return map;
             }
         }
@@ -159,7 +170,11 @@ public final class ClassFinder {
             }
             // ELSE NO FILES IN ADDONS DIRECTORY
         } else {
-            FoxCoreMain.instance().logger().error("Addon Directory ( " + addonDir.toAbsolutePath() + " ) is not a folder!");
+            if (FoxCoreMain.instance() != null) {
+                FoxCoreMain.instance().logger().error("Addon Directory ( " + addonDir.toAbsolutePath() + " ) is not a folder!");
+            }else{
+                System.err.println("Addon Directory ( " + addonDir.toAbsolutePath() + " ) is not a folder!");
+            }
         }
         return map;
     }

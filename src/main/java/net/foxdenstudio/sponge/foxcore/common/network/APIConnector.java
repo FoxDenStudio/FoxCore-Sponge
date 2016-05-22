@@ -29,11 +29,12 @@ package net.foxdenstudio.sponge.foxcore.common.network;
 import com.google.common.base.Optional;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonStreamParser;
+import com.google.gson.JsonParser;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.net.ssl.*;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,7 +51,6 @@ import java.util.function.Supplier;
 
 /**
  * Created by d4rkfly3r on 5/22/2016.
- * Project: SpongeForge
  */
 public final class APIConnector implements Supplier<Optional<JsonObject>> {
 
@@ -64,7 +64,7 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
     private static final ThreadFactory threadFactory = new ThreadFactory() {
         private final AtomicInteger count = new AtomicInteger(1);
 
-        public Thread newThread(Runnable r) {
+        public Thread newThread(@Nonnull Runnable r) {
             return new Thread(r, "AsyncTask #" + count.getAndIncrement());
         }
     };
@@ -98,11 +98,7 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
             sslContext.init(null, trustAllCerts, new SecureRandom());
 
             // Create all-trusting host name verifier
-            allHostsValid = new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
+            allHostsValid = (hostname, session) -> true;
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             e.printStackTrace();
         }
@@ -110,8 +106,8 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
 
     private final JsonObject contents;
     private Consumer<Optional<? super JsonObject>> successCallback;
-    private Function<Throwable, ? extends Void> errorCallback;
-    private CompletableFuture<Void> futureTask;
+    private Function<Throwable, ? extends Optional<JsonObject>> errorCallback;
+    private CompletableFuture<Optional<JsonObject>> futureTask;
     private HttpsURLConnection urlConnection;
 
     public APIConnector(@Nonnull final JsonObject contents) {
@@ -129,29 +125,34 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
 
     @Nonnull
     private static JsonElement convertStreamToJsonObject(@Nonnull InputStream is) {
-        return new JsonStreamParser(new InputStreamReader(is)).next();
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-//        StringBuilder sb = new StringBuilder();
-//
-//        String line;
-//        try {
-//            while ((line = reader.readLine()) != null) {
-//                sb.append(line).append("\n");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                is.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return sb.toString();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return new JsonParser().parse(sb.toString());
     }
 
     public void execute() {
-        futureTask = CompletableFuture.supplyAsync(this, threadPoolExecutor).thenAccept(successCallback).exceptionally(errorCallback);
+        futureTask = CompletableFuture.supplyAsync(this, threadPoolExecutor);
+        if (successCallback != null) {
+            futureTask.thenAccept(successCallback);
+        }
+        if (errorCallback != null) {
+            futureTask.exceptionally(errorCallback);
+        }
     }
 
     @Nonnull
@@ -160,7 +161,7 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
     }
 
     @Nullable
-    public Consumer<Optional<? super JsonObject>> getSuccessCallback() {
+    public final Consumer<Optional<? super JsonObject>> getSuccessCallback() {
         return successCallback;
     }
 
@@ -169,11 +170,11 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
     }
 
     @Nullable
-    public Function<Throwable, ? extends Void> getErrorCallback() {
+    public final Function<Throwable, ? extends Optional<JsonObject>> getErrorCallback() {
         return errorCallback;
     }
 
-    public void setErrorCallback(@Nullable final Function<Throwable, ? extends Void> errorCallback) {
+    public void setErrorCallback(@Nullable final Function<Throwable, ? extends Optional<JsonObject>> errorCallback) {
         this.errorCallback = errorCallback;
     }
 
@@ -189,7 +190,7 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
         JsonObject returnData = null;
 
         try {
-            urlConnection.addRequestProperty("payload", payload.getAsString());
+            urlConnection.addRequestProperty("payload", payload.toString());
             urlConnection.connect();
             final JsonElement returnPayload = convertStreamToJsonObject(urlConnection.getInputStream());
             if (returnPayload.isJsonObject()) {
@@ -200,6 +201,8 @@ public final class APIConnector implements Supplier<Optional<JsonObject>> {
         } catch (IOException e) {
             if (errorCallback != null) {
                 errorCallback.apply(e);
+            } else {
+                e.printStackTrace();
             }
         } finally {
             urlConnection.disconnect();
