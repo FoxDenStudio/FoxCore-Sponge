@@ -45,7 +45,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-public class ClassFinder {
+public final class ClassFinder {
 
     private static final String ADDON_DIR = "fcaddons";
     private JarFileLoader jarFileLoader;
