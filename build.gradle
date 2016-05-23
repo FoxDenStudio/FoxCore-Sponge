@@ -24,7 +24,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'net.foxdenstudio.sponge.foxcore'
-version '0.8.1'
+version '0.8.2'
 
 if (System.env.TRAVIS) {
     String tempVersion = ''
@@ -50,9 +50,9 @@ sponge.plugin {
 }
 
 minecraft {
-    version = "1.8.9-11.15.1.1855"
-    runDir = "run"
-    mappings = "snapshot_20160109"
+    forgeVersion = '1890'
+    runDir = 'run'
+    mappings = 'stable_22'
     makeObfSourceJar = false
 }
 
@@ -67,7 +67,7 @@ repositories {
 dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"
     compile 'com.flowpowered:flow-math:1.0.2'
-    compile 'org.mapdb:mapdb:3.0.0-M6'
+    compile 'org.mapdb:mapdb:3.0.0-beta3'
     //testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
