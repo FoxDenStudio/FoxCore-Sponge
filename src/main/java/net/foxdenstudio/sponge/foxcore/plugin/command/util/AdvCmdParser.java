@@ -200,7 +200,7 @@ public final class AdvCmdParser {
                     if (include) {
                         // Applies the flagMapper function.
                         // This is a destructive function that takes 3 parameters and returns nothing. (Destructive consumer)
-                        flagMapper.apply(parseResult.flagmap)
+                        flagMapper.apply(parseResult.flags)
                                 .apply(parts[0])
                                 .accept(value);
                     }
@@ -217,11 +217,11 @@ public final class AdvCmdParser {
                         if (str.matches("[a-zA-Z]")) {
                             // Checks if the flag already exists, and repeat the letter until it doesn't
                             String temp = str;
-                            while (parseResult.flagmap.containsKey(temp)) {
+                            while (parseResult.flags.containsKey(temp)) {
                                 temp += str;
                             }
                             // Applies destructive flagMapper function.
-                            flagMapper.apply(parseResult.flagmap).apply(temp).accept("");
+                            flagMapper.apply(parseResult.flags).apply(temp).accept("");
                         } else if (str.matches("[:=-]")) {
                             throw new CommandException(Text.of("You may only have alphabetic short flags! Did you mean to use a long flag (two dashes)?"));
                         } else {
@@ -322,7 +322,7 @@ public final class AdvCmdParser {
 
     public static final class ParseResult {
         public String[] args = {};
-        public Map<String, String> flagmap = new CacheMap<>((key, map) -> "");
+        public Map<String, String> flags = new CacheMap<>((key, map) -> "");
         public CurrentElement current = null;
     }
 

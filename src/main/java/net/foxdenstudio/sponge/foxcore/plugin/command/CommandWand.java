@@ -79,8 +79,8 @@ public class CommandWand implements CommandCallable {
 
         Player player = null;
         if (source instanceof Player) player = (Player) source;
-        if (parse.flagmap.containsKey("player"))
-            player = Sponge.getGame().getServer().getPlayer(parse.flagmap.get("player")).orElse(null);
+        if (parse.flags.containsKey("player"))
+            player = Sponge.getGame().getServer().getPlayer(parse.flags.get("player")).orElse(null);
         if (player == null) throw new CommandException(Text.of("You must specify a player to give the wand to!"));
         WandData wandData = Sponge.getDataManager().getManipulatorBuilder(WandData.class).get().create();
         if (parse.args.length > 0) {

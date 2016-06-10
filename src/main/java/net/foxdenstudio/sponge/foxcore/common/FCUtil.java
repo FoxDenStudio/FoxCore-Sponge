@@ -38,16 +38,21 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.spongepowered.api.text.format.TextColors.*;
+
 public final class FCUtil {
+
     public static double parseCoordinate(double sPos, String arg) throws NumberFormatException {
         if (arg.equals("~")) {
             return sPos;
@@ -83,7 +88,7 @@ public final class FCUtil {
     public static String readableTristate(Tristate state) {
         switch (state) {
             case UNDEFINED:
-                return "Passthrough";
+                return "Undefined";
             case TRUE:
                 return "True";
             case FALSE:
@@ -96,7 +101,7 @@ public final class FCUtil {
     public static Text readableTristateText(Tristate state) {
         switch (state) {
             case UNDEFINED:
-                return Text.of(TextColors.YELLOW, "Passthrough");
+                return Text.of(TextColors.YELLOW, "Undefined");
             case TRUE:
                 return Text.of(TextColors.GREEN, "True");
             case FALSE:
@@ -257,6 +262,30 @@ public final class FCUtil {
         builder.append(space);
         builder.append(Text.of(TextColors.GREEN, "-------"));
         return builder.build();
+    }
+
+    public static final String[] colorNames = {"black", "darkblue", "darkgreen", "darkaqua", "darkred", "darkpurple", "gold", "gray",
+            "darkgray", "blue", "green", "aqua", "red", "lightpurple", "yellow", "white"};
+    public static final TextColor[] colors = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
+            DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
+
+    public static int colorCodeFromName(String name) {
+        for (int i = 0; i < colorNames.length; i++) {
+            if (colorNames[i].equalsIgnoreCase(name)) return i;
+        }
+        return -1;
+    }
+
+    public static Optional<TextColor> textColorFromName(String name) {
+        int code = colorCodeFromName(name);
+        if (code >= 0) return Optional.of(colors[code]);
+        else return Optional.empty();
+    }
+
+    public static Optional<TextColor> textColorFromHex(String hex) {
+        if (!hex.matches("[0-9a-f]")) return Optional.empty();
+        int code = Integer.parseInt(hex, 16);
+        return Optional.of(colors[code]);
     }
 
     public static class FCPattern {

@@ -42,6 +42,7 @@ public final class Aliases {
     public static final String[] SET_ALIASES = {"set", "perm", "flag", "rule", "perms", "flags", "rules", "permission", "permissions"};
     public static final String[] PASSIVE_ALIASES = {"passive", "causeless", "userless", "environment"};
     public static final String[] GROUPS_ALIASES = {"group", "groups"};
+    public static final String[] USERS_ALIASES = {"user", "users"};
     public static final String[] TRUE_ALIASES = {"true", "t", "allow", "a"};
     public static final String[] FALSE_ALIASES = {"false", "f", "deny", "d"};
     public static final String[] PASSTHROUGH_ALIASES = {"passthrough", "pass", "p", "undefined", "undef", "un", "u"};

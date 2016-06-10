@@ -79,7 +79,7 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
         } else if (parse.args[0].equalsIgnoreCase("remove")) {
             return remove(source, newArgs);
         }
-        return ProcessResult.of(false, Text.of("Not a valid"));
+        return ProcessResult.of(false, Text.of("Not a valid operation!"));
     }
 
     @Override
