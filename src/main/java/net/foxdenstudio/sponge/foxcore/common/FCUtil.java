@@ -63,6 +63,16 @@ public final class FCUtil {
         }
     }
 
+    public static int parseCoordinate(int sPos, String arg) throws NumberFormatException {
+        if (arg.equals("~")) {
+            return sPos;
+        } else if (arg.startsWith("~")) {
+            return sPos + Integer.parseInt(arg.substring(1));
+        } else {
+            return Integer.parseInt(arg);
+        }
+    }
+
     public static <T> boolean contains(T[] array, T value) {
         for (T element : array) {
             if (element.equals(value)) return true;

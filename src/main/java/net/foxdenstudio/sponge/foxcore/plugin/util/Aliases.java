@@ -35,9 +35,6 @@ public final class Aliases {
     public static final String[] HANDLERS_ALIASES = {"handlers", "handler", "handles", "handle", "hands", "hand", "hn", "h", "flagsets", "flagset", "flags", "flag", "f"};
     public static final String[] CONTROLLERS_ALIASES = {"controllers", "controller", "controls", "control", "switch", "con", "c"};
     public static final String[] POSITIONS_ALIASES = {"positions", "position", "points", "point", "locations", "location", "pos", "loc", "locs", "p"};
-    public static final String[] OWNER_GROUP_ALIASES = {"owners", "owner", "masters", "master", "creators", "creator",
-            "admins", "admin", "administrators", "administrator", "mods", "mod"};
-    public static final String[] MEMBER_GROUP_ALIASES = {"members", "member", "users", "user", "players", "player"};
     public static final String[] DEFAULT_GROUP_ALIASES = {"default", "nonmember", "nonmembers", "everyone", "other"};
     public static final String[] SET_ALIASES = {"set", "perm", "flag", "rule", "perms", "flags", "rules", "permission", "permissions"};
     public static final String[] PASSIVE_ALIASES = {"passive", "causeless", "userless", "environment"};
@@ -53,6 +50,8 @@ public final class Aliases {
     public static final String[] PAGE_ALIASES = {"page", "pag", "p"};
     public static final String[] QUERY_ALIASES = {"query", "que", "q", "search", "match"};
     public static final String[] NUMBER_ALIASES = {"number", "num", "count", "n"};
+    public static final String[] FORCE_ALIASES = {"force", "f"};
+
 
     public static boolean isIn(String[] aliases, String input) {
         if (input == null || input.isEmpty()) return false;
