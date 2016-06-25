@@ -332,7 +332,7 @@ public class FCCommandDispatcher implements Dispatcher {
                                     mapping.getPrimaryAlias())).build(),
                     SPACE_TEXT, description.orElse(mapping.getCallable().getUsage(source)));
             if (it.hasNext()) {
-                build.append(Text.of("\n"));
+                build.append(Text.NEW_LINE);
             }
         }
         return Optional.of(build.build());

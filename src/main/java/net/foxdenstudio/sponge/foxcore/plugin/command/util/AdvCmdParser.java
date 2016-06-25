@@ -188,6 +188,8 @@ public final class AdvCmdParser {
                     // Throw an exception if the key contains a quote character, as that shouldn't be allowed
                     if (parts[0].matches("^.*[^\\w-].*$"))
                         throw new CommandException(Text.of("Long flag keys must be alphanumeric (Includes underscores and hyphens)!"));
+                    if (parts[0].isEmpty())
+                        throw new CommandException(Text.of("Long flag keys cannot be empty!"));
                     // Default value in case a value isn't specified
                     String value = "";
                     // Retrieves value if it exists

@@ -121,9 +121,9 @@ public final class FCUtil {
         }
     }
 
-    public static boolean isUserInCollection(Collection<User> list, User user) {
+    public static boolean isUserInCollection(Collection<User> collection, User user) {
         //System.out.println(user.getUniqueId());
-        for (User u : list) {
+        for (User u : collection) {
             //System.out.println(u.getUniqueId());
             if (u.getUniqueId().equals(user.getUniqueId())) return true;
         }

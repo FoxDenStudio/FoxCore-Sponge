@@ -60,7 +60,7 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
         for (Iterator<Vector3i> it = this.list.iterator(); it.hasNext(); ) {
             Vector3i pos = it.next();
             builder.append(Text.of("  " + (index++) + ": " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()));
-            if (it.hasNext()) builder.append(Text.of("\n"));
+            if (it.hasNext()) builder.append(Text.NEW_LINE);
         }
         return builder.build();
     }
