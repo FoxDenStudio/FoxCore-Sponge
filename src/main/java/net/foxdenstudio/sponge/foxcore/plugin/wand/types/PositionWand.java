@@ -2,6 +2,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.wand.types;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.FCUtil;
+import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.Entity;
@@ -36,6 +37,7 @@ public class PositionWand implements IWand {
             positions.remove(positions.lastIndexOf(pos));
             player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
             FCUtil.updatePositions(player);
+            FCStateManager.instance().getStateMap().get(player).updateScoreboard();
         }
         return true;
     }
@@ -47,6 +49,7 @@ public class PositionWand implements IWand {
         positions.add(pos);
         player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
         FCUtil.updatePositions(player);
+        FCStateManager.instance().getStateMap().get(player).updateScoreboard();
         return true;
     }
 

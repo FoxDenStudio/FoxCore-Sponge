@@ -30,6 +30,7 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -46,7 +47,7 @@ public final class AdvCmdParser {
     public static final Function<Map<String, String>, Function<String, Consumer<String>>>
             DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
 
-    private static final String regex = "(?:--[\\w-]+[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";
+    private static final String regex = "(?:--[\\w-]*[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";
     // Holds the raw input to be parsed
     private String arguments = "";
     // Designates how many separate arguments to parse. Flags do not count toward this number
@@ -161,9 +162,7 @@ public final class AdvCmdParser {
         while (matcher.find()) {
 
             String result = matcher.group();
-            boolean include = true;
-            if (excludeCurrent && lastIsCurrent && matcher.end() == arguments.length())
-                include = false;
+            boolean include = !(excludeCurrent && lastIsCurrent && matcher.end() == arguments.length());
             // Makes "---" mark the end of the command. Effectively allows command comments
             // It also means that flag names cannot start with hyphens
             if (!result.startsWith("---")) {
@@ -222,8 +221,10 @@ public final class AdvCmdParser {
                             while (parseResult.flags.containsKey(temp)) {
                                 temp += str;
                             }
-                            // Applies destructive flagMapper function.
-                            flagMapper.apply(parseResult.flags).apply(temp).accept("");
+                            if (include) {
+                                // Applies destructive flagMapper function.
+                                flagMapper.apply(parseResult.flags).apply(temp).accept("");
+                            }
                         } else if (str.matches("[:=-]")) {
                             throw new CommandException(Text.of("You may only have alphabetic short flags! Did you mean to use a long flag (two dashes)?"));
                         } else {
@@ -239,16 +240,25 @@ public final class AdvCmdParser {
                         String finalBlock = arguments.substring(matcher.start(), arguments.length() - (inQuote ? 1 : 0));
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalBlock, argsList.size(), "");
                         argsList.add(finalBlock);
+                        lastIsCurrent = true;
                         break;
                     }
 
-                    if (limit > 0 && argsList.size() >= limit && !unescapeLast) {
-                        parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, result, argsList.size(), "");
-                        argsList.add(result);
+                    if (limit > 0 && argsList.size() >= limit) {
+                        if (!unescapeLast) {
+                            parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, result, argsList.size(), "");
+                            argsList.add(result);
+                        } else {
+                            String arg = unescapeString(result);
+                            parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, arg, argsList.size(), "");
+                            argsList.add(arg);
+                        }
                     } else {
                         String arg = unescapeString(result);
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.ARGUMENT, arg, argsList.size(), "");
-                        argsList.add(arg);
+                        if (include) {
+                            argsList.add(arg);
+                        }
                     }
                 }
             } else {
@@ -276,23 +286,27 @@ public final class AdvCmdParser {
                 }
             }
         }
-        if (!finalString.isEmpty()) {
-            finalList.add(finalString);
-        }
 
         if (parseResult.current != null && parseResult.current.type == CurrentElement.ElementType.ARGUMENT && limit > 0 && parseResult.current.index >= limit)
-            parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (finalString.isEmpty() || lastIsCurrent ? "" : " "), finalList.size() - 1, "");
+            parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (finalString.isEmpty() || lastIsCurrent ? "" : " "), finalList.size(), "");
+
+        if (!finalString.isEmpty()) {
+            if (!excludeCurrent || parseResult.current.type == CurrentElement.ElementType.COMMENT) {
+                finalList.add(finalString);
+            }
+        }
+
         // Converts final argument list to an array.
         parseResult.args = finalList.toArray(new String[finalList.size()]);
 
-        // Prefix
-        String[] mcArgs = this.arguments.split(" +", -1);
         if ((parseResult.current.type.equals(CurrentElement.ElementType.ARGUMENT) || parseResult.current.type.equals(CurrentElement.ElementType.FINAL))
                 && parseResult.current.index != 0
                 && parseResult.current.token.isEmpty()
                 && !this.arguments.substring(this.arguments.length() - 1).matches(" ")) {
             parseResult.current = new CurrentElement(CurrentElement.ElementType.COMPLETE, "", 0, "");
         }
+        // Prefix
+        String[] mcArgs = this.arguments.split(" +", -1);
         if (!parseResult.current.token.contains(" "))
             parseResult.current = parseResult.current.withPrefix(
                     mcArgs[mcArgs.length - 1].substring(0, mcArgs[mcArgs.length - 1].length() - parseResult.current.token.length()));
@@ -326,6 +340,15 @@ public final class AdvCmdParser {
         public String[] args = {};
         public Map<String, String> flags = new CacheMap<>((key, map) -> "");
         public CurrentElement current = null;
+
+        @Override
+        public String toString() {
+            return "ParseResult{" +
+                    "args=" + Arrays.toString(args) +
+                    ", flags=" + flags +
+                    ", current=" + current +
+                    '}';
+        }
     }
 
     public static final class CurrentElement {
@@ -347,7 +370,7 @@ public final class AdvCmdParser {
             this.prefix = prefix;
         }
 
-        public CurrentElement withPrefix(String prefix) {
+        private CurrentElement withPrefix(String prefix) {
             return new CurrentElement(type, token, index, key, prefix);
         }
 

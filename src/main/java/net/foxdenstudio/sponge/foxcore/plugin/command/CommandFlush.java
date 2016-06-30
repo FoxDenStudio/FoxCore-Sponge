@@ -62,6 +62,7 @@ public class CommandFlush implements CommandCallable {
                 state.flush(id);
             }
         }
+        state.updateScoreboard();
         source.sendMessage(Text.of(TextColors.GREEN, "Successfully flushed!"));
         return CommandResult.empty();
     }

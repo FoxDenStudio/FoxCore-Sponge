@@ -148,17 +148,17 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
             if (pPos == null)
                 pPos = Vector3i.ZERO;
             try {
-                x = (int) FCUtil.parseCoordinate(pPos.getX(), parse.args[0]);
+                x = FCUtil.parseCoordinate(pPos.getX(), parse.args[0]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[0] + "\"!"), e, parse.args[0], 0);
             }
             try {
-                y = (int) FCUtil.parseCoordinate(pPos.getY(), parse.args[1]);
+                y = FCUtil.parseCoordinate(pPos.getY(), parse.args[1]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[1] + "\"!"), e, parse.args[1], 1);
             }
             try {
-                z = (int) FCUtil.parseCoordinate(pPos.getZ(), parse.args[2]);
+                z = FCUtil.parseCoordinate(pPos.getZ(), parse.args[2]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[2] + "\"!"), e, parse.args[2], 2);
             }
@@ -169,7 +169,6 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
         if (source instanceof Player) {
             FCUtil.updatePositions((Player) source);
         }
-        sourceState.updateScoreboard();
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
 

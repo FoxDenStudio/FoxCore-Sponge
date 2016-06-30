@@ -14,6 +14,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.GuavaCollectors;
+import org.spongepowered.api.util.StartsWithPredicate;
 
 import java.util.List;
 import java.util.Map;
@@ -87,7 +89,10 @@ public class CommandHUD implements CommandCallable {
                 .parse();
         if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.ARGUMENT &&
                 parse.current.index == 0)
-            return ImmutableList.of("on", "off", "reset");
+            return ImmutableList.of("on", "off", "reset").stream()
+                    .filter(new StartsWithPredicate(parse.current.token))
+                    .map(args -> parse.current.prefix + args)
+                    .collect(GuavaCollectors.toImmutableList());
         else return ImmutableList.of();
     }
 

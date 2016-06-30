@@ -39,7 +39,6 @@ public abstract class ListStateFieldBase<T> extends StateFieldBase {
     @Override
     public void flush() {
         list.clear();
-        sourceState.updateScoreboard();
     }
 
     @Override

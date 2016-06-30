@@ -42,10 +42,7 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,6 +123,15 @@ public final class FCUtil {
         for (User u : collection) {
             //System.out.println(u.getUniqueId());
             if (u.getUniqueId().equals(user.getUniqueId())) return true;
+        }
+        return false;
+    }
+
+    public static boolean isUserInCollection(Collection<User> collection, UUID user) {
+        //System.out.println(user.getUniqueId());
+        for (User u : collection) {
+            //System.out.println(u.getUniqueId());
+            if (u.getUniqueId().equals(user)) return true;
         }
         return false;
     }

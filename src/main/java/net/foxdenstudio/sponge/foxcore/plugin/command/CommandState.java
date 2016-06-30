@@ -32,6 +32,7 @@ import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser.ParseRes
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -60,7 +61,8 @@ public class CommandState implements CommandCallable {
                     .build());
             return CommandResult.empty();
         }
-        Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
+        SourceState sourceState = FCStateManager.instance().getStateMap().get(source);
+        Optional<IStateField> optField = sourceState.getOrCreateFromAlias(parse.args[0]);
         if (!optField.isPresent())
             throw new CommandException(Text.of("\"" + parse.args[0] + "\" is not a valid category!"));
         IStateField field = optField.get();
@@ -77,6 +79,7 @@ public class CommandState implements CommandCallable {
             } else {
                 source.sendMessage(Text.of(TextColors.GREEN, "Successfully modified the " + field.getName() + " field!"));
             }
+            sourceState.updateScoreboard();
         } else {
             if (result.getMessage().isPresent()) {
                 if (!FCUtil.hasColor(result.getMessage().get())) {
@@ -113,9 +116,7 @@ public class CommandState implements CommandCallable {
             Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
             if (!optField.isPresent()) return ImmutableList.of();
             IStateField field = optField.get();
-            String extraArgs = "";
-            if (parse.args.length > 1) extraArgs = parse.args[1];
-            return field.modifySuggestions(source, extraArgs).stream()
+            return field.modifySuggestions(source, parse.current.token).stream()
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))

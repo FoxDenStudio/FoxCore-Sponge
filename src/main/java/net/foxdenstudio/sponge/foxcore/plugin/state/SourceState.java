@@ -159,8 +159,9 @@ public class SourceState {
                 }
             }
             scoreboard.updateDisplaySlot(objective, DisplaySlots.SIDEBAR);
-            if (objective.getScores().size() == 0 && Sponge.getServer().getServerScoreboard().isPresent()) {
-                ((Player) source).setScoreboard(Sponge.getServer().getServerScoreboard().get());
+            Optional<Scoreboard> serverScoreboard = Sponge.getServer().getServerScoreboard();
+            if (objective.getScores().size() == 0 && serverScoreboard.isPresent()) {
+                ((Player) source).setScoreboard(serverScoreboard.get());
             } else {
                 ((Player) source).setScoreboard(scoreboard);
             }

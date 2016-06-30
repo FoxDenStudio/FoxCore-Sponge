@@ -35,6 +35,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,12 +66,13 @@ public class CommandTest implements CommandCallable {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
+                .excludeCurrent(true)
                 .autoCloseQuotes(true)
-                .limit(2)
                 .parse();
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "\n-----------------------------\n"));
-        builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, Arrays.toString(parse.args), TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Flags: \"", TextColors.RESET, parse.flags, TextColors.GOLD, "\"\n"));
         builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.current.type, TextColors.GOLD, "\n"));
         builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.current.token, TextColors.GOLD, "\"\n"));
         builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.current.index, TextColors.GOLD, "\n"));

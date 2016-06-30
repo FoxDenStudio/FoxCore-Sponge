@@ -39,7 +39,6 @@ public abstract class SetStateFieldBase<T> extends StateFieldBase {
     @Override
     public void flush() {
         set.clear();
-        sourceState.updateScoreboard();
     }
 
     @Override

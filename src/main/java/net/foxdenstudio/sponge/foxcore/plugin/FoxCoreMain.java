@@ -98,27 +98,26 @@ public final class FoxCoreMain {
         logger.info("Initializing state manager");
         FCStateManager.init();
         logger.info("Configuring commands");
-        registerCommands();
+        configureCommands();
     }
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
-        logger.info("Setting default player permissions");
-        configurePermissions();
-        logger.info("Save directory: " + game.getSavesDirectory().toAbsolutePath());
-        logger.info("Registering commands");
-        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Registering positions state field");
         FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Initializing network packet manager");
         FCServerNetworkManager.init();
+        logger.info("Registering commands");
+        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
+        logger.info("Setting default player permissions");
+        configurePermissions();
         logger.info("Registering Wand DataManipulators");
         registerData();
         logger.info("Registering event listeners");
         registerListeners();
     }
 
-    private void registerCommands() {
+    private void configureCommands() {
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "FoxCore\n"));
         builder.append(Text.of("Version: " + container.getVersion().orElse("Unknown") + "\n"));
