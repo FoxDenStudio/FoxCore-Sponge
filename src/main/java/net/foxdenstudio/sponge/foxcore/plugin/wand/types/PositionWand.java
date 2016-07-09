@@ -1,8 +1,8 @@
 package net.foxdenstudio.sponge.foxcore.plugin.wand.types;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
+import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.Entity;
@@ -32,11 +32,11 @@ public class PositionWand implements IWand {
     @Override
     public boolean leftClickBlock(Player player, BlockSnapshot block) {
         Vector3i pos = block.getPosition();
-        List<Vector3i> positions = FCUtil.getPositions(player);
+        List<Vector3i> positions = FCPUtil.getPositions(player);
         if (positions.contains(pos)) {
             positions.remove(positions.lastIndexOf(pos));
             player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-            FCUtil.updatePositions(player);
+            FCPUtil.updatePositions(player);
             FCStateManager.instance().getStateMap().get(player).updateScoreboard();
         }
         return true;
@@ -45,10 +45,10 @@ public class PositionWand implements IWand {
     @Override
     public boolean rightClickBlock(Player player, BlockSnapshot block) {
         Vector3i pos = block.getPosition();
-        List<Vector3i> positions = FCUtil.getPositions(player);
+        List<Vector3i> positions = FCPUtil.getPositions(player);
         positions.add(pos);
         player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
-        FCUtil.updatePositions(player);
+        FCPUtil.updatePositions(player);
         FCStateManager.instance().getStateMap().get(player).updateScoreboard();
         return true;
     }

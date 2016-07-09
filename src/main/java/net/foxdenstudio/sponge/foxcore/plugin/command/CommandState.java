@@ -26,13 +26,13 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser.ParseResult;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
+import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -71,7 +71,7 @@ public class CommandState implements CommandCallable {
         ProcessResult result = field.modify(source, extraArgs);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
-                if (!FCUtil.hasColor(result.getMessage().get())) {
+                if (!FCPUtil.hasColor(result.getMessage().get())) {
                     source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.GREEN).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
@@ -82,7 +82,7 @@ public class CommandState implements CommandCallable {
             sourceState.updateScoreboard();
         } else {
             if (result.getMessage().isPresent()) {
-                if (!FCUtil.hasColor(result.getMessage().get())) {
+                if (!FCPUtil.hasColor(result.getMessage().get())) {
                     source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.RED).build());
                 } else {
                     source.sendMessage(result.getMessage().get());

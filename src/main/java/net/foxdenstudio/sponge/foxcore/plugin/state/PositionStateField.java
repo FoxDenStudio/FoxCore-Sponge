@@ -27,10 +27,11 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.common.FCUtil;
+import net.foxdenstudio.sponge.foxcore.common.util.FCCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
+import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -148,17 +149,17 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
             if (pPos == null)
                 pPos = Vector3i.ZERO;
             try {
-                x = FCUtil.parseCoordinate(pPos.getX(), parse.args[0]);
+                x = FCCUtil.parseCoordinate(pPos.getX(), parse.args[0]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[0] + "\"!"), e, parse.args[0], 0);
             }
             try {
-                y = FCUtil.parseCoordinate(pPos.getY(), parse.args[1]);
+                y = FCCUtil.parseCoordinate(pPos.getY(), parse.args[1]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[1] + "\"!"), e, parse.args[1], 1);
             }
             try {
-                z = FCUtil.parseCoordinate(pPos.getZ(), parse.args[2]);
+                z = FCCUtil.parseCoordinate(pPos.getZ(), parse.args[2]);
             } catch (NumberFormatException e) {
                 throw new ArgumentParseException(Text.of("Unable to parse \"" + parse.args[2] + "\"!"), e, parse.args[2], 2);
             }
@@ -167,7 +168,7 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
         }
         this.list.add(new Vector3i(x, y, z));
         if (source instanceof Player) {
-            FCUtil.updatePositions((Player) source);
+            FCPUtil.updatePositions((Player) source);
         }
         return ProcessResult.of(true, Text.of("Successfully added position (" + x + ", " + y + ", " + z + ") to your state buffer!"));
     }
@@ -202,7 +203,7 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
             throw new ArgumentParseException(Text.of("Index out of bounds! (1 - " + this.list.size()), parse.args[0], 0);
         }
         if (source instanceof Player) {
-            FCUtil.updatePositions((Player) source);
+            FCPUtil.updatePositions((Player) source);
         }
         return ProcessResult.of(true, Text.of("Successfully removed position from your state buffer!"));
     }
@@ -211,7 +212,7 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
     public void flush() {
         super.flush();
         if (sourceState.getSource() instanceof Player) {
-            FCUtil.updatePositions((Player) sourceState.getSource());
+            FCPUtil.updatePositions((Player) sourceState.getSource());
         }
     }
 

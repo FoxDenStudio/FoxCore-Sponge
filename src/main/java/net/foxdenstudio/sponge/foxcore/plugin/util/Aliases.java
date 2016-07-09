@@ -43,7 +43,7 @@ public final class Aliases {
     public static final String[] TRUE_ALIASES = {"true", "t", "allow", "a"};
     public static final String[] FALSE_ALIASES = {"false", "f", "deny", "d"};
     public static final String[] PASSTHROUGH_ALIASES = {"passthrough", "pass", "p", "undefined", "undef", "un", "u"};
-    public static final String[] CLEAR_ALIASES = {"clear", "erase", "reset", "remove", "default", "original"};
+    public static final String[] CLEAR_ALIASES = {"clear", "erase", "reset", "remove"};
     public static final String[] PLAYER_ALIASES = {"player", "user", "username", "p", "u"};
     public static final String[] ALL_ALIASES = {"all", "a", "everything"};
     public static final String[] SUPER_ALIASES = {"super", "sup", "s"};
@@ -51,6 +51,9 @@ public final class Aliases {
     public static final String[] QUERY_ALIASES = {"query", "que", "q", "search", "match"};
     public static final String[] NUMBER_ALIASES = {"number", "num", "count", "n"};
     public static final String[] FORCE_ALIASES = {"force", "f"};
+    public static final String[] INDEX_ALIASES = {"index", "i", "pos", "position"};
+    public static final String[] COLOR_ALIASES = {"color", "colour", "col", "c"};
+    public static final String[] DISPLAY_NAME_ALIASES = {"displayname", "display", "disp", "dispname", "title", "d"};
 
 
     public static boolean isIn(String[] aliases, String input) {

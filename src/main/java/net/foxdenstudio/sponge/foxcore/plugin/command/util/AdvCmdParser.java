@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  */
 public final class AdvCmdParser {
 
-    public static final Function<Map<String, String>, Function<String, Consumer<String>>>
+    public static final FlagMapper
             DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
 
     private static final String regex = "(?:--[\\w-]*[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";

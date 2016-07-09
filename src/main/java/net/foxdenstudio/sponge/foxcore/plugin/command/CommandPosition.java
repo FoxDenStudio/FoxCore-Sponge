@@ -26,10 +26,10 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.common.FCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -53,7 +53,7 @@ public class CommandPosition implements CommandCallable {
         ProcessResult result = positionsField.add(source, arguments);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
-                if (!FCUtil.hasColor(result.getMessage().get())) {
+                if (!FCPUtil.hasColor(result.getMessage().get())) {
                     source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.GREEN).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
@@ -63,7 +63,7 @@ public class CommandPosition implements CommandCallable {
             }
         } else {
             if (result.getMessage().isPresent()) {
-                if (!FCUtil.hasColor(result.getMessage().get())) {
+                if (!FCPUtil.hasColor(result.getMessage().get())) {
                     source.sendMessage(result.getMessage().get().toBuilder().color(TextColors.RED).build());
                 } else {
                     source.sendMessage(result.getMessage().get());
