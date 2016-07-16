@@ -30,8 +30,9 @@ import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.world.Location;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
-public class BoundingBox3 implements Serializable {
+public class BoundingBox3 implements Serializable , Iterable<Vector3i>{
 
     public final Vector3i a;
     public final Vector3i b;
@@ -97,4 +98,35 @@ public class BoundingBox3 implements Serializable {
                 + b.getX() + ", " + b.getY() + ", " + b.getZ() + ")}";
     }
 
+    @Override
+    public Iterator<Vector3i> iterator() {
+        return new BBIterator();
+    }
+
+    private class BBIterator implements Iterator<Vector3i> {
+
+        int x = a.getX(), y = a.getY(), z = a.getZ();
+
+        @Override
+        public boolean hasNext() {
+            return y <= b.getY();
+        }
+
+        @Override
+        public Vector3i next() {
+            if (hasNext()) {
+                Vector3i v = new Vector3i(x, y, z);
+                x++;
+                if (x > b.getX()) {
+                    x = a.getX();
+                    z++;
+                }
+                if (z > b.getZ()) {
+                    z = a.getZ();
+                    y++;
+                }
+                return v;
+            } else return null;
+        }
+    }
 }
