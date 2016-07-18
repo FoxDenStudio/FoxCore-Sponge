@@ -32,7 +32,6 @@ import net.foxdenstudio.sponge.foxcore.plugin.command.util.FlagMapper;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -53,15 +52,12 @@ import org.spongepowered.api.util.StartsWithPredicate;
 import org.spongepowered.api.world.World;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.PLAYER_ALIASES;
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
-public class CommandWand implements CommandCallable {
+public class CommandWand extends FCCommandBase {
 
     private static final FlagMapper MAPPER = map -> key -> value -> {
         map.put(key, value);

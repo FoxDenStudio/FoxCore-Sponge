@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.spongepowered.api.command.CommandMessageFormatting.SPACE_TEXT;
 
-public class FCCommandDispatcher implements Dispatcher {
+public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
 
     protected final Disambiguator disambiguator;
     protected final ListMultimap<String, CommandMapping> commands = ArrayListMultimap.create();

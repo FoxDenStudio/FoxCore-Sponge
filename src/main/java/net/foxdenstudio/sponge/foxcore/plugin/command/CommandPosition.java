@@ -30,7 +30,6 @@ import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -41,7 +40,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.List;
 import java.util.Optional;
 
-public class CommandPosition implements CommandCallable {
+public class CommandPosition extends FCCommandBase {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {

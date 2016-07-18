@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -42,7 +41,7 @@ import java.util.*;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
-public class CommandCurrent implements CommandCallable {
+public class CommandCurrent extends FCCommandBase {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {

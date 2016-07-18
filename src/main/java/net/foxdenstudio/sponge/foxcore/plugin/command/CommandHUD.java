@@ -6,7 +6,6 @@ import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -24,7 +23,7 @@ import java.util.Optional;
 /**
  * Created by Fox on 4/14/2016.
  */
-public class CommandHUD implements CommandCallable {
+public class CommandHUD extends FCCommandBase {
 
     private static final String[] RESET_ALIASES = {"reset", "r", "clear"};
 

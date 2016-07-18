@@ -33,7 +33,6 @@ import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.IStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -45,7 +44,7 @@ import org.spongepowered.api.util.StartsWithPredicate;
 import java.util.List;
 import java.util.Optional;
 
-public class CommandState implements CommandCallable {
+public class CommandState extends FCCommandBase {
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
