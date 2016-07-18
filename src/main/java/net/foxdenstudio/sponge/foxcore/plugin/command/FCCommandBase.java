@@ -42,7 +42,7 @@ public abstract class FCCommandBase implements CommandCallable{
         return Text.EMPTY;
     }
 
-    List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         return getSuggestions(source, arguments);
     }
 }
