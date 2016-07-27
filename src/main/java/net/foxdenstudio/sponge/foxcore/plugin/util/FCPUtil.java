@@ -1,14 +1,13 @@
 package net.foxdenstudio.sponge.foxcore.plugin.util;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.common.network.server.ServerPositionPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.util.FCCUtil;
-import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
+import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -93,7 +92,7 @@ public class FCPUtil {
     }
 
     public static void updatePositions(Player player) {
-        FCServerNetworkManager.instance().sendPacket(player, new ServerPositionPacket(getPositions(player)));
+        FoxCoreMain.instance().getFoxcoreNetworkChannel().sendPacket(player, new ServerPositionPacket(getPositions(player)));
     }
 
     public static Optional<TextColor> textColorFromName(String name) {

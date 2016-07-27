@@ -26,10 +26,10 @@
 package net.foxdenstudio.sponge.foxcore.plugin;
 
 import com.google.inject.Inject;
-import net.foxdenstudio.sponge.foxcore.common.network.server.ServerHandshakePacket;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
-import net.foxdenstudio.sponge.foxcore.plugin.network.FCServerNetworkManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
@@ -39,6 +39,7 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -55,7 +56,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.UUID;
 
 @Plugin(id = "foxcore",
@@ -82,6 +82,8 @@ public final class FoxCoreMain {
 
     private FCCommandDispatcher fcDispatcher;
 
+    private FCServerNetworkManager.ServerChannel foxcoreNetworkChannel;
+
     public static FoxCoreMain instance() {
         return instance;
     }
@@ -97,21 +99,27 @@ public final class FoxCoreMain {
         logger.info("Version: " + container.getVersion().orElse("Unknown"));
         logger.info("Initializing state manager");
         FCStateManager.init();
+        logger.info("Initializing network packet manager");
+        FCServerNetworkManager.instance();
         logger.info("Configuring commands");
         configureCommands();
     }
 
     @Listener
     public void gameInit(GameInitializationEvent event) {
+        logger.info("Starting network packet manager");
+        FCServerNetworkManager.instance().registerNetworkingChannels();
+        logger.info("Creating server network channel");
+        foxcoreNetworkChannel = FCServerNetworkManager.instance().getOrCreateServerChannel("foxcore");
+        logger.info("Registering packet listeners");
+        this.registerPackets();
         logger.info("Registering positions state field");
         FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
-        logger.info("Initializing network packet manager");
-        FCServerNetworkManager.init();
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Setting default player permissions");
         configurePermissions();
-        logger.info("Registering Wand DataManipulators");
+        logger.info("Registering custom data manipulators");
         registerData();
         logger.info("Registering event listeners");
         registerListeners();
@@ -136,13 +144,19 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
     }
 
+    private void registerPackets() {
+        FCServerNetworkManager manager = FCServerNetworkManager.instance();
+        manager.registerPacket(ServerPositionPacket.ID);
+        manager.registerPacket(ServerPrintStringPacket.ID);
+    }
+
     private void registerListeners() {
-        logger.info("Registering event listeners");
-        game.getEventManager().registerListener(this, InteractBlockEvent.class, new WandListener());
+        EventManager manager = game.getEventManager();
+        manager.registerListener(this, InteractBlockEvent.class, new WandListener());
+        manager.registerListeners(this, FCServerNetworkManager.instance());
     }
 
     private void registerData() {
-        logger.info("Registering custom data manipulators");
         game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
     }
 
@@ -163,13 +177,20 @@ public final class FoxCoreMain {
         return fcDispatcher;
     }
 
+    public FCServerNetworkManager.ServerChannel getFoxcoreNetworkChannel() {
+        return foxcoreNetworkChannel;
+    }
+
+    private static final UUID FOX_UUID = UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371");
+
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {
-        FCServerNetworkManager.instance().getPacketMapping().put(event.getTargetEntity(), new HashMap<>());
-        FCServerNetworkManager.instance().sendPacket(event.getTargetEntity(), new ServerHandshakePacket(container.getId(), container.getVersion().orElse("unknown")), true);
-        if (event.getTargetEntity().getUniqueId().equals(UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371"))) {
-            FoxCoreMain.instance().logger().info("A code fox has slipped into the server.");
+        Player player = event.getTargetEntity();
+        if (player.getUniqueId().equals(FOX_UUID)) {
+            logger.info("A code fox has slipped into the server.");
         }
+        FCServerNetworkManager manager = FCServerNetworkManager.instance();
+        manager.negotiateHandshake(player);
     }
 
     public Path getConfigDirectory() {

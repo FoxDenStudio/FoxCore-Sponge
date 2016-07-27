@@ -32,14 +32,17 @@ import java.util.List;
 public class CommonProxy {
 
     public void registerRenderers() {
-
     }
 
-    public void registerNetworkHandlers() {
+    public void initializeNetworkManager() {
+    }
 
+    public void registerNetworkChannels(){
+    }
+
+    public void lockNetworkManager(){
     }
 
     public void updatePositionsList(List<Vector3i> list) {
-
     }
 }

@@ -8,7 +8,5 @@ import org.spongepowered.api.network.ChannelBuf;
  */
 public interface IServerPacket extends IPacket {
 
-    void read(ByteBuf payload);
-
     void write(ChannelBuf buf);
 }

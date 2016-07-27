@@ -26,16 +26,23 @@
 package net.foxdenstudio.sponge.foxcore.mod;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.foxdenstudio.sponge.foxcore.mod.network.FCClientNetworkManager;
+import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPositionPacketListener;
+import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPrintStringPacketListener;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 import java.util.List;
 
 public class ClientProxy extends CommonProxy {
 
-    RenderHandler renderHandler;
+    private RenderHandler renderHandler;
+    private FCClientNetworkManager.ClientChannel foxcoreChannel;
 
     @Override
     public void registerRenderers() {
@@ -43,12 +50,31 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void registerNetworkHandlers() {
-        FCClientNetworkManager.instance();
+    public void initializeNetworkManager() {
+        FCClientNetworkManager manager = FCClientNetworkManager.instance();
+        foxcoreChannel = manager.getOrCreateClientChannel("foxcore");
+        foxcoreChannel.registerListener(ServerPositionPacket.ID, new ServerPositionPacketListener());
+        foxcoreChannel.registerListener(ServerPrintStringPacket.ID, new ServerPrintStringPacketListener());
+    }
+
+    @Override
+    public void registerNetworkChannels() {
+        FCClientNetworkManager.instance().registerNetworkingChannels();
+    }
+
+    @Override
+    public void lockNetworkManager() {
+        FCClientNetworkManager.instance().lock();
     }
 
     @Override
     public void updatePositionsList(List<Vector3i> list) {
         this.renderHandler.updateList(list);
+    }
+
+    @SubscribeEvent
+    public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event){
+        FCClientNetworkManager.instance().hasServer = false;
+        FoxCoreCUIMain.logger.info("DISCO FOX");
     }
 }

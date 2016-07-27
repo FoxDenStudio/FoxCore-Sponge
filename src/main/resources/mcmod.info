@@ -1,8 +1,8 @@
 [
 {
-"modid": "foxcoreforge",
-"name": "FoxCore Forge Client Mod",
-"description": "Client mod for working with FoxCore Selections",
+"modid": "foxcorecui",
+"name": "FoxCore Client User Interface",
+"description": "Client mod for working with FoxCore selections",
 "version": "",
 "credits": "Written by gravityfox",
 "logoFile": "",
