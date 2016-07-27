@@ -164,11 +164,6 @@ public class FCClientNetworkManager {
     public class PacketHandler extends ChannelInboundHandlerAdapter {
 
         @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            super.exceptionCaught(ctx, cause);
-        }
-
-        @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             if (msg instanceof FMLProxyPacket) {
                 ByteBuf data = ((FMLProxyPacket) msg).payload();
