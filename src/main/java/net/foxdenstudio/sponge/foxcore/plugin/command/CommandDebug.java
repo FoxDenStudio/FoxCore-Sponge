@@ -79,12 +79,12 @@ public class CommandDebug extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Toggles debug mode."));
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("Enabling debug mode gives additional output from the plugin.\n" +
                 "While debug output may actually be useful to server owners, it is not an official feature."));
     }

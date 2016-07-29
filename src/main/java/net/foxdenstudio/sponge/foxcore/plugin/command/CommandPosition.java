@@ -87,12 +87,12 @@ public class CommandPosition extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Shorthand command for working with the positions field."));
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("Adds positions from the positions state field. You can specify coordinates."));
     }
 
