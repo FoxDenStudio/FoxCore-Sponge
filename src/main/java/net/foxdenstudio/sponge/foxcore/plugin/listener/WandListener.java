@@ -30,6 +30,8 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.type.HandType;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -42,8 +44,8 @@ public class WandListener implements EventListener<InteractBlockEvent> {
         Object root = event.getCause().root();
         if (root instanceof Player) {
             Player player = (Player) root;
-            if (player.getItemInHand().isPresent()) {
-                ItemStack item = player.getItemInHand().get();
+            if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
+                ItemStack item = player.getItemInHand(HandTypes.MAIN_HAND).get();
                 if (item.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
                     IWand wand = PositionWand.WAND;
                     boolean cancel = false;

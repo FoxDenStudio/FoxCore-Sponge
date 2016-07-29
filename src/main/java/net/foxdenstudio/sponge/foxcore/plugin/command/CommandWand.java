@@ -38,6 +38,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
 import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
@@ -96,12 +97,12 @@ public class CommandWand extends FCCommandBase {
         stack.offer(Keys.DISPLAY_NAME, name);
         stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
 
-        if (player.getItemInHand().isPresent()) {
+        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
             Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition()).get();
             entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
             player.getWorld().spawnEntity(entity, Cause.builder().named("plugin", FoxCoreMain.instance()).build());
         } else {
-            player.setItemInHand(stack);
+            player.setItemInHand(HandTypes.MAIN_HAND, stack);
         }
 
         source.sendMessage(Text.of("Successfully created wand!"));
@@ -141,12 +142,12 @@ public class CommandWand extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.empty();
     }
 
