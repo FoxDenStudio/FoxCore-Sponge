@@ -5,6 +5,9 @@ import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -61,5 +64,20 @@ public class PositionWand implements IWand {
     @Override
     public boolean rightClickEntity(Player player, Entity entity) {
         return false;
+    }
+
+    @Override
+    public void load(DataView data) {
+        
+    }
+
+    @Override
+    public int getContentVersion() {
+        return 1;
+    }
+
+    @Override
+    public DataContainer toContainer() {
+        return new MemoryDataContainer();
     }
 }

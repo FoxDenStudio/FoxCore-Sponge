@@ -44,6 +44,9 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -100,7 +103,10 @@ public class CommandWand extends FCCommandBase {
         if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
             Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition()).get();
             entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
-            player.getWorld().spawnEntity(entity, Cause.builder().named("plugin", FoxCoreMain.instance()).build());
+            player.getWorld().spawnEntity(entity, Cause.builder()
+                    .named(NamedCause.SOURCE, SpawnCause.builder().type(SpawnTypes.CUSTOM).build())
+                    .named("plugin", FoxCoreMain.instance())
+                    .build());
         } else {
             player.setItemInHand(HandTypes.MAIN_HAND, stack);
         }
