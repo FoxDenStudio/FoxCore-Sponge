@@ -35,7 +35,7 @@ if (System.env.TRAVIS) {
         }
         tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
     } else {
-        tempVersion = version + "-$System.env.TRAVIS_BUILD_NUMBER-BLEEDING-SNAPSHOT"
+        tempVersion = version + "-$System.env.TRAVIS_BUILD_NUMBER-BLEEDING"
     }
     version tempVersion
 }
