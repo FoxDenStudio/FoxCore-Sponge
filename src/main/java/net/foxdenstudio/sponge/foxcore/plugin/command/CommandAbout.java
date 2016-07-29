@@ -68,12 +68,12 @@ public class CommandAbout extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Displays information about this plugin."));
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("Why would you need help using the \"about\" command?"));
     }
 

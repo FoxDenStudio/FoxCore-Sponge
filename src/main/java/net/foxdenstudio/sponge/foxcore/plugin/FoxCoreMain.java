@@ -161,8 +161,8 @@ public final class FoxCoreMain {
     }
 
     private void configurePermissions() {
-        game.getServiceManager().provide(PermissionService.class).get()
-                .getDefaultData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcommon.command.info", Tristate.TRUE);
+        game.getServiceManager().provide(PermissionService.class).get().getDefaults()
+                .getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcommon.command.info", Tristate.TRUE);
     }
 
     public Logger logger() {

@@ -22,18 +22,17 @@ public abstract class FCCommandBase implements CommandCallable{
         return CommandResult.empty();
     }
 
-    @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         return ImmutableList.of();
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.empty();
     }
 

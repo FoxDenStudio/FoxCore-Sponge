@@ -31,11 +31,14 @@ import org.spongepowered.api.command.*;
 import org.spongepowered.api.command.dispatcher.Disambiguator;
 import org.spongepowered.api.command.dispatcher.Dispatcher;
 import org.spongepowered.api.command.dispatcher.SimpleDispatcher;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -255,6 +258,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws
             CommandException {
+        Player player = (Player) source;
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .limit(1)
@@ -278,7 +282,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
             if (!cmdOptional.isPresent()) {
                 return ImmutableList.of();
             } else return cmdOptional.get().getCallable()
-                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "")
+                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "", player.getLocation())
                     .stream()
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
@@ -309,12 +313,12 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.ofNullable(shortDescription);
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         if (this.commands.isEmpty()) {
             return Optional.empty();
         }
