@@ -258,7 +258,6 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws
             CommandException {
-        Player player = (Player) source;
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .limit(1)
