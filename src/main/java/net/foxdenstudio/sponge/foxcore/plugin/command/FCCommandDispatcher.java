@@ -282,7 +282,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
             if (!cmdOptional.isPresent()) {
                 return ImmutableList.of();
             } else return cmdOptional.get().getCallable()
-                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "", player.getLocation())
+                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "", null)
                     .stream()
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
