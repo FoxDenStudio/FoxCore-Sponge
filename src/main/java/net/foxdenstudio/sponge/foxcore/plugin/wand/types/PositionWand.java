@@ -67,8 +67,8 @@ public class PositionWand implements IWand {
     }
 
     @Override
-    public void load(DataView data) {
-        
+    public String type() {
+        return "position";
     }
 
     @Override

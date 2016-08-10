@@ -27,9 +27,12 @@ package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +47,7 @@ public interface IStateField {
 
     ProcessResult modify(CommandSource source, String arguments) throws CommandException;
 
-    List<String> modifySuggestions(CommandSource source, String arguments) throws CommandException;
+    List<String> modifySuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException;
 
     default Optional<Text> getScoreboardTitle() {
         return Optional.empty();
