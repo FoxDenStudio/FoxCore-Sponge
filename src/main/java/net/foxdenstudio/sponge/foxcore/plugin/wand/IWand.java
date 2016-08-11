@@ -23,6 +23,5 @@ public interface IWand extends DataSerializable{
 
     boolean rightClickEntity(Player player, Entity entity);
 
-    void load(DataView data);
-
+    String type();
 }
