@@ -22,10 +22,6 @@ public abstract class FCCommandBase implements CommandCallable{
         return CommandResult.empty();
     }
 
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        return ImmutableList.of();
-    }
-
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.empty();
@@ -42,6 +38,6 @@ public abstract class FCCommandBase implements CommandCallable{
     }
 
     public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
-        return getSuggestions(source, arguments);
+        return ImmutableList.of();
     }
 }

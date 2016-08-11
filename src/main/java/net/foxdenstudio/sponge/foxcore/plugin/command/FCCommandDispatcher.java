@@ -40,6 +40,7 @@ import org.spongepowered.api.util.StartsWithPredicate;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -256,7 +257,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws
             CommandException {
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
@@ -281,7 +282,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
             if (!cmdOptional.isPresent()) {
                 return ImmutableList.of();
             } else return cmdOptional.get().getCallable()
-                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "", null)
+                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "", targetPosition)
                     .stream()
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());

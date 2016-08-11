@@ -53,8 +53,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,7 +103,7 @@ public class CommandWand extends FCCommandBase {
         stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
 
         if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-            Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition()).get();
+            Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition());
             entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
             player.getWorld().spawnEntity(entity, Cause.builder()
                     .named(NamedCause.SOURCE, SpawnCause.builder().type(SpawnTypes.CUSTOM).build())
@@ -117,7 +119,7 @@ public class CommandWand extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
