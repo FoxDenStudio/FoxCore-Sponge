@@ -30,12 +30,13 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
+
+import java.util.Optional;
 
 public class WandListener implements EventListener<InteractBlockEvent> {
 
@@ -44,9 +45,35 @@ public class WandListener implements EventListener<InteractBlockEvent> {
         Object root = event.getCause().root();
         if (root instanceof Player) {
             Player player = (Player) root;
-            if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-                ItemStack item = player.getItemInHand(HandTypes.MAIN_HAND).get();
-                if (item.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
+            if (event instanceof InteractBlockEvent.Primary.OffHand ||
+                    event instanceof InteractBlockEvent.Secondary.OffHand ||
+                    !player.hasPermission("foxcore.wand.use"))
+                return;
+
+            Optional<ItemStack> mainItem = player.getItemInHand(HandTypes.MAIN_HAND), offItem = player.getItemInHand(HandTypes.OFF_HAND);
+            if (offItem.isPresent()) {
+                ItemStack item = offItem.get();
+                if (item.get(WandData.class).isPresent()) {
+                    IWand wand = PositionWand.WAND;
+
+                    if (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
+                        if (event instanceof InteractBlockEvent.Primary) {
+                            wand.leftClickAir(player);
+                        } else if (event instanceof InteractBlockEvent.Secondary) {
+                            wand.rightClickAir(player);
+                        }
+                    } else {
+                        if (event instanceof InteractBlockEvent.Primary) {
+                            wand.leftClickBlock(player, event.getTargetBlock());
+                        } else if (event instanceof InteractBlockEvent.Secondary) {
+                            wand.rightClickBlock(player, event.getTargetBlock());
+                        }
+                    }
+                }
+            }
+            if (mainItem.isPresent()) {
+                ItemStack item = mainItem.get();
+                if (item.get(WandData.class).isPresent()) {
                     IWand wand = PositionWand.WAND;
                     boolean cancel = false;
                     if (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {

@@ -118,7 +118,7 @@ public class CommandState extends FCCommandBase {
             Optional<IStateField> optField = FCStateManager.instance().getStateMap().get(source).getOrCreateFromAlias(parse.args[0]);
             if (!optField.isPresent()) return ImmutableList.of();
             IStateField field = optField.get();
-            return field.modifySuggestions(source, parse.current.token, null).stream()
+            return field.modifySuggestions(source, parse.current.token, targetPosition).stream()
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
