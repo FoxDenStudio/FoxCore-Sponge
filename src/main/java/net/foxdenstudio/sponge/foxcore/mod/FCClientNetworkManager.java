@@ -33,7 +33,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacketListener;
-import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -125,7 +124,7 @@ public class FCClientNetworkManager {
         return channel;
     }
 
-    public void lock() {
+    void lock() {
         this.locked = true;
     }
 
@@ -168,7 +167,10 @@ public class FCClientNetworkManager {
             if (msg instanceof FMLProxyPacket) {
                 ByteBuf data = ((FMLProxyPacket) msg).payload();
                 int channelID = data.readInt();
-                if (channelID == 0) {
+                if (channelID == -1) {
+                    FoxCoreCUIMain.logger.info("DEBUG MESSAGE RECIEVED!");
+
+                } else if (channelID == 0) {
                     FoxCoreCUIMain.logger.info("FoxCore client network manager received a handshake. This means the server has FoxCore installed. Negotiating.");
                     int channelCount = data.readInt();
                     for (int i = 0; i < channelCount; i++) {
