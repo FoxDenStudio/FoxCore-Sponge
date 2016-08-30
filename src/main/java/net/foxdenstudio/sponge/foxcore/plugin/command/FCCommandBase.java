@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Created by Fox on 7/17/2016.
  */
-public abstract class FCCommandBase implements CommandCallable{
+public abstract class FCCommandBase implements CommandCallable {
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         return CommandResult.empty();
@@ -28,12 +28,12 @@ public abstract class FCCommandBase implements CommandCallable{
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.empty();
     }
 

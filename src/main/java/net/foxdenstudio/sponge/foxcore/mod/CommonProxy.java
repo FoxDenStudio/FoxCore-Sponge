@@ -37,10 +37,10 @@ public class CommonProxy {
     public void initializeNetworkManager() {
     }
 
-    public void registerNetworkChannels(){
+    public void registerNetworkChannels() {
     }
 
-    public void lockNetworkManager(){
+    public void lockNetworkManager() {
     }
 
     public void updatePositionsList(List<Vector3i> list) {

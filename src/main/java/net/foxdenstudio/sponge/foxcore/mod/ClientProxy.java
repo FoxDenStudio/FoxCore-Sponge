@@ -34,7 +34,6 @@ import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 import java.util.List;
@@ -73,7 +72,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event){
+    public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         FCClientNetworkManager.instance().hasServer = false;
         FoxCoreCUIMain.logger.info("DISCO FOX");
     }

@@ -87,12 +87,12 @@ public class CommandTest extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.empty();
     }
 

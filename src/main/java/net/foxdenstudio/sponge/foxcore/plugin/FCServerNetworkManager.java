@@ -28,7 +28,6 @@ package net.foxdenstudio.sponge.foxcore.plugin;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacketListener;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
-import net.foxdenstudio.sponge.foxcore.mod.FCClientNetworkManager;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;

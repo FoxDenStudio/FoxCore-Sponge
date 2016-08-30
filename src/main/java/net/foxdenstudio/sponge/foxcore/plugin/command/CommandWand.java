@@ -29,8 +29,8 @@ import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.FlagMapper;
-import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -147,12 +147,12 @@ public class CommandWand extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.empty();
     }
 

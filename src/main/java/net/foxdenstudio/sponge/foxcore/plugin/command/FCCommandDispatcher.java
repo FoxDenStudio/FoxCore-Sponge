@@ -309,12 +309,12 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.ofNullable(shortDescription);
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         if (this.commands.isEmpty()) {
             return Optional.empty();
         }

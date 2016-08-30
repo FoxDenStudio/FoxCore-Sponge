@@ -26,15 +26,11 @@
 package net.foxdenstudio.sponge.foxcore.common.util;
 
 import com.flowpowered.math.vector.Vector3f;
-import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
-import org.spongepowered.api.text.format.TextColors;
 
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import static org.spongepowered.api.text.format.TextColors.*;
@@ -154,7 +150,7 @@ public final class FCCUtil {
         return -1;
     }
 
-    public static boolean checkPermissionString(String permission){
+    public static boolean checkPermissionString(String permission) {
         return permission.matches("[a-zA-Z0-9\\-_\\.]") && !permission.matches("^.*\\.\\..*$") && !permission.startsWith(".") && !permission.endsWith(".");
     }
 

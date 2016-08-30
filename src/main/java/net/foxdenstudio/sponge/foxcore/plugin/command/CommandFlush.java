@@ -87,12 +87,12 @@ public class CommandFlush extends FCCommandBase {
     }
 
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource source) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Clears your state buffer."));
     }
 
     @Override
-    public Optional<? extends Text> getHelp(CommandSource source) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("If no fields are specified, all fields are cleared. You can optionally specify which fields to clear."));
     }
 
