@@ -23,10 +23,11 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.state.selection;
+package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
+import net.foxdenstudio.sponge.foxcore.plugin.selection.ISelection;
 import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.state.StateFieldBase;
 import org.spongepowered.api.command.CommandException;

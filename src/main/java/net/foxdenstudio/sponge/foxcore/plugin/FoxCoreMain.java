@@ -29,7 +29,7 @@ import com.google.inject.Inject;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
-import net.foxdenstudio.sponge.foxcore.plugin.listener.WandListener;
+import net.foxdenstudio.sponge.foxcore.plugin.listener.WandBlockListener;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
@@ -152,7 +152,7 @@ public final class FoxCoreMain {
 
     private void registerListeners() {
         EventManager manager = game.getEventManager();
-        manager.registerListener(this, InteractBlockEvent.class, new WandListener());
+        manager.registerListener(this, InteractBlockEvent.class, new WandBlockListener());
         manager.registerListeners(this, FCServerNetworkManager.instance());
     }
 

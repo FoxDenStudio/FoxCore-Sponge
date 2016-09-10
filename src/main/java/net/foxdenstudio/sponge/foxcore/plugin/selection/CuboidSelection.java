@@ -1,4 +1,4 @@
-package net.foxdenstudio.sponge.foxcore.plugin.state.selection;
+package net.foxdenstudio.sponge.foxcore.plugin.selection;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 public class CuboidSelection implements ISelection {
 
-    BoundingBox3 boundingBox;
+    public BoundingBox3 boundingBox;
 
     public CuboidSelection(BoundingBox3 boundingBox) {
         this.boundingBox = boundingBox;

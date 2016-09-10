@@ -35,16 +35,20 @@ import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 
-public class WandListener implements EventListener<InteractBlockEvent> {
+import javax.annotation.Nonnull;
+import java.util.Optional;
+
+public class WandBlockListener implements EventListener<InteractBlockEvent> {
 
     @Override
-    public void handle(InteractBlockEvent event) throws Exception {
+    public void handle(@Nonnull InteractBlockEvent event) throws Exception {
         Object root = event.getCause().root();
         if (root instanceof Player) {
             Player player = (Player) root;
-            if (player.getItemInHand().isPresent()) {
-                ItemStack item = player.getItemInHand().get();
-                if (item.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
+            Optional<ItemStack> itemStackOptional = player.getItemInHand();
+            if (itemStackOptional.isPresent()) {
+                ItemStack itemStack = itemStackOptional.get();
+                if (itemStack.get(WandData.class).isPresent() && player.hasPermission("foxcore.wand.use")) {
                     IWand wand = PositionWand.WAND;
                     boolean cancel = false;
                     if (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
