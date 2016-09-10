@@ -133,7 +133,7 @@ public class CommandState extends FCCommandBase {
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Command for manipulating fields in the state buffer."));
     }
 
     @Override

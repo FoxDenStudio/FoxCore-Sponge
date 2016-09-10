@@ -1,6 +1,5 @@
 package net.foxdenstudio.sponge.foxcore.common.network;
 
-import io.netty.buffer.ByteBuf;
 import org.spongepowered.api.network.ChannelBuf;
 
 /**

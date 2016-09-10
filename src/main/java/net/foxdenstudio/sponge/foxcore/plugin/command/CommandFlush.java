@@ -61,7 +61,7 @@ public class CommandFlush extends FCCommandBase {
             for (String arg : parse.args) {
                 String id = FCStateManager.instance().getID(arg);
                 if (id == null) throw new CommandException(Text.of("\"" + arg + "\" is not a valid type!"));
-                state.flush(id);
+                state.flush(false, id);
             }
         }
         state.updateScoreboard();
@@ -96,7 +96,8 @@ public class CommandFlush extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("If no fields are specified, all fields are cleared. You can optionally specify which fields to clear."));
+        return Optional.of(Text.of("Clears your state buffer.\n" +
+                "If no fields are specified, all fields are cleared. You can optionally specify which fields to clear."));
     }
 
     @Override

@@ -25,7 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.command.util;
 
-import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.text.Text;
 

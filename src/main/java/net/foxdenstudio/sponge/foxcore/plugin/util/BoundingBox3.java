@@ -32,7 +32,7 @@ import org.spongepowered.api.world.Location;
 import java.io.Serializable;
 import java.util.Iterator;
 
-public class BoundingBox3 implements Serializable , Iterable<Vector3i>{
+public class BoundingBox3 implements Serializable, Iterable<Vector3i> {
 
     public final Vector3i a;
     public final Vector3i b;

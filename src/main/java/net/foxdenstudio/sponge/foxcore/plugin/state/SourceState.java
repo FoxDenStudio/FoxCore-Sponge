@@ -25,8 +25,8 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import net.foxdenstudio.sponge.foxcore.plugin.command.CommandHUD;
-import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -87,18 +87,33 @@ public class SourceState {
         } else return Optional.empty();
     }
 
-    public void flush() {
+    public void flush(){
+        this.flush(true);
+    }
+
+    public void flush(boolean updateScoreboard) {
         state.values().forEach(IStateField::flush);
+        if (updateScoreboard) updateScoreboard();
     }
 
-    public void flush(String field) {
+    public void flush(String field){
+        this.flush(true, field);
+    }
+
+    public void flush(boolean updateScoreboard, String field) {
         if (state.containsKey(field)) state.get(field).flush();
+        if (updateScoreboard) updateScoreboard();
     }
 
-    public void flush(String... fields) {
+    public void flush(String... fields){
+        this.flush(true, fields);
+    }
+
+    public void flush(boolean updateScoreboard, String... fields) {
         for (String field : fields) {
-            this.flush(field);
+            this.flush(false, field);
         }
+        if (updateScoreboard) updateScoreboard();
     }
 
     public CommandSource getSource() {

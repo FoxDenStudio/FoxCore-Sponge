@@ -86,7 +86,7 @@ public class CommandPosition extends FCCommandBase {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.add.position");
+        return source.hasPermission("foxcore.command.state");
     }
 
     @Override
@@ -96,7 +96,8 @@ public class CommandPosition extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("Adds positions from the positions state field. You can specify coordinates."));
+        return Optional.of(Text.of("Adds positions to the positions state field.\n" +
+                "You can specify xyz coordinates. This is optional for players, but required in the console."));
     }
 
     @Override

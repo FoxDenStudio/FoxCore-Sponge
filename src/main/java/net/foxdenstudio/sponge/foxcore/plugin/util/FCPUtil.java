@@ -107,7 +107,7 @@ public class FCPUtil {
         return Optional.of(FCCUtil.colors[code]);
     }
 
-    public static CommentedConfigurationNode getHOCONConfiguration(Path file, ConfigurationLoader<CommentedConfigurationNode> loader){
+    public static CommentedConfigurationNode getHOCONConfiguration(Path file, ConfigurationLoader<CommentedConfigurationNode> loader) {
         CommentedConfigurationNode root;
         if (Files.exists(file)) {
             try {

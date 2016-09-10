@@ -28,7 +28,6 @@ package net.foxdenstudio.sponge.foxcore.plugin;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacketListener;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
-import net.foxdenstudio.sponge.foxcore.mod.FCClientNetworkManager;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -70,7 +69,10 @@ public class FCServerNetworkManager {
                 Player player = ((PlayerConnection) connection).getPlayer();
                 PlayerConfig playerConfig = this.playerConfigs.get(player);
                 int channelID = data.readInteger();
-                if (channelID == 0) {
+                if (channelID == -1) {
+                    FoxCoreMain.instance().logger().info("DEBUG MESSAGE RECIEVED!");
+
+                } else if (channelID == 0) {
                     int channelCount = data.readInteger();
                     for (int i = 0; i < channelCount; i++) {
                         int serverChannelID = data.readInteger();
@@ -181,6 +183,14 @@ public class FCServerNetworkManager {
         public void registerListener(String packetName, IClientPacketListener listener) {
             if (!clientPacketListeners.containsKey(packetName)) {
                 clientPacketListeners.put(packetName, listener);
+            }
+        }
+
+        public void sendDebug(Player player) {
+            if (rawDataChannel != null) {
+                rawDataChannel.sendTo(player, load -> {
+                    load.writeInteger(-1);
+                });
             }
         }
 

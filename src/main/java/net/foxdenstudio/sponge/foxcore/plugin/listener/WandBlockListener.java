@@ -36,12 +36,14 @@ import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public class WandListener implements EventListener<InteractBlockEvent> {
+
+public class WandBlockListener implements EventListener<InteractBlockEvent> {
 
     @Override
-    public void handle(InteractBlockEvent event) throws Exception {
+    public void handle(@Nonnull InteractBlockEvent event) throws Exception {
         Object root = event.getCause().root();
         if (root instanceof Player) {
             Player player = (Player) root;

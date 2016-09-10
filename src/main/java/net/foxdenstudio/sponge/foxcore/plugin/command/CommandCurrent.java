@@ -110,7 +110,8 @@ public class CommandCurrent extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("If fields are specified, this command will only print out the data of those particular fields."));
+        return Optional.of(Text.of("Displays the current contents of your state buffer.\n" +
+                "If fields are specified, this command will only print out the data of those particular fields."));
     }
 
     @Override
