@@ -103,9 +103,9 @@ public class FCClientNetworkManager {
             }
             fmlEmbeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
             fmlEmbeddedChannel.writeAndFlush(new FMLProxyPacket(new PacketBuffer(byteBuf), "fox")).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            FoxCoreCUIMain.logger.info("Sent handshake packet");
+            FoxCoreClientMain.logger.info("Sent handshake packet");
         } else {
-            FoxCoreCUIMain.logger.error("Tried to negotiate handshake before manager configurations has been locked!");
+            FoxCoreClientMain.logger.error("Tried to negotiate handshake before manager configurations has been locked!");
         }
     }
 
@@ -155,6 +155,14 @@ public class FCClientNetworkManager {
                 serverPacketListeners.put(packetName, listener);
             }
         }
+
+        public void sendDebug() {
+            ByteBuf byteBuf = Unpooled.buffer();
+            byteBuf.writeInt(-1);
+
+            fmlEmbeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+            fmlEmbeddedChannel.writeAndFlush(new FMLProxyPacket(new PacketBuffer(byteBuf), "fox")).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        }
     }
 
     /**
@@ -168,10 +176,11 @@ public class FCClientNetworkManager {
                 ByteBuf data = ((FMLProxyPacket) msg).payload();
                 int channelID = data.readInt();
                 if (channelID == -1) {
-                    FoxCoreCUIMain.logger.info("DEBUG MESSAGE RECIEVED!");
-
+                    FoxCoreClientMain.logger.info("DEBUG MESSAGE RECIEVED!");
+                    System.out.println(Thread.currentThread());
+                    FoxCoreClientMain.instance.getFoxcoreChannel().sendDebug();
                 } else if (channelID == 0) {
-                    FoxCoreCUIMain.logger.info("FoxCore client network manager received a handshake. This means the server has FoxCore installed. Negotiating.");
+                    FoxCoreClientMain.logger.info("FoxCore client network manager received a handshake. This means the server has FoxCore installed. Negotiating.");
                     int channelCount = data.readInt();
                     for (int i = 0; i < channelCount; i++) {
                         int serverChannelID = data.readInt();
@@ -185,6 +194,15 @@ public class FCClientNetworkManager {
                         serverPacketMapping.put(serverPacketID, serverPacketName);
                     }
                     hasServer = true;
+                    // SpongeForge is dumb, and appears to lose packets that are sent to the server within the first
+                    // few milliseconds of joining the server.
+                    // So we just wait a second before sending the handshake packet.
+                    // Since we are on a Netty worker thread, we're not stopping the rest of the network code from catching up.
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     negotiateHandshake();
                 } else if (hasServer) {
                     ClientChannel channel = clientChannels.get(serverChannelMapping.get(channelID));

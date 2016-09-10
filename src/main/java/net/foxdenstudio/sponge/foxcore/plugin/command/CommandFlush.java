@@ -36,7 +36,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +61,7 @@ public class CommandFlush extends FCCommandBase {
             for (String arg : parse.args) {
                 String id = FCStateManager.instance().getID(arg);
                 if (id == null) throw new CommandException(Text.of("\"" + arg + "\" is not a valid type!"));
-                state.flush(id);
+                state.flush(false, id);
             }
         }
         state.updateScoreboard();
@@ -67,7 +70,7 @@ public class CommandFlush extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
@@ -93,7 +96,8 @@ public class CommandFlush extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("If no fields are specified, all fields are cleared. You can optionally specify which fields to clear."));
+        return Optional.of(Text.of("Clears your state buffer.\n" +
+                "If no fields are specified, all fields are cleared. You can optionally specify which fields to clear."));
     }
 
     @Override

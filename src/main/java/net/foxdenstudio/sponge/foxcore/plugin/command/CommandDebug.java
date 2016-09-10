@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -34,7 +34,10 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -69,7 +72,7 @@ public class CommandDebug extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         return ImmutableList.of();
     }
 
@@ -86,7 +89,7 @@ public class CommandDebug extends FCCommandBase {
     @Override
     public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("Enabling debug mode gives additional output from the plugin.\n" +
-                "While debug output may actually be useful to server owners, it is not an official feature."));
+                "While debug output may actually be useful to server owners, it is not officially a feature, and support will not be given if something stops working."));
     }
 
     @Override

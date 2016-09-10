@@ -40,7 +40,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,7 +97,7 @@ public class CommandState extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
@@ -130,7 +133,7 @@ public class CommandState extends FCCommandBase {
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Command for manipulating fields in the state buffer."));
     }
 
     @Override

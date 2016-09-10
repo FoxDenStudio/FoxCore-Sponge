@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.FCConfigManager;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
-import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,7 +15,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,7 +84,8 @@ public class CommandHUD extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
+        if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .autoCloseQuotes(true)
@@ -107,7 +111,10 @@ public class CommandHUD extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.empty();
+        return Optional.of(Text.of("Command for enabling and disabling the scoreboard HUD.\n" +
+                "\"on\" enables the scoreboard.\n" +
+                "\"off\" disables the scoreboard.\n" +
+                "\"reset\" will clear the current scoreboard, but will not disable the scoreboard for the plugin."));
     }
 
     @Override

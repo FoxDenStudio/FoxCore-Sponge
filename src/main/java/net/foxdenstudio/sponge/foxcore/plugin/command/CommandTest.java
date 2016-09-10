@@ -27,16 +27,18 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
+import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class CommandTest extends FCCommandBase {
@@ -60,7 +62,7 @@ public class CommandTest extends FCCommandBase {
     }
     */
 
-    @Override
+    /*@Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
@@ -78,6 +80,11 @@ public class CommandTest extends FCCommandBase {
         builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.current.key, TextColors.GOLD, "\"\n"));
         builder.append(Text.of(TextColors.GOLD, "Prefix: \"", TextColors.RESET, parse.current.prefix, TextColors.GOLD, "\"\n"));
         source.sendMessage(builder.build());
+        return ImmutableList.of();
+    }*/
+
+    @Override
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         return ImmutableList.of();
     }
 
@@ -108,18 +115,13 @@ public class CommandTest extends FCCommandBase {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).limit(2).parse();
-        Text.Builder builder = Text.builder();
-        builder.append(Text.of(TextColors.GOLD, "\n-----------------------------\n"));
-        int count = 0;
-        for (String str : parse.args) {
-            count++;
-            builder.append(Text.of(count + ": " + str + "\n"));
+        if (source instanceof Player) {
+            Player player = ((Player) source);
+            FoxCoreMain.instance().getFoxcoreNetworkChannel().sendDebug(player);
+            source.sendMessage(Text.of("Sent debug packet!"));
+        } else {
+            source.sendMessage(Text.of("You must be a player to use this command!"));
         }
-        for (Map.Entry<String, String> entry : parse.flags.entrySet()) {
-            builder.append(Text.of(entry.getKey() + " : " + entry.getValue() + "\n"));
-        }
-        source.sendMessage(builder.build());
         return CommandResult.empty();
     }
 }

@@ -25,7 +25,14 @@
 
 package net.foxdenstudio.sponge.foxcore.mod;
 
+import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPositionPacketListener;
+import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPrintStringPacketListener;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
+import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
+import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -33,30 +40,39 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "foxcorecui", name = "FoxCoreCUI", clientSideOnly = true)
-public class FoxCoreCUIMain {
+import java.util.ArrayList;
 
-    @Mod.Instance("foxcorecui")
-    public static FoxCoreCUIMain instance;
+@Mod(modid = FoxCoreClientMain.MODID, name = "FoxCoreClient", clientSideOnly = true)
+public class FoxCoreClientMain {
 
-    @SidedProxy(modId = "foxcorecui", clientSide = "net.foxdenstudio.sponge.foxcore.mod.ClientProxy", serverSide = "net.foxdenstudio.sponge.foxcore.mod.CommonProxy")
-    public static CommonProxy proxy;
+    public static final String MODID = "foxcoreclient";
+
+    @Mod.Instance(MODID)
+    public static FoxCoreClientMain instance;
 
     public static Logger logger;
+
+    private RenderHandler renderHandler;
+    private FCClientNetworkManager.ClientChannel foxcoreChannel;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        proxy.initializeNetworkManager();
+        FCClientNetworkManager manager = FCClientNetworkManager.instance();
+        foxcoreChannel = manager.getOrCreateClientChannel("foxcore");
+        foxcoreChannel.registerListener(ServerPositionPacket.ID, new ServerPositionPacketListener());
+        foxcoreChannel.registerListener(ServerPrintStringPacket.ID, new ServerPrintStringPacketListener());
     }
 
     @EventHandler
     public void load(FMLInitializationEvent event) {
-        proxy.registerRenderers();
-        proxy.registerNetworkChannels();
-        MinecraftForge.EVENT_BUS.register(proxy);
+        MinecraftForge.EVENT_BUS.register(renderHandler = new RenderHandler(Minecraft.getMinecraft()));
+        MinecraftForge.EVENT_BUS.register(this);
+        FCClientNetworkManager.instance().registerNetworkingChannels();
     }
 
     @EventHandler
@@ -66,7 +82,21 @@ public class FoxCoreCUIMain {
 
     @EventHandler
     public void loadComplete(FMLLoadCompleteEvent event) {
-        proxy.lockNetworkManager();
+        FCClientNetworkManager.instance().lock();
     }
 
+    @SubscribeEvent
+    public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+        FCClientNetworkManager.instance().hasServer = false;
+        FoxCoreClientMain.logger.info("Disco Fox!");
+        this.renderHandler.updateList(new ArrayList<>());
+    }
+
+    public RenderHandler getRenderHandler() {
+        return renderHandler;
+    }
+
+    public FCClientNetworkManager.ClientChannel getFoxcoreChannel() {
+        return foxcoreChannel;
+    }
 }

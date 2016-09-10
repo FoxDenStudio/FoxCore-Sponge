@@ -69,7 +69,10 @@ public class FCServerNetworkManager {
                 Player player = ((PlayerConnection) connection).getPlayer();
                 PlayerConfig playerConfig = this.playerConfigs.get(player);
                 int channelID = data.readInteger();
-                if (channelID == 0) {
+                if (channelID == -1) {
+                    FoxCoreMain.instance().logger().info("DEBUG MESSAGE RECIEVED!");
+
+                } else if (channelID == 0) {
                     int channelCount = data.readInteger();
                     for (int i = 0; i < channelCount; i++) {
                         int serverChannelID = data.readInteger();
@@ -180,6 +183,14 @@ public class FCServerNetworkManager {
         public void registerListener(String packetName, IClientPacketListener listener) {
             if (!clientPacketListeners.containsKey(packetName)) {
                 clientPacketListeners.put(packetName, listener);
+            }
+        }
+
+        public void sendDebug(Player player) {
+            if (rawDataChannel != null) {
+                rawDataChannel.sendTo(player, load -> {
+                    load.writeInteger(-1);
+                });
             }
         }
 

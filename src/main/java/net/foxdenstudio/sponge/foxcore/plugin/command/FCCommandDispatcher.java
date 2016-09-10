@@ -36,7 +36,10 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -253,7 +256,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws
             CommandException {
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
@@ -274,14 +277,23 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
                         .collect(GuavaCollectors.toImmutableList());
             } else return ImmutableList.of();
         } else if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.FINAL) {
-            Optional<CommandMapping> cmdOptional = get(parse.args[0], source);
-            if (!cmdOptional.isPresent()) {
-                return ImmutableList.of();
-            } else return cmdOptional.get().getCallable()
-                    .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "")
-                    .stream()
-                    .map(args -> parse.current.prefix + args)
-                    .collect(GuavaCollectors.toImmutableList());
+            String commandString = parse.args[0];
+            if (commandString.equals("help")) {
+                return filterCommandMappings(source).stream()
+                        .map(CommandMapping::getPrimaryAlias)
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            } else {
+                Optional<CommandMapping> cmdOptional = get(parse.args[0], source);
+                if (!cmdOptional.isPresent()) {
+                    return ImmutableList.of();
+                } else return cmdOptional.get().getCallable()
+                        .getSuggestions(source, parse.args.length > 1 ? parse.args[1] : "")
+                        .stream()
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            }
         } else if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.COMPLETE) {
             return ImmutableList.of(parse.current.prefix + " ");
         } else return ImmutableList.of();
@@ -360,5 +372,38 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
         return build.build();
     }
 
+    protected class CommandHelp extends FCCommandBase{
+
+        @Override
+        public CommandResult process(CommandSource source, String arguments) throws CommandException {
+            return super.process(source, arguments);
+        }
+
+        @Override
+        public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
+            return super.getSuggestions(source, arguments, targetPosition);
+        }
+
+        @Override
+        public boolean testPermission(CommandSource source) {
+            return super.testPermission(source);
+        }
+
+        @Override
+        public Optional<Text> getShortDescription(CommandSource source) {
+            return super.getShortDescription(source);
+        }
+
+        @Override
+        public Optional<Text> getHelp(CommandSource source) {
+            return super.getHelp(source);
+        }
+
+        @Override
+        public Text getUsage(CommandSource source) {
+            return super.getUsage(source);
+        }
+
+    }
 
 }

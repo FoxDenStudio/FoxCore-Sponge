@@ -36,7 +36,10 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +78,7 @@ public class CommandPosition extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         PositionStateField positionsField = (PositionStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionStateField.ID).get();
         return positionsField.addSuggestions(source, arguments);
@@ -83,7 +86,7 @@ public class CommandPosition extends FCCommandBase {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("foxcore.command.state.add.position");
+        return source.hasPermission("foxcore.command.state");
     }
 
     @Override
@@ -93,7 +96,8 @@ public class CommandPosition extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("Adds positions from the positions state field. You can specify coordinates."));
+        return Optional.of(Text.of("Adds positions to the positions state field.\n" +
+                "You can specify xyz coordinates. This is optional for players, but required in the console."));
     }
 
     @Override

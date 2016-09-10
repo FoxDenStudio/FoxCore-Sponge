@@ -3,7 +3,7 @@ package net.foxdenstudio.sponge.foxcore.common.network.client.listener;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacketListener;
-import net.foxdenstudio.sponge.foxcore.mod.FoxCoreCUIMain;
+import net.foxdenstudio.sponge.foxcore.mod.FoxCoreClientMain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ServerPositionPacketListener implements IServerPacketListener {
             Vector3i pos = new Vector3i(payload.readInt(), payload.readInt(), payload.readInt());
             positionList.add(pos);
         }
-        FoxCoreCUIMain.proxy.updatePositionsList(positionList);
+        FoxCoreClientMain.instance.getRenderHandler().updateList(positionList);
     }
 
 }

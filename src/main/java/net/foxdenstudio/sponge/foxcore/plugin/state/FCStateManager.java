@@ -26,7 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.state;
 
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
-import net.foxdenstudio.sponge.foxcore.plugin.util.CacheMap;
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.util.GuavaCollectors;
 

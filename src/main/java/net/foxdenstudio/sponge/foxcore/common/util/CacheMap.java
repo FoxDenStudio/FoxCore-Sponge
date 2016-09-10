@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.plugin.util;
+package net.foxdenstudio.sponge.foxcore.common.util;
 
 import java.util.HashMap;
 import java.util.Map;

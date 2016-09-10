@@ -36,7 +36,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
@@ -81,7 +84,7 @@ public class CommandCurrent extends FCCommandBase {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
         if (!testPermission(source)) return ImmutableList.of();
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).excludeCurrent(true).autoCloseQuotes(true).parse();
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
@@ -107,7 +110,8 @@ public class CommandCurrent extends FCCommandBase {
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("If fields are specified, this command will only print out the data of those particular fields."));
+        return Optional.of(Text.of("Displays the current contents of your state buffer.\n" +
+                "If fields are specified, this command will only print out the data of those particular fields."));
     }
 
     @Override
