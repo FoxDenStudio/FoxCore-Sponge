@@ -373,7 +373,7 @@ public class FCCommandDispatcher extends FCCommandBase implements Dispatcher {
         return build.build();
     }
 
-    protected class CommandHelp extends FCCommandBase{
+    protected class CommandHelp extends FCCommandBase {
 
         @Override
         public CommandResult process(CommandSource source, String arguments) throws CommandException {

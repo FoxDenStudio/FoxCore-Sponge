@@ -33,7 +33,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacketListener;
-import net.foxdenstudio.sponge.foxcore.plugin.FCServerNetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
