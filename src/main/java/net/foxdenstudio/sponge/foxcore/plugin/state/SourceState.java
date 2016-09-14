@@ -87,7 +87,7 @@ public class SourceState {
         } else return Optional.empty();
     }
 
-    public void flush(){
+    public void flush() {
         this.flush(true);
     }
 
@@ -96,7 +96,7 @@ public class SourceState {
         if (updateScoreboard) updateScoreboard();
     }
 
-    public void flush(String field){
+    public void flush(String field) {
         this.flush(true, field);
     }
 
@@ -105,7 +105,7 @@ public class SourceState {
         if (updateScoreboard) updateScoreboard();
     }
 
-    public void flush(String... fields){
+    public void flush(String... fields) {
         this.flush(true, fields);
     }
 

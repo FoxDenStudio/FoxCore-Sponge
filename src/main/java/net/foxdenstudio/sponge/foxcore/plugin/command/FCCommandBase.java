@@ -1,6 +1,5 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
-import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;

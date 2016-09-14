@@ -1,10 +1,10 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import net.foxdenstudio.sponge.foxcore.plugin.FCConfigManager;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
-import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
