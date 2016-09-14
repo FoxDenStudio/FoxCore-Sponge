@@ -194,6 +194,11 @@ public class FCServerNetworkManager {
             }
         }
 
+        public boolean hasClientChannel(Player player) {
+            PlayerConfig config = FCServerNetworkManager.this.playerConfigs.get(player);
+            return config != null && config.clientChannelMapping.values().contains(this.name);
+        }
+
     }
 
     public class PlayerConfig {

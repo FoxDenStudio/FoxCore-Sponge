@@ -33,6 +33,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.foxdenstudio.sponge.foxcore.common.network.IClientPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacketListener;
+import net.foxdenstudio.sponge.foxcore.plugin.FCServerNetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -162,6 +163,10 @@ public class FCClientNetworkManager {
 
             fmlEmbeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
             fmlEmbeddedChannel.writeAndFlush(new FMLProxyPacket(new PacketBuffer(byteBuf), "fox")).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        }
+
+        public boolean hasServerChannel() {
+            return FCClientNetworkManager.this.serverChannelMapping.values().contains(this.name);
         }
     }
 
