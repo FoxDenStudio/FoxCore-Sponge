@@ -45,7 +45,6 @@ public class SelectionStateField extends StateFieldBase {
 
     public static final String ID = "selection";
 
-    private List<ISelection> selections;
     private ISelection currentSelection;
 
     public SelectionStateField(SourceState sourceState) {
@@ -80,19 +79,15 @@ public class SelectionStateField extends StateFieldBase {
 
     @Override
     public void flush() {
-
+        currentSelection = null;
     }
 
     @Override
     public boolean isEmpty() {
-        return true;
+        return currentSelection == null || currentSelection.isEmpty();
     }
 
-    public List<ISelection> getSelections() {
-        return selections;
-    }
-
-    public ISelection getCurrentSelection() {
+    public ISelection getSelection() {
         return currentSelection;
     }
 }

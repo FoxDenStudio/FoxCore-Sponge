@@ -5,6 +5,7 @@ import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
 import org.spongepowered.api.text.Text;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 public class CuboidSelection implements ISelection {
 
@@ -30,18 +31,28 @@ public class CuboidSelection implements ISelection {
     }
 
     @Override
-    public Text details() {
+    public Text overview() {
         return Text.of(boundingBox);
     }
 
     @Override
-    public int size() {
-        return 0;
+    public Optional<Text> details() {
+        return Optional.empty();
     }
 
     @Override
-    public BoundingBox3 bounds() {
-        return boundingBox;
+    public String type() {
+        return "cuboid";
+    }
+
+    @Override
+    public int size() {
+        return (int) boundingBox.size();
+    }
+
+    @Override
+    public Optional<BoundingBox3> bounds() {
+        return Optional.of(boundingBox);
     }
 
     private class SelectionIterator implements Iterator<Vector3i> {
