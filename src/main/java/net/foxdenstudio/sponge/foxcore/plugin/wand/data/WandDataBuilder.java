@@ -26,6 +26,7 @@
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
 import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
@@ -42,18 +43,21 @@ public class WandDataBuilder extends AbstractDataBuilder<WandData> implements Da
         super(WandData.class, CONTENT_VERSION);
     }
 
+    @NotNull
     @Override
     public WandData create() {
         return new WandData();
     }
 
+    @NotNull
     @Override
-    public Optional<WandData> createFrom(DataHolder dataHolder) {
+    public Optional<WandData> createFrom(@NotNull DataHolder dataHolder) {
         return create().fill(dataHolder);
     }
 
+    @NotNull
     @Override
-    protected Optional<WandData> buildContent(DataView container) throws InvalidDataException {
+    protected Optional<WandData> buildContent(@NotNull DataView container) throws InvalidDataException {
         if (!container.contains(WandKeys.WANDTYPE.getQuery())) return Optional.empty();
         WandData data = create();
         data.setWandType(WandType.valueOf((String) container.get(WandKeys.WANDTYPE.getQuery()).get()));

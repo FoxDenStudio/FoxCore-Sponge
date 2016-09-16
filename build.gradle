@@ -24,7 +24,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'net.foxdenstudio.sponge.foxcore'
-version '0.9.2-api5'
+version '0.9.5-api5'
 
 if (System.env.TRAVIS) {
     String tempVersion = ''
@@ -40,7 +40,7 @@ if (System.env.TRAVIS) {
     version tempVersion
 }
 
-apply from: project.file("sponge.gradle")
+apply from: project.file("versions.gradle")
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -50,7 +50,7 @@ sponge.plugin {
 }
 
 minecraft {
-    forgeVersion = '1890'
+    forgeVersion = clientForgeVersion
     runDir = 'run'
     mappings = 'stable_22'
     makeObfSourceJar = false
@@ -126,51 +126,6 @@ task serverJar(type: ShadowJar) {
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
-task liteJar(type: Jar) {
-    classifier = 'lite'
-    from sourceSets.main.output
-}
-
-task serverLiteJar(type: Jar) {
-    classifier = 'server-lite'
-    from(sourceSets.main.output) {
-        exclude "net/foxdenstudio/sponge/foxcore/mod"
-    }
-}
-
-task libJar(type: ShadowJar){
-    classifier = 'lib'
-    dependencies{
-        include dependency('com.flowpowered:flow-math')
-        include dependency('org.mapdb:mapdb')
-        include dependency('org.mapdb:elsa')
-        include dependency('org.eclipse.collections:eclipse-collections')
-        include dependency('org.eclipse.collections:eclipse-collections-api')
-        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
-        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
-        include dependency('org.jetbrains.kotlin:kotlin-runtime')
-        include dependency('net.jpountz.lz4:lz4')
-    }
-    configurations = [project.configurations.runtime]
-    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
-}
-
-task serverLibJar(type: ShadowJar){
-    classifier = 'server-lib'
-    dependencies{
-        include dependency('org.mapdb:mapdb')
-        include dependency('org.mapdb:elsa')
-        include dependency('org.eclipse.collections:eclipse-collections')
-        include dependency('org.eclipse.collections:eclipse-collections-api')
-        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
-        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
-        include dependency('org.jetbrains.kotlin:kotlin-runtime')
-        include dependency('net.jpountz.lz4:lz4')
-    }
-    configurations = [project.configurations.runtime]
-    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
-}
-
 reobf {
     shadowJar { mappingType = 'SEARGE' }
 }
@@ -178,10 +133,6 @@ reobf {
 artifacts {
     archives shadowJar
     archives serverJar
-    archives liteJar
-    archives serverLiteJar
-    archives libJar
-    archives serverLibJar
 }
 
 task wrapper(type: Wrapper) {
