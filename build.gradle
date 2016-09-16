@@ -40,7 +40,7 @@ if (System.env.TRAVIS) {
     version tempVersion
 }
 
-apply from: project.file("sponge.gradle")
+apply from: project.file("versions.gradle")
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -50,7 +50,7 @@ sponge.plugin {
 }
 
 minecraft {
-    forgeVersion = '1890'
+    forgeVersion = clientForgeVersion
     runDir = 'run'
     mappings = 'stable_22'
     makeObfSourceJar = false
