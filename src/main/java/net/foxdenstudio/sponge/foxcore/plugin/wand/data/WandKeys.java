@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
+import com.google.common.reflect.TypeToken;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Key;
@@ -32,5 +33,10 @@ import org.spongepowered.api.data.key.KeyFactory;
 import org.spongepowered.api.data.value.mutable.Value;
 
 public class WandKeys {
-    public static final Key<Value<WandType>> WANDTYPE = KeyFactory.makeSingleKey(WandType.class, Value.class, DataQuery.of("wandtype"));
+    public static final Key<Value<WandType>> WANDTYPE = KeyFactory.makeSingleKey(
+            TypeToken.of(WandType.class),
+            new TypeToken<Value<WandType>>() {},
+            DataQuery.of("wandtype"),
+            "foxcore:wandtype",
+            "Wand Type");
 }

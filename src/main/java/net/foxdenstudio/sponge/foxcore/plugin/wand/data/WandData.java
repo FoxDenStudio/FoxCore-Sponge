@@ -96,11 +96,6 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
     }
 
     @Override
-    public int compareTo(WandData o) {
-        return this.type.compareTo(o.type);
-    }
-
-    @Override
     public int getContentVersion() {
         return 1;
     }
