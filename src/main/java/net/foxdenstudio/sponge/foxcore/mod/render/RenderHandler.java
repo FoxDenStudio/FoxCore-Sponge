@@ -27,6 +27,7 @@ package net.foxdenstudio.sponge.foxcore.mod.render;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -54,9 +55,11 @@ public class RenderHandler {
     public void render(RenderWorldLastEvent event) {
 
         //System.out.println("TEST");
-        double playerX = mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * event.partialTicks;
-        double playerY = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * event.partialTicks;
-        double playerZ = mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * event.partialTicks;
+        EntityPlayerSP player = mc.thePlayer;
+        float partialTicks = event.getPartialTicks();
+        double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+        double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+        double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
         list.sortZ(playerX, playerY, playerZ);
 
         glPushMatrix();
