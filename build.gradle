@@ -4,6 +4,10 @@ buildscript {
     repositories {
         jcenter()
         maven {
+            name = 'gradle-plugins'
+            url = 'https://plugins.gradle.org/m2'
+        }
+        maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
@@ -13,24 +17,26 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-        classpath 'org.spongepowered:spongegradle:0.5.2-SNAPSHOT'
+        classpath 'gradle.plugin.org.spongepowered:spongegradle:0.7'
     }
 }
 
 apply plugin: 'org.spongepowered.plugin'
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'maven-publish'
 
 group 'net.foxdenstudio.sponge.foxcore'
-version '0.9.0'
+
+version 'SNAPSHOT'
 
 if (System.env.TRAVIS) {
     String tempVersion = ''
     if (System.env.TRAVIS_TAG) {
         tempVersion = System.env.TRAVIS_TAG;
-        if(tempVersion.startsWith("v")){
+        if (tempVersion.startsWith("v")) {
             tempVersion = tempVersion.substring(1)
         }
         tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
@@ -52,7 +58,7 @@ sponge.plugin {
 minecraft {
     forgeVersion = clientForgeVersion
     runDir = 'run'
-    mappings = 'stable_22'
+    mappings = 'snapshot_20160822'
     makeObfSourceJar = false
 }
 
@@ -127,7 +133,9 @@ task serverJar(type: ShadowJar) {
 }
 
 reobf {
-    shadowJar { mappingType = 'SEARGE' }
+    shadowJar {
+        mappingType = 'SEARGE'
+    }
 }
 
 artifacts {
@@ -136,5 +144,5 @@ artifacts {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
+    gradleVersion = gradleWrapperVersion
 }
