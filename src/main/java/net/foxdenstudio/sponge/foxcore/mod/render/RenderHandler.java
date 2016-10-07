@@ -68,8 +68,6 @@ public class RenderHandler {
 
         list.render();
         glPopMatrix();
-
-
     }
 
     public void updateList(List<Vector3i> posList) {
@@ -78,5 +76,4 @@ public class RenderHandler {
         posList.forEach(set::add);
         set.forEach(pos -> this.list.add(new Highlight(pos /*, FCHelper.RGBfromHSV(Math.random() * 360, 1, 1)*/)));
     }
-
 }
