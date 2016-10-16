@@ -25,7 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.key.Key;
@@ -36,31 +36,37 @@ import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
 import java.util.Optional;
 
-import static net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandKeys.WANDTYPE;
+import static net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandKeys.*;
 
 public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, WandData> {
 
     public static final ValueFactory VALUEFACTORY = Sponge.getRegistry().getValueFactory();
 
-    private WandType type;
+    private String type;
+    private Integer id;
+    private IWand wand;
 
-    public ImmutableWandData(WandType type) {
+    ImmutableWandData(IWand wand, int id, String type){
+        this.wand = wand;
+        this.id = id;
         this.type = type;
         registerGetters();
     }
 
-    public ImmutableWandData() {
-        this(WandType.POSITION);
+    public ImmutableValue<String> getWandType() {
+        return VALUEFACTORY.createValue(TYPE, type).asImmutable();
     }
 
-    public ImmutableValue<WandType> getWandType() {
-        return VALUEFACTORY.createValue(WANDTYPE, type).asImmutable();
+    public ImmutableValue<IWand> getWand() {
+        return VALUEFACTORY.createValue(WAND, wand).asImmutable();
     }
 
     @Override
     protected void registerGetters() {
-        registerFieldGetter(WANDTYPE, () -> this.type);
-        registerKeyValue(WANDTYPE, this::getWandType);
+        registerFieldGetter(TYPE, () -> this.type);
+        registerKeyValue(TYPE, this::getWandType);
+        registerFieldGetter(WAND, () -> this.wand);
+        registerKeyValue(WAND, this::getWand);
     }
 
     @Override
@@ -72,7 +78,7 @@ public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, 
 
     @Override
     public WandData asMutable() {
-        return new WandData(type);
+        return new WandData(wand, id, type);
     }
 
     @Override
@@ -87,6 +93,9 @@ public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, 
 
     @Override
     public DataContainer toContainer() {
-        return super.toContainer().set(WANDTYPE.getQuery(), this.type.name());
+        return super.toContainer()
+                .set(TYPE.getQuery(), this.type)
+                .set(ID.getQuery(), this.id)
+                .set(WAND.getQuery(), this.wand);
     }
 }

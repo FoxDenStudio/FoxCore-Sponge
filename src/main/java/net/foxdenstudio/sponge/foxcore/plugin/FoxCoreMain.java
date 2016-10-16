@@ -30,12 +30,16 @@ import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositi
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandBlockListener;
+import net.foxdenstudio.sponge.foxcore.plugin.listener.WandEntityListener;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
 import net.foxdenstudio.sponge.foxcore.plugin.util.Aliases;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.FCWandRegistry;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.ImmutableWandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.types.CounterWand;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
@@ -43,6 +47,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
@@ -115,6 +120,8 @@ public final class FoxCoreMain {
         this.registerPackets();
         logger.info("Registering positions state field");
         FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
+        logger.info("Registering wand factories");
+        registerWands();
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
         logger.info("Setting default player permissions");
@@ -153,11 +160,18 @@ public final class FoxCoreMain {
     private void registerListeners() {
         EventManager manager = game.getEventManager();
         manager.registerListener(this, InteractBlockEvent.class, new WandBlockListener());
+        manager.registerListener(this, InteractEntityEvent.class, new WandEntityListener());
         manager.registerListeners(this, FCServerNetworkManager.instance());
     }
 
     private void registerData() {
         game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
+    }
+
+    private void registerWands(){
+        FCWandRegistry registry = FCWandRegistry.getInstance();
+        registry.registerBuilder(PositionWand.type, new PositionWand.Factory());
+        registry.registerBuilder(CounterWand.type, new CounterWand.Factory());
     }
 
     private void configurePermissions() {

@@ -17,9 +17,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-        classpath 'gradle.plugin.org.spongepowered:spongegradle:0.7'
+        classpath 'org.spongepowered:spongegradle:0.5.1'
     }
 }
 
@@ -58,7 +58,7 @@ sponge.plugin {
 minecraft {
     forgeVersion = clientForgeVersion
     runDir = 'run'
-    mappings = 'snapshot_20160822'
+    mappings = mcpMappings
     makeObfSourceJar = false
 }
 

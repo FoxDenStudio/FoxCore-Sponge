@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,7 +44,10 @@ import java.util.regex.Pattern;
 public final class AdvCmdParser {
 
     public static final FlagMapper
-            DEFAULT_MAPPER = map -> key -> value -> map.put(key, value);
+            DEFAULT_MAPPER = map -> key -> value -> {
+        map.put(key, value);
+        return true;
+    };
 
     private static final String regex = "(?:--[\\w-]*[:=])?([\"'])(?:\\\\.|[^\\\\])*?\\1|(?:\\\\.|[^\"'\\s])+";
     // Holds the raw input to be parsed
@@ -57,7 +59,7 @@ public final class AdvCmdParser {
     private boolean extractSubFlags = false;
     // Destructive function to handle flag input. A map, key, and value are provided.
     // This function determines how the key-value pair is inserted into the map.
-    private Function<Map<String, String>, Function<String, Consumer<String>>> flagMapper = DEFAULT_MAPPER;
+    private Function<Map<String, String>, Function<String, Function<String, Boolean>>> flagMapper = DEFAULT_MAPPER;
     // Determines whether to unescape ending block.
     // Set to true if the block needs to be fed through a parser that doesn't understand escaped characters.
     private boolean unescapeLast = false;
@@ -110,7 +112,7 @@ public final class AdvCmdParser {
         return this;
     }
 
-    public AdvCmdParser flagMapper(Function<Map<String, String>, Function<String, Consumer<String>>> flagMapper) {
+    public AdvCmdParser flagMapper(Function<Map<String, String>, Function<String, Function<String, Boolean>>> flagMapper) {
         this.flagMapper = flagMapper;
         return this;
     }
@@ -158,28 +160,29 @@ public final class AdvCmdParser {
         // Matcher for identifying arguments and flags.
         Matcher matcher = pattern.matcher(arguments);
         boolean lastIsCurrent = !(arguments.length() == 0) && (inQuote || !arguments.substring(arguments.length() - 1).matches("[\"' ]"));
+        // Whether or not the jump key was used.
+        boolean jump = false;
+        // Stores flags that were not accepted by the mapper, to be given to the final block, if it exists.
+        List<String> extraFlags = new ArrayList<>();
         // Iterate through matches
         while (matcher.find()) {
 
-            String result = matcher.group();
+            final String result = matcher.group();
             boolean include = !(excludeCurrent && lastIsCurrent && matcher.end() == arguments.length());
             // Makes "---" mark the end of the command. Effectively allows command comments
             // It also means that flag names cannot start with hyphens
             if (!result.startsWith("---")) {
-                // Throws out any results that are empty
-                if (result.equals("--")) {
-                    parseResult.current = new CurrentElement(CurrentElement.ElementType.LONGFLAGKEY, "", 0, "");
-                    continue;
-                } else if (result.equals("-")) {
-                    parseResult.current = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
-                    continue;
-                }
                 // Parses result as long flag.
                 // Format is --<flagname>:<value> Where value can be a quoted string. "=" is also a valid separator
                 // If a limit is specified, the flags will be cut out of the final string
                 // Setting extractSubFlags to true forces flags within the final string to be left as-is
                 // This is useful if the final string is it's own command and needs to be re-parsed
-                if (result.startsWith("--") && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
+                if (result.startsWith("--") && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit && !jump))) {
+                    if (result.equals("--")) {
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.LONGFLAGKEY, "", 0, "");
+                        continue;
+                    }
+
                     // Trims the prefix
                     String trimmedResult = result.substring(2);
                     // Splits once by ":" or "="
@@ -200,16 +203,25 @@ public final class AdvCmdParser {
                     }
                     if (include) {
                         // Applies the flagMapper function.
-                        // This is a destructive function that takes 3 parameters and returns nothing. (Destructive consumer)
-                        flagMapper.apply(parseResult.flags)
+                        // This is a destructive function that takes 3 parameters and returns a boolean to signal whether the flag was "accepted" or not.
+                        // If the flag was not "accepted", then it is stored for potential application to the final block, if it exists.
+                        // I put "accepted" in quotes because the function might have actually accepted the flag, but returned false anyway.
+                        // This will cause the flag to be duplicated into the final block, which could actually still be intended behavior.
+                        boolean success = flagMapper.apply(parseResult.flags)
                                 .apply(parts[0])
-                                .accept(value);
+                                .apply(value);
+                        if (!success) extraFlags.add(result);
                     }
                     // Parses result as a short flag. Limit behavior is the same as long flags
                     // multiple letters are treated as multiple flags. Repeating letters add a second flag with a repetition
                     // Example: "-aab" becomes flags "a", "aa", and "b"
                 } else if (result.startsWith("-") && result.substring(1).matches("^.*[^\\d\\.].*$")
-                        && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit))) {
+                        && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit && !jump))) {
+                    if (result.equals("-")) {
+                        parseResult.current = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
+                        continue;
+                    }
+
                     // Trims prefix
                     String trimmedResult = result.substring(1);
                     // Iterates through each letter
@@ -222,8 +234,11 @@ public final class AdvCmdParser {
                                 temp += str;
                             }
                             if (include) {
-                                // Applies destructive flagMapper function.
-                                flagMapper.apply(parseResult.flags).apply(temp).accept("");
+                                // Applies destructive flagMapper function. See above for better docs.
+                                boolean success = flagMapper.apply(parseResult.flags)
+                                        .apply(temp)
+                                        .apply("");
+                                if (!success) extraFlags.add(result);
                             }
                         } else if (str.matches("[:=-]")) {
                             throw new CommandException(Text.of("You may only have alphabetic short flags! Did you mean to use a long flag (two dashes)?"));

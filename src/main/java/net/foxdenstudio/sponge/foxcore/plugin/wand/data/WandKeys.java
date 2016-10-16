@@ -25,12 +25,55 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.KeyFactory;
 import org.spongepowered.api.data.value.mutable.Value;
 
 public class WandKeys {
-    public static final Key<Value<WandType>> WANDTYPE = KeyFactory.makeSingleKey(WandType.class, Value.class, DataQuery.of("wandtype"));
+
+    public static final Key<Value<String>> TYPE = KeyFactory.makeSingleKey(
+            String.class,
+            Value.class,
+            DataQuery.of("type")
+    );
+
+    public static final Key<Value<Integer>> ID = KeyFactory.makeSingleKey(
+            Integer.class,
+            Value.class,
+            DataQuery.of("id")
+    );
+
+    public static final Key<Value<IWand>> WAND = KeyFactory.makeSingleKey(
+            IWand.class,
+            Value.class,
+            DataQuery.of("wand")
+    );
+
+    // API 5 Code:
+    /*
+    public static final Key<Value<String>> TYPE = KeyFactory.makeSingleKey(
+            TypeToken.of(String.class),
+            new TypeToken<Value<String>>() {},
+            DataQuery.of("type"),
+            "foxcore:wandtype",
+            "Wand Type");
+
+    public static final Key<Value<Integer>> ID = KeyFactory.makeSingleKey(
+            TypeToken.of(Integer.class),
+            new TypeToken<Value<Integer>>() {},
+            DataQuery.of("id"),
+            "foxcore:wandID",
+            "Wand ID"
+    );
+
+    public static final Key<Value<IWand>> WAND = KeyFactory.makeSingleKey(
+            TypeToken.of(IWand.class),
+            new TypeToken<Value<IWand>>() {},
+            DataQuery.of("wand"),
+            "foxcore:wanddata",
+            "Wand Data"
+    );
+    */
 }

@@ -87,7 +87,7 @@ public class FoxCoreClientMain {
     public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         FCClientNetworkManager.instance().hasServer = false;
         FoxCoreClientMain.logger.info("Disco Fox!");
-        this.renderHandler.updateList(new ArrayList<>());
+        this.renderHandler.updateList(null, null);
     }
 
     public RenderHandler getRenderHandler() {

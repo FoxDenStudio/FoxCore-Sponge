@@ -25,74 +25,125 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.FCWandRegistry;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWandFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractData;
 import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.value.ValueFactory;
 import org.spongepowered.api.data.value.mutable.Value;
 
 import java.util.Optional;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandKeys.WANDTYPE;
+import static net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandKeys.*;
 
 public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     public static final ValueFactory VALUEFACTORY = Sponge.getRegistry().getValueFactory();
+    public static final Random random = new Random();
 
-    private WandType type;
+    private IWand wand;
+    private int id;
+    private String type;
 
-    public WandData(WandType type) {
-        this.type = type;
+    public WandData(IWand wand) {
+        this.wand = wand;
+        if(wand == null) {
+            type = "";
+        } else {
+            type = wand.type();
+        }
         registerGettersAndSetters();
     }
 
     public WandData() {
-        this(WandType.POSITION);
+        this(null);
     }
 
-    public Value<WandType> getWandType() {
-        return VALUEFACTORY.createValue(WANDTYPE, type);
-    }
-
-    public void setWandType(WandType type) {
+    WandData(IWand wand, int id, String type){
+        this.wand = wand;
+        this.id = id;
         this.type = type;
+        registerGettersAndSetters();
+    }
+
+    public Value<String> getWandType() {
+        return VALUEFACTORY.createValue(TYPE, type);
+    }
+
+    public Value<IWand> getWand() {
+        return VALUEFACTORY.createValue(WAND, wand);
+    }
+
+    public void setWand(IWand wand) {
+        this.type = wand.type();
+        this.wand = wand;
     }
 
     @Override
     protected void registerGettersAndSetters() {
-        registerFieldGetter(WANDTYPE, () -> this.type);
-        registerFieldSetter(WANDTYPE, this::setWandType);
-        registerKeyValue(WANDTYPE, this::getWandType);
+        registerFieldGetter(TYPE, () -> this.type);
+        registerKeyValue(TYPE, this::getWandType);
+        registerFieldGetter(WAND, () -> this.wand);
+        registerFieldSetter(WAND, this::setWand);
+        registerKeyValue(WAND, this::getWand);
     }
 
     @Override
     public Optional<WandData> fill(DataHolder dataHolder, MergeFunction overlap) {
         WandData wandData = checkNotNull(overlap).merge(copy(),
                 from(dataHolder.toContainer()).orElse(null));
-        return Optional.of(set(WANDTYPE, wandData.get(WANDTYPE).get()));
+        set(TYPE, wandData.get(TYPE).orElse(null));
+        set(ID, wandData.get(ID).orElse(random.nextInt()));
+        set(WAND, wandData.get(WAND).orElse(null));
+        return Optional.of(this);
     }
 
     @Override
     public Optional<WandData> from(DataContainer container) {
-        set(WANDTYPE, WandType.POSITION);
-        if (container.contains(WANDTYPE.getQuery())) {
-            set(WANDTYPE, WandType.valueOf((String) container.get(WANDTYPE.getQuery()).orElse(null)));
-            return Optional.of(this);
-        } else return Optional.empty();
+        return from((DataView) container);
+    }
+
+    public Optional<WandData> from(DataView view) {
+        if (!view.contains(TYPE.getQuery())) {
+            return Optional.empty();
+        }
+        String type = view.getString(TYPE.getQuery()).orElse(null);
+        IWandFactory factory = FCWandRegistry.getInstance().getBuilder(type);
+        if (factory == null) {
+            return Optional.empty();
+        }
+
+        if (view.contains(ID.getQuery())) {
+
+        }
+        DataQuery wandQuery = WAND.getQuery();
+        DataView wandData = view.getView(wandQuery).orElse(view.createView(wandQuery));
+        IWand wand = factory.build(wandData);
+        if (wand == null) {
+            return Optional.empty();
+        }
+
+        this.wand = wand;
+        this.type = type;
+        return Optional.of(this);
     }
 
     @Override
     public WandData copy() {
-        return new WandData(this.type);
+        return new WandData(wand, id, type);
     }
 
     @Override
     public ImmutableWandData asImmutable() {
-        return new ImmutableWandData(this.type);
+        return new ImmutableWandData(wand, id, type);
     }
 
     @Override
@@ -107,6 +158,9 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     @Override
     public DataContainer toContainer() {
-        return super.toContainer().set(WANDTYPE.getQuery(), this.type.name());
+        return super.toContainer()
+                .set(TYPE.getQuery(), this.type)
+                .set(ID.getQuery(), this.id)
+                .set(WAND.getQuery(), this.wand);
     }
 }

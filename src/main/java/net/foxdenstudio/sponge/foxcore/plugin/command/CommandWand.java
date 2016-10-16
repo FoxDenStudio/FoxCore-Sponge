@@ -26,10 +26,13 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
+import net.foxdenstudio.sponge.foxcore.plugin.FCConfigManager;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.FlagMapper;
-import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.FCWandRegistry;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWandFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -46,6 +49,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -64,11 +68,24 @@ import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
 
 public class CommandWand extends FCCommandBase {
 
+    private static final String[] HAND_ALIASES = {"hand", "h"};
+    private static final String[] ITEM_ALIASES = {"item", "itemstack", "i", "it"};
+    private static final String[] CREATE_ALIASES = {"c", "cr", "create"};
+    private static final String[] MODIFY_ALIASES = {"m", "md", "mod", "modify"};
+    private static final String[] DUPLICATE_ALIASES = {"d", "dup", "dupe", "duplicate"};
+
     private static final FlagMapper MAPPER = map -> key -> value -> {
-        map.put(key, value);
         if (isIn(PLAYER_ALIASES, key) && !map.containsKey("player")) {
             map.put("player", value);
+            return true;
+        } else if (isIn(HAND_ALIASES, key) && !map.containsKey("current")) {
+            map.put("current", value);
+            return true;
+        } else if (isIn(ITEM_ALIASES, key) && !map.containsKey("item")) {
+            map.put("item", value);
+            return true;
         }
+        return false;
     };
 
     @Override
@@ -77,31 +94,64 @@ public class CommandWand extends FCCommandBase {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).flagMapper(MAPPER).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
+                .arguments(arguments)
+                .limit(1)
+                .parse();
+
 
         Player player = null;
         if (source instanceof Player) player = (Player) source;
         if (parse.flags.containsKey("player"))
             player = Sponge.getGame().getServer().getPlayer(parse.flags.get("player")).orElse(null);
         if (player == null) throw new CommandException(Text.of("You must specify a player to give the wand to!"));
+
+        if (parse.args.length < 1) throw new CommandException(Text.of("Must specify a wand type"));
+        IWandFactory factory = FCWandRegistry.getInstance().getBuilderFromAlias(parse.args[0]);
+        if (factory == null) throw new CommandException(Text.of("\"" + parse.args[0] + "\" is not a valid wand type!"));
+        IWand wand = factory.create(parse.args.length > 1 ? parse.args[1] : "");
+        if (wand == null) throw new CommandException(Text.of("Unable to create wand!"));
+
         WandData wandData = Sponge.getDataManager().getManipulatorBuilder(WandData.class).get().create();
-        if (parse.args.length > 0) {
-            WandType type = WandType.from(parse.args[0]);
-            if (type == null) throw new CommandException(Text.of("Not a valid wand type!"));
-            wandData.setWandType(type);
-        }
+        wandData.setWand(wand);
+
+        List<Text> wandLore = wand.getLore();
         LoreData loreData = Sponge.getDataManager().getManipulatorBuilder(LoreData.class).get().create();
         final ListValue<Text> lore = loreData.lore();
-        Text name = Text.of("Position Wand");
-        lore.add(name);
+        if (wandLore != null) lore.addAll(wand.getLore());
         loreData.set(lore);
-        ItemStack stack = ItemStack.of(ItemTypes.GOLDEN_AXE, 1);
+
+        ItemStack stack = null;
+
+        boolean usingCurrent = false;
+        if (parse.flags.containsKey("current")) {
+            Optional<ItemStack> handItemOptional = player.getItemInHand();
+            if (handItemOptional.isPresent()) {
+                stack = handItemOptional.get();
+            }
+            usingCurrent = true;
+        }
+        if (stack == null) {
+            ItemType itemType = FCConfigManager.getInstance().getDefaultWandItemType();
+            if (parse.flags.containsKey("item")) {
+                String itemTypeName = parse.flags.get("item");
+                Optional<ItemType> itemTypeOptional = Sponge.getRegistry().getType(ItemType.class, itemTypeName);
+                if (itemTypeOptional.isPresent()) {
+                    itemType = itemTypeOptional.get();
+                } else {
+                    throw new CommandException(Text.of("\"" + itemTypeName + "\" is not a valid item type!"));
+                }
+            }
+            stack = ItemStack.of(itemType, 1);
+        }
         stack.offer(wandData);
         stack.offer(loreData);
-        stack.offer(Keys.DISPLAY_NAME, name);
-        stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
+        stack.offer(Keys.DISPLAY_NAME, wand.getItemName());
+        Optional<EnchantmentData> enchantmentDataOptioanl = stack.getOrCreate(EnchantmentData.class);
+        if (enchantmentDataOptioanl.isPresent()) stack.offer(enchantmentDataOptioanl.get());
+        else stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
 
-        if (player.getItemInHand().isPresent()) {
+        if (player.getItemInHand().isPresent() && !usingCurrent) {
             Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition()).get();
             entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
             player.getWorld().spawnEntity(entity, Cause.builder()
@@ -123,21 +173,43 @@ public class CommandWand extends FCCommandBase {
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .flagMapper(MAPPER)
+                .limit(1)
                 .excludeCurrent(true)
                 .autoCloseQuotes(true)
+                .parseLastFlags(false)
                 .parse();
-        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
-            return ImmutableList.of("world").stream()
+        if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
+            return FCWandRegistry.getInstance().getTypes().stream()
+                    .sorted()
+                    .filter(new StartsWithPredicate(parse.current.token))
+                    .map(args -> parse.current.prefix + args)
+                    .collect(GuavaCollectors.toImmutableList());
+        else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
+            return ImmutableList.of("player", "item", "current").stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGVALUE)) {
-            if (parse.current.key.equals("world"))
-                return Sponge.getGame().getServer().getWorlds().stream()
-                        .map(World::getName)
+            if (parse.current.key.equals("player"))
+                return Sponge.getGame().getServer().getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .sorted()
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
+            else if (parse.current.key.equals("item")) {
+                return Sponge.getRegistry().getAllOf(ItemType.class).stream()
+                        .filter(itemType -> itemType != ItemTypes.NONE)
+                        .map(ItemType::getId)
+                        .sorted()
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            }
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.FINAL)) {
+            IWandFactory factory = FCWandRegistry.getInstance().getBuilderFromAlias(parse.args[0]);
+            if (factory == null) return ImmutableList.of();
+            return factory.createSuggestions(parse.current.token, source, targetPosition);
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();

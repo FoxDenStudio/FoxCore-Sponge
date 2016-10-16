@@ -28,21 +28,21 @@ package net.foxdenstudio.sponge.foxcore.plugin.listener;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
-import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public class WandBlockListener implements EventListener<InteractBlockEvent> {
+public class WandEntityListener implements EventListener<InteractEntityEvent> {
 
     @Override
-    public void handle(@Nonnull InteractBlockEvent event) throws Exception {
+    public void handle(@Nonnull InteractEntityEvent event) throws Exception {
         Object root = event.getCause().root();
         if (root instanceof Player) {
             Player player = (Player) root;
@@ -54,19 +54,11 @@ public class WandBlockListener implements EventListener<InteractBlockEvent> {
                     WandData wandData = wandDataOptional.get();
                     IWand wand = wandData.getWand().get();
                     boolean cancel = false;
-                    if (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR)) {
-                        if (event instanceof InteractBlockEvent.Primary) {
-                            cancel = wand.leftClickAir(player);
-                        } else if (event instanceof InteractBlockEvent.Secondary) {
-                            cancel = wand.rightClickAir(player);
+                        if (event instanceof InteractEntityEvent.Primary) {
+                            cancel = wand.leftClickEntity(player, event.getTargetEntity());
+                        } else if (event instanceof InteractEntityEvent.Secondary) {
+                            cancel = wand.rightClickEntity(player, event.getTargetEntity());
                         }
-                    } else {
-                        if (event instanceof InteractBlockEvent.Primary) {
-                            cancel = wand.leftClickBlock(player, event.getTargetBlock());
-                        } else if (event instanceof InteractBlockEvent.Secondary) {
-                            cancel = wand.rightClickBlock(player, event.getTargetBlock());
-                        }
-                    }
                     itemStack.offer(wandData);
                     FCPUtil.updateWandLore(itemStack, wand);
                     player.setItemInHand(itemStack);
