@@ -172,6 +172,7 @@ public class FCClientNetworkManager {
     /**
      * Created by Fox on 4/18/2016.
      */
+    @ChannelHandler.Sharable
     public class PacketHandler extends ChannelInboundHandlerAdapter {
 
         @Override
