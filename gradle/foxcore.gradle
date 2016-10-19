@@ -22,7 +22,7 @@ publishing{
                 classifier "sources"
             }
             artifact shadowJar {
-                classifier "shadow"
+                classifier "client"
             }
             artifact serverJar {
                 classifier "server"
@@ -41,7 +41,7 @@ if(System.env.TRAVIS && !Boolean.valueOf(System.env.TRAVIS_PULL_REQUEST)){
 
 shadowJar {
     group = 'build'
-    classifier = ''
+    classifier = 'client'
     dependsOn reobfJar
     dependencies {
         include dependency('com.flowpowered:flow-math')
