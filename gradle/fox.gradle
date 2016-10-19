@@ -10,7 +10,7 @@ if (System.env.TRAVIS) {
         }
         tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
     } else {
-        tempVersion = "$System.env.TRAVIS_BRANCH-SNAPSHOT-$System.env.TRAVIS_BUILD_NUMBER"
+        tempVersion = "$System.env.TRAVIS_BRANCH-SNAPSHOT"
     }
     version = tempVersion
 }
