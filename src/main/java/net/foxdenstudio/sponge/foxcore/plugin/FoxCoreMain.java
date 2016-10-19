@@ -50,6 +50,7 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -130,6 +131,12 @@ public final class FoxCoreMain {
         registerData();
         logger.info("Registering event listeners");
         registerListeners();
+    }
+
+    @Listener
+    public void gamePostInit(GamePostInitializationEvent event){
+        logger.info("Configuring permissions");
+        configurePermissions();
     }
 
     private void configureCommands() {

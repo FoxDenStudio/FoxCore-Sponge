@@ -137,8 +137,7 @@ public class FCPUtil {
             String key = match.split("[:=]")[0].substring(2);
             if (Aliases.isIn(Aliases.PAGE_ALIASES, key)) {
                 start = command.substring(0, matcher.start());
-                if (matcher.end() == command.length()) end = "";
-                else end = command.substring(matcher.end(), command.length() - 1);
+                end = command.substring(matcher.end());
                 break;
             }
         }

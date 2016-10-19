@@ -78,8 +78,8 @@ public class CommandWand extends FCCommandBase {
         if (isIn(PLAYER_ALIASES, key) && !map.containsKey("player")) {
             map.put("player", value);
             return true;
-        } else if (isIn(HAND_ALIASES, key) && !map.containsKey("current")) {
-            map.put("current", value);
+        } else if (isIn(HAND_ALIASES, key) && !map.containsKey("hand")) {
+            map.put("hand", value);
             return true;
         } else if (isIn(ITEM_ALIASES, key) && !map.containsKey("item")) {
             map.put("item", value);
@@ -96,6 +96,7 @@ public class CommandWand extends FCCommandBase {
         }
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
+                .flagMapper(MAPPER)
                 .limit(1)
                 .parse();
 
@@ -124,7 +125,7 @@ public class CommandWand extends FCCommandBase {
         ItemStack stack = null;
 
         boolean usingCurrent = false;
-        if (parse.flags.containsKey("current")) {
+        if (parse.flags.containsKey("hand")) {
             Optional<ItemStack> handItemOptional = player.getItemInHand();
             if (handItemOptional.isPresent()) {
                 stack = handItemOptional.get();
@@ -197,7 +198,7 @@ public class CommandWand extends FCCommandBase {
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
-            else if (parse.current.key.equals("item")) {
+            else if (isIn(ITEM_ALIASES, parse.current.key)) {
                 return Sponge.getRegistry().getAllOf(ItemType.class).stream()
                         .filter(itemType -> itemType != ItemTypes.NONE)
                         .map(ItemType::getId)

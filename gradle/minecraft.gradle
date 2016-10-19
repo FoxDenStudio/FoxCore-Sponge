@@ -1,0 +1,12 @@
+minecraft {
+    forgeVersion = clientForgeVersion
+    runDir = 'run'
+    mappings = mcpMappings
+    makeObfSourceJar = false
+}
+
+reobf {
+    shadowJar {
+        mappingType = 'SEARGE'
+    }
+}
