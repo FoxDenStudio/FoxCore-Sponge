@@ -8,7 +8,7 @@ publishing {
                 password = System.env.NEXUS_PASS
             }
             name = 'FDSSnapshots'
-            url = 'http://nexus.foxdenstudio.net/repository/maven-snapshots/'
+            url = 'http://repo.foxdenstudio.net/repository/maven-snapshots/'
         }
         maven {
             credentials {
@@ -16,7 +16,7 @@ publishing {
                 password = System.env.NEXUS_PASS
             }
             name = 'FDSReleases'
-            url = 'http://nexus.foxdenstudio.net/repository/maven-releases/'
+            url = 'http://repo.foxdenstudio.net/repository/maven-releases/'
         }
         maven {
             credentials {
@@ -24,7 +24,7 @@ publishing {
                 password = System.env.NEXUS_PASS
             }
             name = 'FDSDownloads'
-            url = 'http://nexus.foxdenstudio.net/repository/downloads/'
+            url = 'http://repo.foxdenstudio.net/repository/downloads/'
         }
     }
 }
