@@ -21,6 +21,10 @@ publishing{
             artifact sourceJar {
                 classifier "sources"
             }
+        }
+        download(MavenPublication) {
+            artifactId = archivesBaseName
+
             artifact shadowJar {
                 classifier "client"
             }
@@ -37,6 +41,7 @@ if(System.env.TRAVIS && !Boolean.valueOf(System.env.TRAVIS_PULL_REQUEST)){
     } else {
         travisPublish.dependsOn 'publishFoxcorePublicationToFDSSnapshotsRepository'
     }
+    travisPublish.dependsOn 'publishDownloadPublicationToFDSDownloadsRepository'
 }
 
 shadowJar {

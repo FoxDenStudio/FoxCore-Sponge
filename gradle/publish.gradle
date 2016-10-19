@@ -16,6 +16,14 @@ publishing {
             name = 'FDSReleases'
             url = 'http://nexus.foxdenstudio.net/repository/maven-releases/'
         }
+        maven {
+            credentials {
+                username = System.env.NEXUS_USER
+                password = System.env.NEXUS_PASS
+            }
+            name = 'Downloads'
+            url = 'http://nexus.foxdenstudio.net/repository/downloads/'
+        }
     }
 }
 
