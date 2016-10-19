@@ -26,8 +26,6 @@ buildscript {
 
 apply plugin: 'org.spongepowered.plugin'
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'maven-publish'
 
 group 'net.foxdenstudio.sponge'
 
