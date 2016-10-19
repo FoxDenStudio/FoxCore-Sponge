@@ -1,5 +1,4 @@
 
-
 archivesBaseName = project.name.toLowerCase()
 if (System.env.TRAVIS) {
     String tempVersion = ''
@@ -23,6 +22,10 @@ repositories {
     maven {
         name 'Sponge maven repo'
         url 'http://repo.spongepowered.org/maven'
+    }
+    maven {
+        name = 'minecrell'
+        url = 'http://repo.minecrell.net/releases'
     }
 }
 

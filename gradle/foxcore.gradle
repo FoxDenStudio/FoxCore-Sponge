@@ -11,6 +11,8 @@ buildscript {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
+
+
 publishing{
     publications {
         foxcore(MavenPublication) {
