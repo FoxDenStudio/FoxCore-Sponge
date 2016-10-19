@@ -42,8 +42,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-
 @Mod(modid = FoxCoreClientMain.MODID, name = "FoxCoreClient", clientSideOnly = true)
 public class FoxCoreClientMain {
 
@@ -60,16 +58,21 @@ public class FoxCoreClientMain {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
+        logger.info("Instantiating client network manager");
         FCClientNetworkManager manager = FCClientNetworkManager.instance();
+        logger.info("Creating foxcore network channel");
         foxcoreChannel = manager.getOrCreateClientChannel("foxcore");
+        logger.info("Registering server packet listeners");
         foxcoreChannel.registerListener(ServerPositionPacket.ID, new ServerPositionPacketListener());
         foxcoreChannel.registerListener(ServerPrintStringPacket.ID, new ServerPrintStringPacketListener());
     }
 
     @EventHandler
     public void load(FMLInitializationEvent event) {
+        logger.info("Registering event handlers");
         MinecraftForge.EVENT_BUS.register(renderHandler = new RenderHandler(Minecraft.getMinecraft()));
         MinecraftForge.EVENT_BUS.register(this);
+        logger.info("Registering MinecraftForge networking channels");
         FCClientNetworkManager.instance().registerNetworkingChannels();
     }
 
@@ -87,7 +90,7 @@ public class FoxCoreClientMain {
     public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         FCClientNetworkManager.instance().hasServer = false;
         FoxCoreClientMain.logger.info("Disco Fox!");
-        this.renderHandler.updateList(new ArrayList<>());
+        this.renderHandler.updateList(null, null);
     }
 
     public RenderHandler getRenderHandler() {

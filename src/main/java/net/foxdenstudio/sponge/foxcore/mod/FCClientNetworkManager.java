@@ -172,6 +172,7 @@ public class FCClientNetworkManager {
     /**
      * Created by Fox on 4/18/2016.
      */
+    @ChannelHandler.Sharable
     public class PacketHandler extends ChannelInboundHandlerAdapter {
 
         @Override
@@ -181,7 +182,7 @@ public class FCClientNetworkManager {
                 int channelID = data.readInt();
                 if (channelID == -1) {
                     FoxCoreClientMain.logger.info("DEBUG MESSAGE RECIEVED!");
-                    System.out.println(Thread.currentThread());
+                    FoxCoreClientMain.logger.info(Thread.currentThread());
                     FoxCoreClientMain.instance.getFoxcoreChannel().sendDebug();
                 } else if (channelID == 0) {
                     FoxCoreClientMain.logger.info("FoxCore client network manager received a handshake. This means the server has FoxCore installed. Negotiating.");

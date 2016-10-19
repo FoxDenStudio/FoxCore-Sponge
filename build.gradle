@@ -1,4 +1,5 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+apply from: project.file("gradle/versions.gradle")
 
 buildscript {
     repositories {
@@ -17,9 +18,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-        classpath 'gradle.plugin.org.spongepowered:spongegradle:0.7'
+        classpath 'org.spongepowered:spongegradle:0.5.1'
     }
 }
 
@@ -28,48 +29,14 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 
-group 'net.foxdenstudio.sponge.foxcore'
+group 'net.foxdenstudio.sponge'
 
 version 'api5-SNAPSHOT'
 
-
-if (System.env.TRAVIS) {
-    String tempVersion = ''
-    if (System.env.TRAVIS_TAG) {
-        tempVersion = System.env.TRAVIS_TAG;
-        if (tempVersion.startsWith("v")) {
-            tempVersion = tempVersion.substring(1)
-        }
-        tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
-    } else {
-        tempVersion = version + "-$System.env.TRAVIS_BUILD_NUMBER-BLEEDING"
-    }
-    version tempVersion
-}
-
-apply from: project.file("versions.gradle")
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-sponge.plugin {
-    id = 'foxcore'
-}
-
-minecraft {
-    forgeVersion = clientForgeVersion
-    runDir = 'run'
-    mappings = 'snapshot_20160822'
-    makeObfSourceJar = false
-}
-
-repositories {
-    mavenCentral()
-    maven {
-        name 'Sponge maven repo'
-        url 'http://repo.spongepowered.org/maven'
-    }
-}
+apply from: project.file("gradle/fox.gradle")
+apply from: project.file("gradle/minecraft.gradle")
+apply from: project.file("gradle/publish.gradle")
+apply from: project.file("gradle/foxcore.gradle")
 
 dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"
@@ -78,72 +45,3 @@ dependencies {
     //testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-/* TODO: This is broken, but was never replacing anything anyway
-processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-    }
-
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}*/
-
-shadowJar {
-    classifier = ''
-    dependsOn reobfJar
-    dependencies {
-        include dependency('com.flowpowered:flow-math')
-        include dependency('org.mapdb:mapdb')
-        include dependency('org.mapdb:elsa')
-        include dependency('org.eclipse.collections:eclipse-collections')
-        include dependency('org.eclipse.collections:eclipse-collections-api')
-        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
-        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
-        include dependency('org.jetbrains.kotlin:kotlin-runtime')
-        include dependency('net.jpountz.lz4:lz4')
-    }
-}
-
-task serverJar(type: ShadowJar) {
-    classifier = 'server'
-    dependencies {
-        include dependency('org.mapdb:mapdb')
-        include dependency('org.mapdb:elsa')
-        include dependency('org.eclipse.collections:eclipse-collections')
-        include dependency('org.eclipse.collections:eclipse-collections-api')
-        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
-        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
-        include dependency('org.jetbrains.kotlin:kotlin-runtime')
-        include dependency('net.jpountz.lz4:lz4')
-    }
-    from(sourceSets.main.output) {
-        exclude "net/foxdenstudio/sponge/foxcore/mod"
-    }
-    configurations = [project.configurations.runtime]
-    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
-}
-
-reobf {
-    shadowJar {
-        mappingType = 'SEARGE'
-    }
-}
-
-artifacts {
-    archives shadowJar
-    archives serverJar
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleWrapperVersion
-}

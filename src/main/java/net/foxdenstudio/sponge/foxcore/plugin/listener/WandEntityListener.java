@@ -28,33 +28,33 @@ package net.foxdenstudio.sponge.foxcore.plugin.listener;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-
-public class WandBlockListener implements EventListener<InteractBlockEvent> {
+public class WandEntityListener implements EventListener<InteractEntityEvent> {
 
     @Override
-    public void handle(@Nonnull InteractBlockEvent event) throws Exception {
+    public void handle(@Nonnull InteractEntityEvent event) throws Exception {
         Object root = event.getCause().root();
         if (root instanceof Player) {
             Player player = (Player) root;
             if (event instanceof InteractBlockEvent.Primary.OffHand || event instanceof InteractBlockEvent.Secondary.OffHand)
                 return;
 
+            Entity entity = event.getTargetEntity();
+
             Optional<ItemStack> mainItem = player.getItemInHand(HandTypes.MAIN_HAND), offItem = player.getItemInHand(HandTypes.OFF_HAND);
 
             boolean computed = false;
             boolean permission = false;
-            boolean air = false;
             if (mainItem.isPresent()) {
                 ItemStack itemStack = mainItem.get();
                 Optional<WandData> wandDataOptional = itemStack.get(WandData.class);
@@ -64,19 +64,12 @@ public class WandBlockListener implements EventListener<InteractBlockEvent> {
                         IWand wand = wandData.getWand().get();
 
                         boolean cancel = false;
-                        if (air = (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR))) {
-                            if (event instanceof InteractBlockEvent.Primary) {
-                                cancel = wand.leftClickAir(player);
-                            } else if (event instanceof InteractBlockEvent.Secondary) {
-                                cancel = wand.rightClickAir(player);
-                            }
-                        } else {
-                            if (event instanceof InteractBlockEvent.Primary) {
-                                cancel = wand.leftClickBlock(player, event.getTargetBlock());
-                            } else if (event instanceof InteractBlockEvent.Secondary) {
-                                cancel = wand.rightClickBlock(player, event.getTargetBlock());
-                            }
+                        if (event instanceof InteractEntityEvent.Primary) {
+                            cancel = wand.leftClickEntity(player, entity);
+                        } else if (event instanceof InteractEntityEvent.Secondary) {
+                            cancel = wand.rightClickEntity(player, entity);
                         }
+
                         itemStack.offer(wandData);
                         FCPUtil.updateWandLore(itemStack, wand);
                         player.setItemInHand(HandTypes.MAIN_HAND, itemStack);
@@ -93,19 +86,12 @@ public class WandBlockListener implements EventListener<InteractBlockEvent> {
                         WandData wandData = wandDataOptional.get();
                         IWand wand = wandData.getWand().get();
 
-                        if (computed ? air : (event.getTargetBlock().equals(BlockSnapshot.NONE) || event.getTargetBlock().getState().getType().equals(BlockTypes.AIR))) {
-                            if (event instanceof InteractBlockEvent.Primary) {
-                                wand.leftClickAir(player);
-                            } else if (event instanceof InteractBlockEvent.Secondary) {
-                                wand.rightClickAir(player);
-                            }
-                        } else {
-                            if (event instanceof InteractBlockEvent.Primary) {
-                                wand.leftClickBlock(player, event.getTargetBlock());
-                            } else if (event instanceof InteractBlockEvent.Secondary) {
-                                wand.rightClickBlock(player, event.getTargetBlock());
-                            }
+                        if (event instanceof InteractEntityEvent.Primary) {
+                            wand.leftClickEntity(player, entity);
+                        } else if (event instanceof InteractEntityEvent.Secondary) {
+                            wand.leftClickEntity(player, entity);
                         }
+
                         itemStack.offer(wandData);
                         FCPUtil.updateWandLore(itemStack, wand);
                         player.setItemInHand(HandTypes.OFF_HAND, itemStack);

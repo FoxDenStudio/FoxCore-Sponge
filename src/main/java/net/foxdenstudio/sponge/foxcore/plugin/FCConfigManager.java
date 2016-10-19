@@ -29,6 +29,9 @@ import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,6 +42,7 @@ public final class FCConfigManager {
     private static FCConfigManager instance;
 
     private boolean defaultHUDOn = true;
+    private ItemType defaultWandItemType = ItemTypes.GOLDEN_AXE;
 
     public FCConfigManager() {
         if (instance == null) instance = this;
@@ -69,13 +73,16 @@ public final class FCConfigManager {
 
         this.defaultHUDOn = root.getNode("defaultHUDOn").getBoolean(true);
 
+        this.defaultWandItemType = Sponge.getRegistry()
+                .getType(ItemType.class, root.getNode("wands", "defaultWandItemType").getString(""))
+                .orElse(ItemTypes.GOLDEN_AXE);
 
         //--------------------------------------------------------------------------------------------------------------
     }
 
     public void save() {
         Path configFile =
-                FoxCoreMain.instance().getConfigDirectory().resolve("foxguard.cfg");
+                FoxCoreMain.instance().getConfigDirectory().resolve("foxcore.cfg");
         CommentedConfigurationNode root;
         ConfigurationLoader<CommentedConfigurationNode> loader =
                 HoconConfigurationLoader.builder().setPath(configFile).build();
@@ -93,6 +100,8 @@ public final class FCConfigManager {
         root.getNode("defaultHUDOn").setValue(this.defaultHUDOn)
                 .setComment("Whether the scoreboard HUD is enabled by default or not.");
 
+        root.getNode("wands", "defaultWandItemType").setValue(this.defaultWandItemType.getId());
+
         //--------------------------------------------------------------------------------------------------------------
         try {
             loader.save(root);
@@ -103,5 +112,9 @@ public final class FCConfigManager {
 
     public boolean isDefaultHUDOn() {
         return defaultHUDOn;
+    }
+
+    public ItemType getDefaultWandItemType() {
+        return defaultWandItemType;
     }
 }

@@ -6,12 +6,19 @@ import net.foxdenstudio.sponge.foxcore.common.util.FCCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.IWand;
+import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
@@ -87,7 +94,7 @@ public class FCPUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Vector3i> getPositions(CommandSource source) {
+    public static List<Position> getPositions(CommandSource source) {
         return ((PositionStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionStateField.ID).get()).getList();
     }
 
@@ -130,8 +137,7 @@ public class FCPUtil {
             String key = match.split("[:=]")[0].substring(2);
             if (Aliases.isIn(Aliases.PAGE_ALIASES, key)) {
                 start = command.substring(0, matcher.start());
-                if (matcher.end() == command.length()) end = "";
-                else end = command.substring(matcher.end(), command.length() - 1);
+                end = command.substring(matcher.end());
                 break;
             }
         }
@@ -185,5 +191,23 @@ public class FCPUtil {
         builder.append(space);
         builder.append(Text.of(TextColors.GREEN, "-------"));
         return builder.build();
+    }
+
+    public static void updateWandLore(ItemStack itemStack) {
+        Optional<WandData> wandDataOptional = itemStack.get(WandData.class);
+        if (wandDataOptional.isPresent()) {
+            WandData wandData = wandDataOptional.get();
+            updateWandLore(itemStack, wandData.getWand().get());
+        }
+    }
+
+    public static void updateWandLore(ItemStack itemStack, IWand wand) {
+        List<Text> wandLore = wand.getLore();
+        LoreData loreData = Sponge.getDataManager().getManipulatorBuilder(LoreData.class).get().create();
+        final ListValue<Text> lore = loreData.lore();
+        if (wandLore != null) lore.addAll(wand.getLore());
+        loreData.set(lore);
+        itemStack.offer(loreData);
+        itemStack.offer(Keys.DISPLAY_NAME, wand.getItemName());
     }
 }

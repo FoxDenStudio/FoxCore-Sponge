@@ -29,9 +29,11 @@ import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.common.util.FCCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.FlagMapper;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.factory.IStateFieldFactory;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
+import net.foxdenstudio.sponge.foxcore.plugin.util.Position;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -44,14 +46,26 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PositionStateField extends ListStateFieldBase<Vector3i> {
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.COLOR_ALIASES;
+import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
+
+public class PositionStateField extends ListStateFieldBase<Position> {
 
     public static final String ID = "position";
+
+    private static final FlagMapper MAPPER = map -> key -> value -> {
+        if (isIn(COLOR_ALIASES, key)) {
+            map.put("color", value);
+            return true;
+        }
+        return false;
+    };
 
     public PositionStateField(String name, SourceState sourceState) {
         super(name, sourceState);
@@ -61,9 +75,9 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
     public Text currentState(CommandSource source) {
         Text.Builder builder = Text.builder();
         int index = 1;
-        for (Iterator<Vector3i> it = this.list.iterator(); it.hasNext(); ) {
-            Vector3i pos = it.next();
-            builder.append(Text.of("  " + (index++) + ": " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()));
+        for (Iterator<Position> it = this.list.iterator(); it.hasNext(); ) {
+            Position pos = it.next();
+            builder.append(Text.of("  " + (index++) + ": ", pos.getTextColor(), pos.toString()));
             if (it.hasNext()) builder.append(Text.NEW_LINE);
         }
         return builder.build();
@@ -119,7 +133,7 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
     public List<Text> getScoreboardText() {
         int[] index = {1};
         return this.list.stream()
-                .map(vector3i -> Text.of("  " + index[0]++ + ": " + vector3i.toString()))
+                .map(position -> Text.of("  " + index[0]++ + ": ", position.getTextColor(), position.toString()))
                 .collect(Collectors.toList());
     }
 
@@ -134,10 +148,14 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
     }
 
     public ProcessResult add(CommandSource source, String arguments) throws CommandException {
-        AdvCmdParser.ParseResult parse = AdvCmdParser.builder().arguments(arguments).parse();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
+                .arguments(arguments)
+                .flagMapper(MAPPER)
+                .parse();
 
         int x, y, z;
         Vector3i pPos = null;
+        Position.Color color = Position.Color.WHITE;
         if (source instanceof Player)
             pPos = ((Player) source).getLocation().getBlockPosition();
         if (parse.args.length == 0) {
@@ -169,7 +187,24 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
         } else {
             throw new CommandException(Text.of("Too many arguments!"));
         }
-        this.list.add(new Vector3i(x, y, z));
+
+        if (parse.flags.containsKey("color")) {
+            String colorString = parse.flags.get("color");
+            if (colorString != null && !colorString.isEmpty()) {
+                Position.Color color1;
+                try {
+                    int index = Integer.parseInt(colorString);
+                    color1 = Position.Color.from(index);
+                } catch (NumberFormatException e) {
+                    color1 = Position.Color.from(colorString);
+                }
+                if (color1 != null) color = color1;
+            } else {
+                color = Position.Color.randomColor();
+            }
+        }
+
+        this.list.add(new Position(x, y, z, color));
         if (source instanceof Player) {
             FCPUtil.updatePositions((Player) source);
         }
@@ -184,6 +219,20 @@ public class PositionStateField extends ListStateFieldBase<Vector3i> {
                 .parse();
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT) && parse.current.index < 3 && parse.current.token.isEmpty()) {
             return ImmutableList.of(parse.current.prefix + "~");
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
+            return ImmutableList.of("color").stream()
+                    .filter(new StartsWithPredicate(parse.current.token))
+                    .map(args -> parse.current.prefix + args)
+                    .collect(GuavaCollectors.toImmutableList());
+        else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGVALUE)) {
+            if (isIn(COLOR_ALIASES, parse.current.key)) {
+                return Arrays.stream(Position.Color.values())
+                        .map(Enum::name)
+                        .map(String::toLowerCase)
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            }
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
             return ImmutableList.of(parse.current.prefix + " ");
         return ImmutableList.of();

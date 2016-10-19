@@ -1,5 +1,6 @@
 package net.foxdenstudio.sponge.foxcore.common.network.client.listener;
 
+import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import net.foxdenstudio.sponge.foxcore.common.network.IServerPacketListener;
@@ -16,11 +17,12 @@ public class ServerPositionPacketListener implements IServerPacketListener {
     @Override
     public void read(ByteBuf payload) {
         List<Vector3i> positionList = new ArrayList<>();
+        List<Vector3f> colorList = new ArrayList<>();
         while (payload.isReadable(12)) {
-            Vector3i pos = new Vector3i(payload.readInt(), payload.readInt(), payload.readInt());
-            positionList.add(pos);
+            positionList.add(new Vector3i(payload.readInt(), payload.readInt(), payload.readInt()));
+            colorList.add(new Vector3f(payload.readFloat(), payload.readFloat(), payload.readFloat()));
         }
-        FoxCoreClientMain.instance.getRenderHandler().updateList(positionList);
+        FoxCoreClientMain.instance.getRenderHandler().updateList(positionList, colorList);
     }
 
 }

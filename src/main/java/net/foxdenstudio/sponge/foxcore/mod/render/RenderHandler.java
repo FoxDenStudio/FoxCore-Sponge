@@ -25,15 +25,17 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
+import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -70,10 +72,47 @@ public class RenderHandler {
         glPopMatrix();
     }
 
-    public void updateList(List<Vector3i> posList) {
+    public void updateList(List<Vector3i> posList, List<Vector3f> colorList) {
         this.list.clear();
-        Set<Vector3i> set = new HashSet<>();
-        posList.forEach(set::add);
-        set.forEach(pos -> this.list.add(new Highlight(pos /*, FCHelper.RGBfromHSV(Math.random() * 360, 1, 1)*/)));
+        if (posList == null || colorList == null || posList.size() == 0) return;
+
+        Map<Vector3i, ColorBlender> posColorMap = new HashMap<>();
+        Iterator<Vector3i> posIt = posList.iterator();
+        Iterator<Vector3f> colorIt = colorList.iterator();
+
+        while (posIt.hasNext()) {
+            Vector3i pos = posIt.next();
+            Vector3f color = colorIt.next();
+            if (posColorMap.containsKey(pos)) {
+                posColorMap.get(pos).blend(color);
+            } else {
+                posColorMap.put(pos, new ColorBlender(color));
+            }
+        }
+
+        posColorMap.entrySet().forEach(entry -> this.list.add(new Highlight(entry.getKey(), entry.getValue().color)));
+    }
+
+    private class ColorBlender {
+        Vector3f color;
+        int weight;
+
+        public ColorBlender(Vector3f color) {
+            this.color = color;
+            weight = 1;
+        }
+
+        public void blend(Vector3f newColor) {
+            final float a = ((float) weight) / (weight + 1),
+                    b = 1.0f / (weight + 1);
+            color = new Vector3f(
+                    a * color.getX() + b * newColor.getX(),
+                    a * color.getY() + b * newColor.getY(),
+                    a * color.getZ() + b * newColor.getZ()
+            );
+            weight++;
+        }
+
+
     }
 }

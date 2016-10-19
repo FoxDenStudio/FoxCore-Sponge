@@ -1,0 +1,91 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+publishing{
+    publications {
+        foxcore(MavenPublication) {
+            from components.java
+
+            artifactId = archivesBaseName
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+        download(MavenPublication) {
+            artifactId = archivesBaseName
+
+            artifact shadowJar {
+                classifier "client"
+            }
+            artifact serverJar {
+                classifier "server"
+            }
+        }
+    }
+}
+
+if(System.env.TRAVIS && !Boolean.valueOf(System.env.TRAVIS_PULL_REQUEST)){
+    if(System.env.TRAVIS_TAG){
+        travisPublish.dependsOn 'publishFoxcorePublicationToFDSReleasesRepository'
+    } else {
+        travisPublish.dependsOn 'publishFoxcorePublicationToFDSSnapshotsRepository'
+    }
+    travisPublish.dependsOn 'publishDownloadPublicationToFDSDownloadsRepository'
+}
+
+shadowJar {
+    group = 'build'
+    classifier = 'client'
+    dependsOn reobfJar
+    dependencies {
+        include dependency('com.flowpowered:flow-math')
+        include dependency('org.mapdb:mapdb')
+        include dependency('org.mapdb:elsa')
+        include dependency('org.eclipse.collections:eclipse-collections')
+        include dependency('org.eclipse.collections:eclipse-collections-api')
+        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
+        include dependency('org.jetbrains.kotlin:kotlin-runtime')
+        include dependency('net.jpountz.lz4:lz4')
+    }
+}
+
+task serverJar(type: ShadowJar) {
+    group = 'build'
+    classifier = 'server'
+    dependencies {
+        include dependency('org.mapdb:mapdb')
+        include dependency('org.mapdb:elsa')
+        include dependency('org.eclipse.collections:eclipse-collections')
+        include dependency('org.eclipse.collections:eclipse-collections-api')
+        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
+        include dependency('org.jetbrains.kotlin:kotlin-runtime')
+        include dependency('net.jpountz.lz4:lz4')
+    }
+    from(sourceSets.main.output) {
+        exclude "net/foxdenstudio/sponge/foxcore/mod"
+    }
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+}
+
+artifacts {
+    archives shadowJar
+    archives serverJar
+}
+
+sourceJar {
+    group = 'build'
+}

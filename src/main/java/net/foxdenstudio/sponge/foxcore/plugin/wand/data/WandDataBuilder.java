@@ -25,7 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import net.foxdenstudio.sponge.foxcore.plugin.wand.WandType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
@@ -57,11 +56,9 @@ public class WandDataBuilder extends AbstractDataBuilder<WandData> implements Da
 
     @NotNull
     @Override
-    protected Optional<WandData> buildContent(@NotNull DataView container) throws InvalidDataException {
-        if (!container.contains(WandKeys.WANDTYPE.getQuery())) return Optional.empty();
+    protected Optional<WandData> buildContent(@NotNull DataView view) throws InvalidDataException {
         WandData data = create();
-        data.setWandType(WandType.valueOf((String) container.get(WandKeys.WANDTYPE.getQuery()).get()));
-        return Optional.of(data);
+        return data.from(view);
     }
 
 

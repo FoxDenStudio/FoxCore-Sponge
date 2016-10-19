@@ -33,7 +33,7 @@ public class CommandHUD extends FCCommandBase {
     private static CommandHUD instance;
 
     private Map<Player, Boolean> isHUDEnabled = new CacheMap<>((k, m) -> FCConfigManager.getInstance().isDefaultHUDOn() &&
-            (!(k instanceof Player) || testPermission((Player) k)));
+            k instanceof Player && testPermission((Player) k));
 
     public CommandHUD() {
         if (instance == null) instance = this;
