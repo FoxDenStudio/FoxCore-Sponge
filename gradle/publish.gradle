@@ -21,7 +21,7 @@ publishing {
                 username = System.env.NEXUS_USER
                 password = System.env.NEXUS_PASS
             }
-            name = 'Downloads'
+            name = 'FDSDownloads'
             url = 'http://nexus.foxdenstudio.net/repository/downloads/'
         }
     }
