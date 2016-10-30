@@ -157,7 +157,7 @@ public final class FoxCoreMain {
     @Listener
     public void configurePermissions(GamePostInitializationEvent event) {
         logger.info("Configuring permissions");
-        game.getServiceManager().provide(PermissionService.class).getDefaults()
+        game.getServiceManager().provide(PermissionService.class).get().getDefaults()
                 .getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcore.command.info", Tristate.TRUE);
     }
 
