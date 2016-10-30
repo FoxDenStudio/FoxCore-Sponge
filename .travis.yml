@@ -27,7 +27,7 @@ deploy:
   file_glob: true
   provider: releases
   api-key: ${KEY}
-  file: "./build/libs/FoxCore*.jar"
+  file: "./build/libs/foxcore*.jar"
   skip_cleanup: true
   on:
     tags: true
