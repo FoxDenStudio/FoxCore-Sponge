@@ -27,6 +27,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command.util;
 
 import org.spongepowered.api.text.Text;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public final class ProcessResult {
@@ -35,19 +36,19 @@ public final class ProcessResult {
     private static final ProcessResult FAILURE = of(false);
 
     private final boolean success;
-    private final Optional<Text> message;
+    private final @Nullable Text message;
 
-    private ProcessResult(boolean success, Optional<Text> message) {
+    private ProcessResult(boolean success, @Nullable Text message) {
         this.success = success;
         this.message = message;
     }
 
     public static ProcessResult of(boolean success) {
-        return new ProcessResult(success, Optional.empty());
+        return new ProcessResult(success, null);
     }
 
     public static ProcessResult of(boolean success, Text message) {
-        return new ProcessResult(success, Optional.of(message));
+        return new ProcessResult(success, message);
     }
 
     public static ProcessResult success() {
@@ -63,6 +64,6 @@ public final class ProcessResult {
     }
 
     public Optional<Text> getMessage() {
-        return message;
+        return Optional.ofNullable(message);
     }
 }
