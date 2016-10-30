@@ -140,8 +140,6 @@ public final class FCCUtil {
 
     public static final String[] colorNames = {"black", "darkblue", "darkgreen", "darkaqua", "darkred", "darkpurple", "gold", "gray",
             "darkgray", "blue", "green", "aqua", "red", "lightpurple", "yellow", "white"};
-    public static final TextColor[] colors = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
-            DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
 
     public static int colorCodeFromName(String name) {
         for (int i = 0; i < colorNames.length; i++) {
@@ -151,7 +149,7 @@ public final class FCCUtil {
     }
 
     public static boolean checkPermissionString(String permission) {
-        return permission.matches("[a-zA-Z0-9\\-_\\.]") && !permission.matches("^.*\\.\\..*$") && !permission.startsWith(".") && !permission.endsWith(".");
+        return permission.matches("[a-zA-Z0-9\\-_.]") && !permission.matches("^.*\\.\\..*$") && !permission.startsWith(".") && !permission.endsWith(".");
     }
 
     public static class FCPattern {

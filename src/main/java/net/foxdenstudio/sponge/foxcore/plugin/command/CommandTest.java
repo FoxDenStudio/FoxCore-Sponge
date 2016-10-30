@@ -28,6 +28,7 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -43,24 +44,36 @@ import java.util.Optional;
 
 public class CommandTest extends FCCommandBase {
 
-    /*
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        AdvCmdParse.ParseResult parse = AdvCmdParse.builder().arguments(arguments).limit(3).parse2();
+        AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
+                .arguments(arguments)
+                .limit(3)
+                .parse();
+
         Text.Builder builder = Text.builder();
         builder.append(Text.of(TextColors.GOLD, "-----------------------------\n"));
-        builder.append(Text.of(TextColors.GOLD, "Args: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
-        builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.currentElement.type, TextColors.GOLD, "\n"));
-        builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.currentElement.token, TextColors.GOLD, "\"\n"));
-        builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.currentElement.index, TextColors.GOLD, "\n"));
-        builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.currentElement.key, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Raw: \"", TextColors.RESET, arguments, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Args: \""));
+
+        for (int i = 0; i < parse.args.length; i++) {
+            builder.append(Text.of(TextColors.RESET, parse.args[i]));
+            if(i < parse.args.length - 1) builder.append(Text.of(TextColors.GOLD, ", "));
+        }
+        builder.append(Text.of(TextColors.GOLD, "\"\n"));
+
+        builder.append(Text.of(TextColors.GOLD, "Flags: \"", TextColors.RESET, parse.flags, TextColors.GOLD, "\"\n"));
+
+        builder.append(Text.of(TextColors.GOLD, "Type: ", TextColors.RESET, parse.current.type, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Token: \"", TextColors.RESET, parse.current.token, TextColors.GOLD, "\"\n"));
+        builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.current.index, TextColors.GOLD, "\n"));
+        builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.current.key, TextColors.GOLD, "\"\n"));
         source.sendMessage(builder.build());
         return CommandResult.empty();
     }
-    */
 
     /*@Override
     public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
@@ -109,7 +122,7 @@ public class CommandTest extends FCCommandBase {
     }
 
 
-    @Override
+    /*@Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
@@ -123,5 +136,5 @@ public class CommandTest extends FCCommandBase {
             source.sendMessage(Text.of("You must be a player to use this command!"));
         }
         return CommandResult.empty();
-    }
+    }*/
 }

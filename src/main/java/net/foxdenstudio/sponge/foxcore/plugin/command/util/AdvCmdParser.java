@@ -164,6 +164,7 @@ public final class AdvCmdParser {
         boolean jump = false;
         // Stores flags that were not accepted by the mapper, to be given to the final block, if it exists.
         List<String> extraFlags = new ArrayList<>();
+        String finalBlock = "";
         // Iterate through matches
         while (matcher.find()) {
 
@@ -251,10 +252,15 @@ public final class AdvCmdParser {
                     // Simply adds the result to the argument list. Quotes are trimmed.
                     // Fallback if the result isn't a flag.
                 } else {
+                    if (limit > 0 && argsList.size() == limit && result.equals(">")) {
+                        jump = true;
+                        continue;
+                    }
+
                     if (leaveFinalAsIs && limit > 0 && argsList.size() >= limit) {
-                        String finalBlock = arguments.substring(matcher.start(), arguments.length() - (inQuote ? 1 : 0));
+                        finalBlock = arguments.substring(matcher.start(), arguments.length() - (inQuote ? 1 : 0));
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalBlock, argsList.size(), "");
-                        argsList.add(finalBlock);
+
                         lastIsCurrent = true;
                         break;
                     }
@@ -290,24 +296,26 @@ public final class AdvCmdParser {
         // A number of arguments are copied to a new list less than or equal to the limit.
         // The rest of the arguments, if any, are concatenated together.
         List<String> finalList = new ArrayList<>();
-        String finalString = "";
         for (int i = 0; i < argsList.size(); i++) {
             if (limit <= 0 || i < limit) {
                 finalList.add(argsList.get(i));
             } else {
-                finalString += argsList.get(i);
+                finalBlock += argsList.get(i);
                 if (i + 1 < argsList.size()) {
-                    finalString += " ";
+                    finalBlock += " ";
                 }
             }
         }
+        for(String flag : extraFlags){
+            finalBlock = flag + " " + finalBlock;
+        }
 
         if (parseResult.current != null && parseResult.current.type == CurrentElement.ElementType.ARGUMENT && limit > 0 && parseResult.current.index >= limit)
-            parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalString + (finalString.isEmpty() || lastIsCurrent ? "" : " "), finalList.size(), "");
+            parseResult.current = new CurrentElement(CurrentElement.ElementType.FINAL, finalBlock + (finalBlock.isEmpty() || lastIsCurrent ? "" : " "), finalList.size(), "");
 
-        if (!finalString.isEmpty()) {
+        if (!finalBlock.isEmpty()) {
             if (!excludeCurrent || parseResult.current.type == CurrentElement.ElementType.COMMENT) {
-                finalList.add(finalString);
+                finalList.add(finalBlock);
             }
         }
 

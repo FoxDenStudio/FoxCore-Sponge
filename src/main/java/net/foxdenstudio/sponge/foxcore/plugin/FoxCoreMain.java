@@ -95,12 +95,12 @@ public final class FoxCoreMain {
     }
 
     @Listener
-    public void gameConstruct(GameConstructionEvent event) {
+    public void construct(GameConstructionEvent event) {
         instance = this;
     }
 
     @Listener
-    public void gamePreInit(GamePreInitializationEvent event) {
+    public void preInit(GamePreInitializationEvent event) {
         logger.info("Beginning FoxCore initialization");
         logger.info("Version: " + container.getVersion().orElse("Unknown"));
         logger.info("Initializing state manager");
@@ -112,31 +112,53 @@ public final class FoxCoreMain {
     }
 
     @Listener
-    public void gameInit(GameInitializationEvent event) {
+    public void init(GameInitializationEvent event) {
         logger.info("Starting network packet manager");
         FCServerNetworkManager.instance().registerNetworkingChannels();
         logger.info("Creating server network channel");
         foxcoreNetworkChannel = FCServerNetworkManager.instance().getOrCreateServerChannel("foxcore");
         logger.info("Registering packet listeners");
-        this.registerPackets();
+        registerPackets();
         logger.info("Registering positions state field");
         FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
         logger.info("Registering wand factories");
         registerWands();
         logger.info("Registering commands");
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
-        logger.info("Setting default player permissions");
-        configurePermissions();
-        logger.info("Registering custom data manipulators");
-        registerData();
-        logger.info("Registering event listeners");
-        registerListeners();
     }
 
     @Listener
-    public void gamePostInit(GamePostInitializationEvent event){
+    public void registerListeners(GameInitializationEvent event) {
+        logger.info("Registering event listeners");
+        EventManager manager = game.getEventManager();
+        try {
+            manager.registerListeners(this, FCServerNetworkManager.instance());
+        } catch (Exception e) {
+            logger.error("Error registering Network Manager Listeners", e);
+        }
+        try {
+            manager.registerListener(this, InteractBlockEvent.class, new WandBlockListener());
+        } catch (Exception e) {
+            logger.error("Error registering Wand Block Listener", e);
+        }
+        try {
+            manager.registerListener(this, InteractEntityEvent.class, new WandEntityListener());
+        } catch (Exception e){
+            logger.error("Error registering Wand Entity Listener", e);
+        }
+    }
+
+    @Listener
+    public void registerData(GameInitializationEvent event) {
+        logger.info("Registering custom data manipulators");
+        game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
+    }
+
+    @Listener
+    public void configurePermissions(GamePostInitializationEvent event) {
         logger.info("Configuring permissions");
-        configurePermissions();
+        game.getServiceManager().provide(PermissionService.class).get()
+                .getDefaultData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcommon.command.info", Tristate.TRUE);
     }
 
     private void configureCommands() {
@@ -151,7 +173,7 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandPosition(), "position", "pos", "p");
         fcDispatcher.register(new CommandFlush(), "flush", "clear", "wipe", "f");
         fcDispatcher.register(new CommandWand(), "wand", "tool", "stick", "w");
-        fcDispatcher.register(new CommandTest(), "test");
+        //fcDispatcher.register(new CommandTest(), "test");
         fcDispatcher.register(new CommandDebug(), "debug");
         fcDispatcher.register(new CommandHUD(), "hud", "scoreboard");
 
@@ -164,27 +186,12 @@ public final class FoxCoreMain {
         manager.registerPacket(ServerPrintStringPacket.ID);
     }
 
-    private void registerListeners() {
-        EventManager manager = game.getEventManager();
-        manager.registerListener(this, InteractBlockEvent.class, new WandBlockListener());
-        manager.registerListener(this, InteractEntityEvent.class, new WandEntityListener());
-        manager.registerListeners(this, FCServerNetworkManager.instance());
-    }
-
-    private void registerData() {
-        game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
-    }
-
-    private void registerWands(){
+    private void registerWands() {
         FCWandRegistry registry = FCWandRegistry.getInstance();
         registry.registerBuilder(PositionWand.type, new PositionWand.Factory());
         registry.registerBuilder(CounterWand.type, new CounterWand.Factory());
     }
 
-    private void configurePermissions() {
-        game.getServiceManager().provide(PermissionService.class).get()
-                .getDefaultData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcommon.command.info", Tristate.TRUE);
-    }
 
     public Logger logger() {
         return logger;

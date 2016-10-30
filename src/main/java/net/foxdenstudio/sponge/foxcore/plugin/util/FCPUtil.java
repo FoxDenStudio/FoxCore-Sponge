@@ -1,6 +1,5 @@
 package net.foxdenstudio.sponge.foxcore.plugin.util;
 
-import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.util.FCCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
@@ -35,10 +34,17 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.spongepowered.api.text.format.TextColors.*;
+
 /**
  * Created by Fox on 7/7/2016.
  */
 public class FCPUtil {
+
+    public static Text readableBooleanText(boolean bool) {
+        return bool ? Text.of(TextColors.GREEN, "True") : Text.of(TextColors.RED, "False");
+    }
+
     public static String readableTristate(Tristate state) {
         switch (state) {
             case UNDEFINED:
@@ -102,16 +108,60 @@ public class FCPUtil {
         FoxCoreMain.instance().getFoxcoreNetworkChannel().sendPacket(player, new ServerPositionPacket(getPositions(player)));
     }
 
+    public static final TextColor[] colors = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
+            DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
+
     public static Optional<TextColor> textColorFromName(String name) {
         int code = FCCUtil.colorCodeFromName(name);
-        if (code >= 0) return Optional.of(FCCUtil.colors[code]);
+        if (code >= 0) return Optional.of(colors[code]);
         else return Optional.empty();
     }
 
     public static Optional<TextColor> textColorFromHex(String hex) {
         if (!hex.matches("[0-9a-f]")) return Optional.empty();
         int code = Integer.parseInt(hex, 16);
-        return Optional.of(FCCUtil.colors[code]);
+        return Optional.of(colors[code]);
+    }
+
+    public static String getColorName(TextColor color, boolean upperCase) {
+        switch (color.getId()) {
+            case "RED":
+                return upperCase ? "Red" : "red";
+            case "YELLOW":
+                return upperCase ? "Yellow" : "yellow";
+            case "GREEN":
+                return upperCase ? "Green" : "green";
+            case "AQUA":
+                return upperCase ? "Aqua" : "aqua";
+            case "BLUE":
+                return upperCase ? "Blue" : "blue";
+            case "LIGHT_PURPLE":
+                return upperCase ? "Light purple" : "light purple";
+            case "DARK_RED":
+                return upperCase ? "Dark red" : "dark red";
+            case "GOLD":
+                return upperCase ? "Gold" : "gold";
+            case "DARK_GREEN":
+                return upperCase ? "Dark green" : "dark green";
+            case "DARK_AQUA":
+                return upperCase ? "Dark aqua" : "dark aqua";
+            case "DARK_BLUE":
+                return upperCase ? "Dark blue" : "dark blue";
+            case "DARK_PURPLE":
+                return upperCase ? "Dark purple" : "dark puple";
+            case "WHITE":
+                return upperCase ? "White" : "white";
+            case "GRAY":
+                return upperCase ? "Gray" : "gray";
+            case "DARK_GRAY":
+                return upperCase ? "Dark gray" : "dark gray";
+            case "BLACK":
+                return upperCase ? "Black" : "black";
+            case "RESET":
+                return upperCase ? "Reset" : "reset";
+            default:
+                return "What?";
+        }
     }
 
     public static CommentedConfigurationNode getHOCONConfiguration(Path file, ConfigurationLoader<CommentedConfigurationNode> loader) {
