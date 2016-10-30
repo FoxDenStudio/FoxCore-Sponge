@@ -12,6 +12,7 @@ script: ./gradlew build
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -rf $HOME/.gradle/caches/minecraft/deobfedDeps/
 cache:
   directories:
     - $HOME/.gradle/caches/
@@ -27,7 +28,7 @@ deploy:
   file_glob: true
   provider: releases
   api-key: ${KEY}
-  file: "./build/libs/FoxCore*.jar"
+  file: "./build/libs/foxcore*.jar"
   skip_cleanup: true
   on:
     tags: true
