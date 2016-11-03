@@ -99,6 +99,7 @@ public class CommandWand extends FCCommandBase {
                 .arguments(arguments)
                 .flagMapper(MAPPER)
                 .limit(1)
+                .parseLastFlags(true)
                 .parse();
 
 
@@ -123,48 +124,87 @@ public class CommandWand extends FCCommandBase {
         if (wandLore != null) lore.addAll(wand.getLore());
         loreData.set(lore);
 
-        ItemStack stack = null;
-
-        boolean usingCurrent = false;
+        boolean mainHand = false, offHand = false;
+        Optional<ItemStack> mainHandItemOptional = player.getItemInHand(HandTypes.MAIN_HAND),
+                offHandItemOptional = player.getItemInHand(HandTypes.OFF_HAND);
         if (parse.flags.containsKey("hand")) {
-            Optional<ItemStack> handItemOptional = player.getItemInHand(HandTypes.MAIN_HAND);
-            if (handItemOptional.isPresent()) {
-                stack = handItemOptional.get();
-            }
-            usingCurrent = true;
-        }
-        if (stack == null) {
-            ItemType itemType = FCConfigManager.getInstance().getDefaultWandItemType();
-            if (parse.flags.containsKey("item")) {
-                String itemTypeName = parse.flags.get("item");
-                Optional<ItemType> itemTypeOptional = Sponge.getRegistry().getType(ItemType.class, itemTypeName);
-                if (itemTypeOptional.isPresent()) {
-                    itemType = itemTypeOptional.get();
-                } else {
-                    throw new CommandException(Text.of("\"" + itemTypeName + "\" is not a valid item type!"));
+            String handString = parse.flags.get("hand");
+            if (handString.isEmpty()) {
+                if (mainHandItemOptional.isPresent()) {
+                    mainHand = true;
+                } else if (offHandItemOptional.isPresent()) {
+                    offHand = true;
                 }
+            } else if (handString.equalsIgnoreCase("main")) {
+                mainHand = true;
+            } else if (handString.equalsIgnoreCase("off")) {
+                offHand = true;
+            } else if (handString.equalsIgnoreCase("both")) {
+                mainHand = true;
+                offHand = true;
             }
-            stack = ItemStack.of(itemType, 1);
         }
-        stack.offer(wandData);
-        stack.offer(loreData);
-        stack.offer(Keys.DISPLAY_NAME, wand.getItemName());
-        Optional<EnchantmentData> enchantmentDataOptioanl = stack.getOrCreate(EnchantmentData.class);
-        if (enchantmentDataOptioanl.isPresent()) stack.offer(enchantmentDataOptioanl.get());
-        else stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
 
-        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-            Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition());
-            entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
-            player.getWorld().spawnEntity(entity, Cause.builder()
-                    .named(NamedCause.SOURCE, SpawnCause.builder().type(SpawnTypes.CUSTOM).build())
-                    .named("plugin", FoxCoreMain.instance())
-                    .build());
-        } else {
+        ItemType itemType = FCConfigManager.getInstance().getDefaultWandItemType();
+        if (parse.flags.containsKey("item")) {
+            String itemTypeName = parse.flags.get("item");
+            Optional<ItemType> itemTypeOptional = Sponge.getRegistry().getType(ItemType.class, itemTypeName);
+            if (itemTypeOptional.isPresent()) {
+                itemType = itemTypeOptional.get();
+            } else {
+                throw new CommandException(Text.of("\"" + itemTypeName + "\" is not a valid item type!"));
+            }
+        }
+
+        if (mainHand) {
+            ItemStack stack = mainHandItemOptional.orElse(ItemStack.of(itemType, 1));
+
+            stack.offer(wandData);
+            stack.offer(loreData);
+            stack.offer(Keys.DISPLAY_NAME, wand.getItemName());
+            Optional<EnchantmentData> enchantmentDataOptional = stack.getOrCreate(EnchantmentData.class);
+            if (enchantmentDataOptional.isPresent()) stack.offer(enchantmentDataOptional.get());
+            else stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
+
             player.setItemInHand(HandTypes.MAIN_HAND, stack);
         }
 
-        source.sendMessage(Text.of("Successfully created wand!"));
+        if (offHand) {
+            ItemStack stack = offHandItemOptional.orElse(ItemStack.of(itemType, 1));
+
+            stack.offer(wandData);
+            stack.offer(loreData);
+            stack.offer(Keys.DISPLAY_NAME, wand.getItemName());
+            Optional<EnchantmentData> enchantmentDataOptional = stack.getOrCreate(EnchantmentData.class);
+            if (enchantmentDataOptional.isPresent()) stack.offer(enchantmentDataOptional.get());
+            else stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
+
+            player.setItemInHand(HandTypes.OFF_HAND, stack);
+        }
+
+        if (!(mainHand || offHand)) {
+            ItemStack stack = ItemStack.of(itemType, 1);
+
+            stack.offer(wandData);
+            stack.offer(loreData);
+            stack.offer(Keys.DISPLAY_NAME, wand.getItemName());
+            Optional<EnchantmentData> enchantmentDataOptional = stack.getOrCreate(EnchantmentData.class);
+            if (enchantmentDataOptional.isPresent()) stack.offer(enchantmentDataOptional.get());
+            else stack.offer(Sponge.getDataManager().getManipulatorBuilder(EnchantmentData.class).get().create());
+
+            if (mainHandItemOptional.isPresent()) {
+                Entity entity = player.getWorld().createEntity(EntityTypes.ITEM, player.getLocation().getPosition());
+                entity.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+                player.getWorld().spawnEntity(entity, Cause.builder()
+                        .named(NamedCause.SOURCE, SpawnCause.builder().type(SpawnTypes.CUSTOM).build())
+                        .named("plugin", FoxCoreMain.instance())
+                        .build());
+            } else {
+                player.setItemInHand(HandTypes.MAIN_HAND, stack);
+            }
+        }
+
+        source.sendMessage(Text.of("Successfully created wand" + (mainHand && offHand ? "s" : "") + "!"));
 
         return CommandResult.empty();
     }
@@ -178,7 +218,6 @@ public class CommandWand extends FCCommandBase {
                 .limit(1)
                 .excludeCurrent(true)
                 .autoCloseQuotes(true)
-                .parseLastFlags(false)
                 .parse();
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
             return FCWandRegistry.getInstance().getTypes().stream()
@@ -187,12 +226,12 @@ public class CommandWand extends FCCommandBase {
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
-            return ImmutableList.of("player", "item", "current").stream()
+            return ImmutableList.of("player", "hand", "item").stream()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGVALUE)) {
-            if (parse.current.key.equals("player"))
+            if (isIn(PLAYER_ALIASES, parse.current.key))
                 return Sponge.getGame().getServer().getOnlinePlayers().stream()
                         .map(Player::getName)
                         .sorted()
@@ -204,6 +243,11 @@ public class CommandWand extends FCCommandBase {
                         .filter(itemType -> itemType != ItemTypes.NONE)
                         .map(ItemType::getId)
                         .sorted()
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            } else if (isIn(HAND_ALIASES, parse.current.key)) {
+                return ImmutableList.of("main", "off", "both").stream()
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());

@@ -1,5 +1,6 @@
 package net.foxdenstudio.sponge.foxcore.plugin.command;
 
+import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -23,11 +24,7 @@ public abstract class FCCommandBase implements CommandCallable {
 
     @Override
     public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
-        return getSuggestions(source, arguments);
-    }
-
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        return getSuggestions(source, arguments, null);
+        return ImmutableList.of();
     }
 
     @Override

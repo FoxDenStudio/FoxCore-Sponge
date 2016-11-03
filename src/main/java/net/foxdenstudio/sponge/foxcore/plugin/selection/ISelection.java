@@ -2,12 +2,13 @@ package net.foxdenstudio.sponge.foxcore.plugin.selection;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
+import net.foxdenstudio.sponge.foxcore.plugin.util.IModifiable;
 import net.foxdenstudio.sponge.foxcore.plugin.util.IWorldBounded;
 import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
-public interface ISelection extends Iterable<Vector3i>, IWorldBounded {
+public interface ISelection extends Iterable<Vector3i>, IWorldBounded, IModifiable {
 
     Text overview();
 

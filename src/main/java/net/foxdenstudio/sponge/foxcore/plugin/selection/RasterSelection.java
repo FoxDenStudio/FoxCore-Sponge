@@ -2,13 +2,21 @@ package net.foxdenstudio.sponge.foxcore.plugin.selection;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Fox on 9/14/2016.
@@ -80,27 +88,31 @@ public class RasterSelection implements ISelection {
 
     private void calculateBounds() {
         if (dirty) {
-            int
-                    minX = Integer.MAX_VALUE,
-                    minY = Integer.MAX_VALUE,
-                    minZ = Integer.MAX_VALUE,
-                    maxX = Integer.MIN_VALUE,
-                    maxY = Integer.MIN_VALUE,
-                    maxZ = Integer.MIN_VALUE;
+            if (this.positions.isEmpty()) {
+                this.bounds = null;
+            } else {
+                int
+                        minX = Integer.MAX_VALUE,
+                        minY = Integer.MAX_VALUE,
+                        minZ = Integer.MAX_VALUE,
+                        maxX = Integer.MIN_VALUE,
+                        maxY = Integer.MIN_VALUE,
+                        maxZ = Integer.MIN_VALUE;
 
-            for (Vector3i vec : this.positions) {
-                int x = vec.getX(), y = vec.getY(), z = vec.getZ();
-                minX = Math.min(minX, x);
-                minY = Math.min(minY, y);
-                minZ = Math.min(minZ, z);
-                maxX = Math.max(maxX, x);
-                maxY = Math.max(maxY, y);
-                maxZ = Math.max(maxZ, z);
+                for (Vector3i vec : this.positions) {
+                    int x = vec.getX(), y = vec.getY(), z = vec.getZ();
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    minZ = Math.min(minZ, z);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                    maxZ = Math.max(maxZ, z);
+                }
+                this.bounds = new BoundingBox3(
+                        new Vector3i(minX, minY, minZ),
+                        new Vector3i(maxX, maxY, maxZ)
+                );
             }
-            this.bounds = new BoundingBox3(
-                    new Vector3i(minX, minY, minZ),
-                    new Vector3i(maxX, maxY, maxZ)
-            );
             dirty = false;
         }
     }
@@ -124,5 +136,19 @@ public class RasterSelection implements ISelection {
         selection.calculateBounds();
         long end = System.currentTimeMillis();
         System.out.println("Time: " + (end - start));
+
+        try(DB db = DBMaker.memoryDB().make()){
+
+        }
+    }
+
+    @Override
+    public ProcessResult modify(CommandSource source, String arguments) throws CommandException {
+        return null;
+    }
+
+    @Override
+    public List<String> modifySuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
+        return null;
     }
 }
