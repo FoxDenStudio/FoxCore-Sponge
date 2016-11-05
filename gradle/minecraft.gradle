@@ -5,18 +5,18 @@ minecraft {
     makeObfSourceJar = false
 }
 
-if (project.tasks.findByPath("shadowJar") != null) {
-    reobf {
-        shadowJar {
-            mappingType = 'SEARGE'
-        }
-    }
-}
-
 sourceJar {
     group = 'build'
 }
 
 artifacts {
     archives sourceJar
+}
+
+if (project.tasks.findByPath(":shadowJar") != null) {
+    reobf {
+        shadowJar {
+            mappingType = 'SEARGE'
+        }
+    }
 }
