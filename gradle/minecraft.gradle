@@ -5,8 +5,8 @@ minecraft {
     makeObfSourceJar = false
 }
 
-reobf {
-    if (shadowJar != null) {
+if (shadowJar != null) {
+    reobf {
         shadowJar {
             mappingType = 'SEARGE'
         }
