@@ -6,8 +6,10 @@ minecraft {
 }
 
 reobf {
-    shadowJar {
-        mappingType = 'SEARGE'
+    if (project.plugins.hasPlugin('com.github.johnrengelman.shadow')) {
+        shadowJar {
+            mappingType = 'SEARGE'
+        }
     }
 }
 
