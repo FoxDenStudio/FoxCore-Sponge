@@ -28,7 +28,6 @@ apply plugin: 'org.spongepowered.plugin'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 group 'net.foxdenstudio.sponge'
-
 version 'api5-SNAPSHOT'
 
 apply from: project.file("gradle/fox.gradle")

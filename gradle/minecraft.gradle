@@ -10,3 +10,11 @@ reobf {
         mappingType = 'SEARGE'
     }
 }
+
+sourceJar {
+    group = 'build'
+}
+
+artifacts {
+    archives sourceJar
+}
