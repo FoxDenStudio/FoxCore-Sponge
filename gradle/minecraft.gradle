@@ -5,7 +5,7 @@ minecraft {
     makeObfSourceJar = false
 }
 
-if (shadowJar != null) {
+if (project.tasks.findByPath("shadowJar") != null) {
     reobf {
         shadowJar {
             mappingType = 'SEARGE'
