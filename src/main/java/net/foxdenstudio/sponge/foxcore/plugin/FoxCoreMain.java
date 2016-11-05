@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.plugin.command.*;
+import net.foxdenstudio.sponge.foxcore.plugin.command.misc.CommandPWD;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandBlockListener;
 import net.foxdenstudio.sponge.foxcore.plugin.listener.WandEntityListener;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
@@ -178,6 +179,11 @@ public final class FoxCoreMain {
         fcDispatcher.register(new CommandHUD(), "hud", "scoreboard");
 
         fcDispatcher.register(new CommandAbout(builder.build()), "about", "info");
+
+        FCCommandDispatcher miscDispatcher = new FCCommandDispatcher("/foxcore misc", "Misc commands that may be helpful.");
+        miscDispatcher.register(new CommandPWD(), "pwd", "directory");
+
+        fcDispatcher.register(miscDispatcher, "misc", "miscellaneous", "util");
     }
 
     private void registerPackets() {

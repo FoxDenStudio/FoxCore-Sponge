@@ -29,7 +29,7 @@ public abstract class FCCommandBase implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return true;
+        return source.hasPermission("foxcore.command");
     }
 
     @Override
