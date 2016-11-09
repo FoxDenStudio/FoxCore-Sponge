@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableList;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
 import net.foxdenstudio.sponge.foxcore.plugin.state.PositionStateField;
+import net.foxdenstudio.sponge.foxcore.plugin.state.SourceState;
 import net.foxdenstudio.sponge.foxcore.plugin.util.FCPUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -51,7 +52,8 @@ public class CommandPosition extends FCCommandBase {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
         }
-        PositionStateField positionsField = (PositionStateField) FCStateManager.instance().getStateMap().get(source).getOrCreate(PositionStateField.ID).get();
+        SourceState state = FCStateManager.instance().getStateMap().get(source);
+        PositionStateField positionsField = (PositionStateField) state.getOrCreate(PositionStateField.ID).get();
         ProcessResult result = positionsField.add(source, arguments);
         if (result.isSuccess()) {
             if (result.getMessage().isPresent()) {
@@ -63,6 +65,7 @@ public class CommandPosition extends FCCommandBase {
             } else {
                 source.sendMessage(Text.of(TextColors.GREEN, "Successfully added data to the Positions field!"));
             }
+            state.updateScoreboard();
         } else {
             if (result.getMessage().isPresent()) {
                 if (!FCPUtil.hasColor(result.getMessage().get())) {

@@ -13,7 +13,7 @@ artifacts {
     archives sourceJar
 }
 
-if (project.tasks.findByPath(":shadowJar") != null) {
+if (tasks.findByPath(":shadowJar") != null) {
     reobf {
         shadowJar {
             mappingType = 'SEARGE'
