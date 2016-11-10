@@ -64,15 +64,17 @@ public class CommandHUD extends FCCommandBase {
                     source.sendMessage(Text.of("Turned ", TextColors.GREEN, "on", TextColors.RESET, " the HUD!"));
                 } else if (parse.args[0].equalsIgnoreCase("off")) {
                     isHUDEnabled.put((Player) source, false);
-                    if (Sponge.getServer().getServerScoreboard().isPresent()) {
-                        ((Player) source).setScoreboard(Sponge.getServer().getServerScoreboard().get());
+                    Optional<Scoreboard> serverScoreboard = Sponge.getServer().getServerScoreboard();
+                    if (serverScoreboard.isPresent()) {
+                        ((Player) source).setScoreboard(serverScoreboard.get());
                     } else {
                         ((Player) source).setScoreboard(Scoreboard.builder().build());
                     }
                     source.sendMessage(Text.of("Turned ", TextColors.RED, "off", TextColors.RESET, " the HUD!"));
                 } else if (Aliases.isIn(RESET_ALIASES, parse.args[0])) {
-                    if (Sponge.getServer().getServerScoreboard().isPresent()) {
-                        ((Player) source).setScoreboard(Sponge.getServer().getServerScoreboard().get());
+                    Optional<Scoreboard> serverScoreboard = Sponge.getServer().getServerScoreboard();
+                    if (serverScoreboard.isPresent()) {
+                        ((Player) source).setScoreboard(serverScoreboard.get());
                     } else {
                         ((Player) source).setScoreboard(Scoreboard.builder().build());
                     }
