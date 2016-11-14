@@ -23,12 +23,25 @@
  * THE SOFTWARE.
  */
 
-package net.foxdenstudio.sponge.foxcore.mod.render;
+package net.foxdenstudio.sponge.foxcore.common.util;
 
-import com.flowpowered.math.vector.Vector2i;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.function.BiFunction;
 
-public interface IRenderable {
+public class WeakCacheMap<K, V> extends WeakHashMap<K, V> {
+    final private BiFunction<Object, Map<K, V>, V> callback;
 
-    void render(Vector2i offset);
+    public WeakCacheMap(BiFunction<Object, Map<K, V>, V> callback) {
+        this.callback = callback;
+    }
 
+    @Override
+    public V get(Object key) {
+        if (containsKey(key)) {
+            return super.get(key);
+        } else {
+            return callback.apply(key, this);
+        }
+    }
 }

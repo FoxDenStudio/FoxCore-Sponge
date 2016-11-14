@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 
@@ -32,7 +33,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Highlight implements IRenderable {
 
-    private static final double OFFSET = 0.005;
+    private static final double OFFSET = 0.01;
     private static final int PERIOD = 2000;
     public transient double distance;
     boolean[][][] filled = new boolean[3][3][3];
@@ -58,22 +59,22 @@ public class Highlight implements IRenderable {
         this.phase = phase;
     }
 
-    public void render() {
+    public void render(Vector2i offset) {
         final float alpha = (1f - ((System.currentTimeMillis()) % PERIOD) / (float) PERIOD + phase) % 1f;
         glColor4f(color.getX(), color.getY(), color.getZ(), alpha);
-        drawBoxLines();
+        drawBoxLines(offset);
         glColor4f(color.getX(), color.getY(), color.getZ(), alpha / 4 + 0.1f);
-        drawBoxFaces();
+        drawBoxFaces(offset);
     }
 
-    public void drawBoxFaces() {
+    public void drawBoxFaces(Vector2i offset) {
 
-        final double x1 = pos.getX() - OFFSET;
+        final double x1 = pos.getX() + offset.getX() - OFFSET;
         final double y1 = pos.getY() - OFFSET;
-        final double z1 = pos.getZ() - OFFSET;
-        final double x2 = pos.getX() + OFFSET + 1;
+        final double z1 = pos.getZ() + offset.getY() - OFFSET;
+        final double x2 = pos.getX() + offset.getX() + OFFSET + 1;
         final double y2 = pos.getY() + OFFSET + 1;
-        final double z2 = pos.getZ() + OFFSET + 1;
+        final double z2 = pos.getZ() + offset.getY() + OFFSET + 1;
 
         glBegin(GL_QUADS);
         if (!filled[0][1][1]) {
@@ -121,13 +122,13 @@ public class Highlight implements IRenderable {
         glEnd();
     }
 
-    public void drawBoxLines() {
-        final double x1 = pos.getX() - OFFSET;
+    public void drawBoxLines(Vector2i offset) {
+        final double x1 = pos.getX() + offset.getX() - OFFSET;
         final double y1 = pos.getY() - OFFSET;
-        final double z1 = pos.getZ() - OFFSET;
-        final double x2 = pos.getX() + OFFSET + 1;
+        final double z1 = pos.getZ() + offset.getY() - OFFSET;
+        final double x2 = pos.getX() + offset.getX() + OFFSET + 1;
         final double y2 = pos.getY() + OFFSET + 1;
-        final double z2 = pos.getZ() + OFFSET + 1;
+        final double z2 = pos.getZ() + offset.getY() + OFFSET + 1;
 
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);

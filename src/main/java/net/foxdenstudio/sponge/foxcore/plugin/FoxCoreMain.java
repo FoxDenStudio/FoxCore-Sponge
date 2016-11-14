@@ -194,7 +194,7 @@ public final class FoxCoreMain {
 
     private void registerWands() {
         FCWandRegistry registry = FCWandRegistry.getInstance();
-        registry.registerBuilder(PositionWand.type, new PositionWand.Factory());
+        registry.registerBuilder(PositionWand.TYPE, new PositionWand.Factory());
         registry.registerBuilder(CounterWand.type, new CounterWand.Factory());
     }
 

@@ -90,4 +90,8 @@ public class SelectionStateField extends StateFieldBase {
     public ISelection getSelection() {
         return currentSelection;
     }
+
+    public void setCurrentSelection(ISelection currentSelection) {
+        this.currentSelection = currentSelection;
+    }
 }

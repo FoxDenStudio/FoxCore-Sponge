@@ -38,10 +38,10 @@ import static org.spongepowered.api.text.format.TextColors.*;
  */
 public class PositionWand implements IWand {
 
-    public static final String type = "position";
+    public static final String TYPE = "position";
 
-    public static final DataQuery colorQuery = DataQuery.of("color");
-    public static final DataQuery rainbowQuery = DataQuery.of("rainbow");
+    public static final DataQuery COLOR_QUERY = DataQuery.of("color");
+    public static final DataQuery RAINBOW_QUERY = DataQuery.of("rainbow");
 
     private Position.Color color;
     private boolean rainbow;
@@ -134,7 +134,7 @@ public class PositionWand implements IWand {
 
     @Override
     public String type() {
-        return type;
+        return TYPE;
     }
 
     @Override
@@ -145,8 +145,8 @@ public class PositionWand implements IWand {
     @Override
     public DataContainer toContainer() {
         return new MemoryDataContainer()
-                .set(colorQuery, color.name())
-                .set(rainbowQuery, rainbow);
+                .set(COLOR_QUERY, color.name())
+                .set(RAINBOW_QUERY, rainbow);
     }
 
     public static class Factory implements IWandFactory {
@@ -197,14 +197,14 @@ public class PositionWand implements IWand {
 
         @Override
         public IWand build(DataView dataView) {
-            if (dataView.contains(colorQuery) && dataView.contains(rainbowQuery))
-                return new PositionWand(Position.Color.from(dataView.getString(colorQuery).orElse(null)), dataView.getBoolean(rainbowQuery).orElse(false));
+            if (dataView.contains(COLOR_QUERY) && dataView.contains(RAINBOW_QUERY))
+                return new PositionWand(Position.Color.from(dataView.getString(COLOR_QUERY).orElse(null)), dataView.getBoolean(RAINBOW_QUERY).orElse(false));
             else return new PositionWand();
         }
 
         @Override
         public String type() {
-            return type;
+            return TYPE;
         }
 
         @Override

@@ -31,16 +31,9 @@ import java.util.function.BiFunction;
 
 public class CacheMap<K, V> extends HashMap<K, V> {
     final private BiFunction<Object, Map<K, V>, V> callback;
-    final private boolean cache;
 
     public CacheMap(BiFunction<Object, Map<K, V>, V> callback) {
         this.callback = callback;
-        this.cache = false;
-    }
-
-    public CacheMap(BiFunction<Object, Map<K, V>, V> callback, boolean cache) {
-        this.callback = callback;
-        this.cache = cache;
     }
 
     @Override

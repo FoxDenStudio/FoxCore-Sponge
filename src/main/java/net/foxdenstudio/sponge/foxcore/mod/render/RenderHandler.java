@@ -25,12 +25,15 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +56,7 @@ public class RenderHandler {
         list = new HighlightList(mc);
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void render(RenderWorldLastEvent event) {
 
@@ -66,9 +70,10 @@ public class RenderHandler {
 
         glPushMatrix();
 
-        glTranslated(-playerX, -playerY, -playerZ);
+        Vector2i offset = new Vector2i(-playerX, -playerZ);
 
-        list.render();
+        glTranslated(-playerX - offset.getX(), -playerY, -playerZ - offset.getY());
+        list.render(offset);
         glPopMatrix();
     }
 

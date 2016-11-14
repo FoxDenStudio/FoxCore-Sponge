@@ -25,6 +25,7 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
+import com.flowpowered.math.vector.Vector2i;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
     }
 
     @Override
-    public void render() {
+    public void render(Vector2i offset) {
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT);
 
         glDisable(GL_LIGHTING);
@@ -55,7 +56,7 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
 
         glLineWidth(2f);
         try {
-            this.forEach(Highlight::render);
+            this.forEach(highlight -> highlight.render(offset));
         } catch (ConcurrentModificationException ignored) {
         }
 
