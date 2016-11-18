@@ -51,6 +51,10 @@ public final class ProcessResult {
         return new ProcessResult(success, message);
     }
 
+    public static ProcessResult of(boolean success, String message){
+        return of(success, Text.of(message));
+    }
+
     public static ProcessResult success() {
         return SUCCESS;
     }

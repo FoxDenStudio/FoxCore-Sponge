@@ -31,9 +31,9 @@ group 'net.foxdenstudio.sponge'
 version 'api5-SNAPSHOT'
 
 apply from: project.file("gradle/fox.gradle")
+apply from: project.file("gradle/minecraft.gradle")
 apply from: project.file("gradle/publish.gradle")
 apply from: project.file("gradle/foxcore.gradle")
-apply from: project.file("gradle/minecraft.gradle")
 
 dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"

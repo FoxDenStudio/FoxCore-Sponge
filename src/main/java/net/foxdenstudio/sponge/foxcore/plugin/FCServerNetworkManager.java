@@ -64,7 +64,6 @@ public class FCServerNetworkManager {
     public void registerNetworkingChannels() {
         rawDataChannel = Sponge.getGame().getChannelRegistrar().createRawChannel(FoxCoreMain.instance(), "fox");
         rawDataChannel.addListener(Platform.Type.SERVER, (data, connection, side) -> {
-            FoxCoreMain.instance().logger().info("FOX PACKET RECIEVED!!!");
             if (connection instanceof PlayerConnection) {
                 Player player = ((PlayerConnection) connection).getPlayer();
                 PlayerConfig playerConfig = this.playerConfigs.get(player);
@@ -73,6 +72,7 @@ public class FCServerNetworkManager {
                     FoxCoreMain.instance().logger().info("DEBUG MESSAGE RECIEVED!");
 
                 } else if (channelID == 0) {
+                    FoxCoreMain.instance().logger().info("Received CUI response from " + player.getName());
                     int channelCount = data.readInteger();
                     for (int i = 0; i < channelCount; i++) {
                         int serverChannelID = data.readInteger();

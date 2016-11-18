@@ -84,6 +84,14 @@ task serverJar(type: ShadowJar) {
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 }
 
+reobf {
+    shadowJar {
+        mappingType = 'SEARGE'
+    }
+}
+
+shadowJar.finalizedBy 'reobfShadowJar'
+
 artifacts {
     archives shadowJar
     archives serverJar

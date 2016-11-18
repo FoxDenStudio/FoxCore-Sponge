@@ -37,6 +37,7 @@ public final class Aliases {
     public static final String[] POSITIONS_ALIASES = {"positions", "position", "points", "point", "locations", "location", "pos", "loc", "locs", "p"};
     public static final String[] DEFAULT_GROUP_ALIASES = {"default", "nonmember", "nonmembers", "everyone", "other"};
     public static final String[] FLAGS_ALIASES = {"flag", "flags", "perm", "rule", "perms", "rules", "permission", "permissions"};
+    public static final String[] ENTRIES_ALIASES = {"entry", "entries"};
     public static final String[] PASSIVE_ALIASES = {"passive", "causeless", "userless", "environment"};
     public static final String[] GROUPS_ALIASES = {"group", "groups"};
     public static final String[] USERS_ALIASES = {"user", "users"};

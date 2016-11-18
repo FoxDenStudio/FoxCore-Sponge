@@ -37,6 +37,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -105,7 +106,7 @@ public class CommandPosition extends FCCommandBase {
 
     @Override
     public Text getUsage(CommandSource source) {
-        if (source instanceof Player)
+        if (source instanceof Locatable)
             return Text.of("position [<x> <y> <z>]");
         else return Text.of("position <x> <y> <z>");
     }

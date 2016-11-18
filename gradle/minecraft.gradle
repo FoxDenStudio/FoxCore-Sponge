@@ -12,11 +12,3 @@ sourceJar {
 artifacts {
     archives sourceJar
 }
-
-if (tasks.findByPath(":shadowJar") != null) {
-    reobf {
-        shadowJar {
-            mappingType = 'SEARGE'
-        }
-    }
-}

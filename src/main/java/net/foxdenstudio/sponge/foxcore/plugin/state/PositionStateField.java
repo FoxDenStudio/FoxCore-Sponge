@@ -42,6 +42,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.StartsWithPredicate;
+import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -156,8 +157,8 @@ public class PositionStateField extends ListStateFieldBase<Position> {
         int x, y, z;
         Vector3i pPos = null;
         Position.Color color = Position.Color.WHITE;
-        if (source instanceof Player)
-            pPos = ((Player) source).getLocation().getBlockPosition();
+        if (source instanceof Locatable)
+            pPos = ((Locatable) source).getLocation().getBlockPosition();
         if (parse.args.length == 0) {
             if (pPos == null)
                 throw new CommandException(Text.of("Must specify coordinates!"));

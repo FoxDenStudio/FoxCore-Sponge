@@ -278,7 +278,7 @@ public class CommandWand extends FCCommandBase {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("wand [--p:<player>]");
+        return Text.of("wand [--p:<player>] <type> [args...]");
     }
 
 }
