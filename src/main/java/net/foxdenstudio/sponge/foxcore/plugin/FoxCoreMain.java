@@ -47,6 +47,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
@@ -138,13 +139,13 @@ public final class FoxCoreMain {
             logger.error("Error registering Network Manager Listeners", e);
         }
         try {
-            manager.registerListener(this, InteractBlockEvent.class, new WandBlockListener());
+            manager.registerListener(this, InteractBlockEvent.class, Order.FIRST, new WandBlockListener());
         } catch (Exception e) {
             logger.error("Error registering Wand Block Listener", e);
         }
         try {
-            manager.registerListener(this, InteractEntityEvent.class, new WandEntityListener());
-        } catch (Exception e){
+            manager.registerListener(this, InteractEntityEvent.class, Order.FIRST, new WandEntityListener());
+        } catch (Exception e) {
             logger.error("Error registering Wand Entity Listener", e);
         }
     }

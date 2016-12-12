@@ -67,7 +67,7 @@ public class HighlightList extends ArrayList<Highlight> implements IRenderable {
     public void sortZ(double x, double y, double z) {
         try {
             forEach(highlight -> highlight.distance = highlight.getPos().toDouble().add(0.5, 0.5, 0.5).distanceSquared(x, y, z));
-            Collections.sort(this, (o1, o2) -> o1.distance > o2.distance ? -1 : (o1.distance < o2.distance ? 1 : 0));
+            this.sort((o1, o2) -> o1.distance > o2.distance ? -1 : (o1.distance < o2.distance ? 1 : 0));
         } catch (ConcurrentModificationException ignored) {
         }
     }
