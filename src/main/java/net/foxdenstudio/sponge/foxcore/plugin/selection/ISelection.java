@@ -23,7 +23,7 @@ public interface ISelection extends Iterable<Vector3i>, IWorldBounded, IModifiab
 
     Optional<BoundingBox3> bounds();
 
-    default boolean isEmpty(){
+    default boolean isEmpty() {
         return size() == 0;
     }
 }

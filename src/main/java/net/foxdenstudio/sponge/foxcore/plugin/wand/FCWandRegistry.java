@@ -42,7 +42,7 @@ public class FCWandRegistry {
         return null;
     }
 
-    public Set<String> getTypes(){
+    public Set<String> getTypes() {
         return ImmutableSet.copyOf(wandBuilders.keySet());
     }
 }

@@ -55,7 +55,7 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
 
     public WandData(IWand wand) {
         this.wand = wand;
-        if(wand == null) {
+        if (wand == null) {
             type = "";
         } else {
             type = wand.type();
@@ -67,7 +67,7 @@ public class WandData extends AbstractData<WandData, ImmutableWandData> {
         this(null);
     }
 
-    WandData(IWand wand, int id, String type){
+    WandData(IWand wand, int id, String type) {
         this.wand = wand;
         this.id = id;
         this.type = type;

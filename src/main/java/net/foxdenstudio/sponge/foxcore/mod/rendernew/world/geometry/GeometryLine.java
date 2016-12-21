@@ -14,7 +14,6 @@ public class GeometryLine extends Geometry {
     Vector3d localStart, localEnd;
 
 
-
     public GeometryLine(Vector3d start, Vector3d end, Vector3f color, float opacity) {
         this.start = start;
         this.end = end;

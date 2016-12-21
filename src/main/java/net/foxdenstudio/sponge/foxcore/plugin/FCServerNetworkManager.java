@@ -42,12 +42,10 @@ import java.util.Map;
 public class FCServerNetworkManager {
 
     private static FCServerNetworkManager instance;
-
-    private ChannelBinding.RawDataChannel rawDataChannel;
-
     private final Map<String, ServerChannel> serverChannels = new HashMap<>();
     private final Map<String, Integer> serverPacketIDMapping = new HashMap<>();
     private final Map<Player, PlayerConfig> playerConfigs = new HashMap<>();
+    private ChannelBinding.RawDataChannel rawDataChannel;
     private int nextAvailableChannelIndex = 1;
     private int nextAvailablePacketIndex = 0;
     private boolean locked = false;
@@ -202,9 +200,9 @@ public class FCServerNetworkManager {
     }
 
     public class PlayerConfig {
-        public boolean hasClient = false;
         final Map<Integer, String> clientChannelMapping = new HashMap<>();
         final Map<Integer, String> clientPacketMapping = new HashMap<>();
+        public boolean hasClient = false;
     }
 
 }

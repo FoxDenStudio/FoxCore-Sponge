@@ -63,6 +63,7 @@ import org.spongepowered.api.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.PLAYER_ALIASES;
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
@@ -226,7 +227,7 @@ public class CommandWand extends FCCommandBase {
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
         else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
-            return ImmutableList.of("player", "hand", "item").stream()
+            return Stream.of("player", "hand", "item")
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
@@ -247,7 +248,7 @@ public class CommandWand extends FCCommandBase {
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
             } else if (isIn(HAND_ALIASES, parse.current.key)) {
-                return ImmutableList.of("main", "off", "both").stream()
+                return Stream.of("main", "off", "both")
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());

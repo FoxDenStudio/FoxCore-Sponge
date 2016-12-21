@@ -47,13 +47,12 @@ import java.util.Map;
 public class FCClientNetworkManager {
 
     private static FCClientNetworkManager instance;
-
-    private FMLEmbeddedChannel fmlEmbeddedChannel;
-    private final Map<String, ClientChannel> clientChannels = new HashMap<>();
-    private final Map<String, Integer> clientPacketIDMapping = new HashMap<>();
     public final Map<Integer, String> serverChannelMapping = new HashMap<>();
     public final Map<Integer, String> serverPacketMapping = new HashMap<>();
+    private final Map<String, ClientChannel> clientChannels = new HashMap<>();
+    private final Map<String, Integer> clientPacketIDMapping = new HashMap<>();
     public boolean hasServer = false;
+    private FMLEmbeddedChannel fmlEmbeddedChannel;
     private int nextAvailableChannelIndex = 1;
     private int nextAvailablePacketIndex = 0;
     private boolean locked = false;

@@ -22,31 +22,31 @@ public class Position extends Vector3i {
     }
 
     public Position(Vector2i v, double z) {
-        this(v, z,Color.WHITE);
+        this(v, z, Color.WHITE);
     }
 
     public Position(Vector2i v, int z) {
-        this(v, z,Color.WHITE);
+        this(v, z, Color.WHITE);
     }
 
     public Position(Vector3i v) {
-        this(v,Color.WHITE);
+        this(v, Color.WHITE);
     }
 
     public Position(Vector4i v) {
-        this(v,Color.WHITE);
+        this(v, Color.WHITE);
     }
 
     public Position(VectorNi v) {
-        this(v,Color.WHITE);
+        this(v, Color.WHITE);
     }
 
     public Position(double x, double y, double z) {
-        this(x, y, z,Color.WHITE);
+        this(x, y, z, Color.WHITE);
     }
 
     public Position(int x, int y, int z) {
-        this(x, y, z,Color.WHITE);
+        this(x, y, z, Color.WHITE);
     }
 
     public Position(Color color) {
@@ -127,16 +127,16 @@ public class Position extends Vector3i {
         return result;
     }
 
-    public enum Color{
-        WHITE(TextColors.WHITE, new Vector3f(1,1,1)),
-        RED(TextColors.RED, new Vector3f(1,0,0)),
-        ORANGE(TextColors.GOLD, new Vector3f(1,0.5,0)),
-        YELLOW(TextColors.YELLOW, new Vector3f(1,1,0)),
-        GREEN(TextColors.GREEN, new Vector3f(0,1,0)),
-        AQUA(TextColors.AQUA, new Vector3f(0,1,1)),
-        BLUE(TextColors.BLUE, new Vector3f(0,0,1)),
-        MAGENTA(TextColors.LIGHT_PURPLE, new Vector3f(1,0,1)),
-        BLACK(TextColors.DARK_GRAY, new Vector3f(0,0,0));
+    public enum Color {
+        WHITE(TextColors.WHITE, new Vector3f(1, 1, 1)),
+        RED(TextColors.RED, new Vector3f(1, 0, 0)),
+        ORANGE(TextColors.GOLD, new Vector3f(1, 0.5, 0)),
+        YELLOW(TextColors.YELLOW, new Vector3f(1, 1, 0)),
+        GREEN(TextColors.GREEN, new Vector3f(0, 1, 0)),
+        AQUA(TextColors.AQUA, new Vector3f(0, 1, 1)),
+        BLUE(TextColors.BLUE, new Vector3f(0, 0, 1)),
+        MAGENTA(TextColors.LIGHT_PURPLE, new Vector3f(1, 0, 1)),
+        BLACK(TextColors.DARK_GRAY, new Vector3f(0, 0, 0));
 
         private static final Random random = new Random();
 
@@ -148,30 +148,30 @@ public class Position extends Vector3i {
             this.rgbColor = rgbColor;
         }
 
+        public static Color randomColor() {
+            Color[] values = Color.values();
+            return values[random.nextInt(values.length)];
+        }
+
+        public static Color from(int index) {
+            Color[] values = Color.values();
+            if (index < 0 || index >= values.length) return null;
+            return values[index];
+        }
+
+        public static Color from(String name) {
+            for (Color color : values()) {
+                if (color.name().equalsIgnoreCase(name)) return color;
+            }
+            return null;
+        }
+
         public TextColor getTextColor() {
             return textColor;
         }
 
         public Vector3f getRgbColor() {
             return rgbColor;
-        }
-
-        public static Color randomColor(){
-            Color[] values = Color.values();
-            return values[random.nextInt(values.length)];
-        }
-
-        public static Color from(int index){
-            Color[] values = Color.values();
-            if(index < 0 || index >= values.length) return null;
-            return values[index];
-        }
-
-        public static Color from(String name){
-            for(Color color : values()){
-                if(color.name().equalsIgnoreCase(name)) return color;
-            }
-            return null;
         }
 
     }

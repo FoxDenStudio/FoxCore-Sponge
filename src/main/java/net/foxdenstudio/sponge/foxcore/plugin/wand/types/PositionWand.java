@@ -119,8 +119,8 @@ public class PositionWand implements IWand {
         return ImmutableList.of(getItemName(), getColorText());
     }
 
-    private Text getColorText(){
-        if(rainbow){
+    private Text getColorText() {
+        if (rainbow) {
             return Text.of("Color: ",
                     RED, "R",
                     GOLD, "a",

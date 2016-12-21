@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Created by Fox on 4/14/2016.
@@ -94,7 +95,7 @@ public class CommandHUD extends FCCommandBase {
                 .parse();
         if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.ARGUMENT &&
                 parse.current.index == 0)
-            return ImmutableList.of("on", "off", "reset").stream()
+            return Stream.of("on", "off", "reset")
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());

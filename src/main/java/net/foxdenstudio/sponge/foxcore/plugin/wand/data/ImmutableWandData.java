@@ -46,7 +46,7 @@ public class ImmutableWandData extends AbstractImmutableData<ImmutableWandData, 
     private Integer id;
     private IWand wand;
 
-    ImmutableWandData(IWand wand, int id, String type){
+    ImmutableWandData(IWand wand, int id, String type) {
         this.wand = wand;
         this.id = id;
         this.type = type;

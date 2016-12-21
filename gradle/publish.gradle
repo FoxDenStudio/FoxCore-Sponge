@@ -29,6 +29,6 @@ publishing {
     }
 }
 
-task travisPublish{
+task travisPublish {
     group = 'publishing'
 }

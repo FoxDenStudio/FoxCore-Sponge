@@ -26,7 +26,7 @@ public class RenderManager {
         this.mc = mc;
         this.list = new RenderList();
 
-        list.addAll(new Highlight(new Vector3i(0,80,0)).getGeometry());
+        list.addAll(new Highlight(new Vector3i(0, 80, 0)).getGeometry());
     }
 
     public static RenderManager instance() {

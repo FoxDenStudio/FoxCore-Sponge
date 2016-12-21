@@ -74,8 +74,8 @@ import java.util.UUID;
 )
 public final class FoxCoreMain {
 
+    private static final UUID FOX_UUID = UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371");
     private static FoxCoreMain instance;
-
     @Inject
     private Logger logger;
     @Inject
@@ -87,9 +87,7 @@ public final class FoxCoreMain {
     private Path configDirectory;
     @Inject
     private PluginContainer container;
-
     private FCCommandDispatcher fcDispatcher;
-
     private FCServerNetworkManager.ServerChannel foxcoreNetworkChannel;
 
     public static FoxCoreMain instance() {
@@ -214,8 +212,6 @@ public final class FoxCoreMain {
     public FCServerNetworkManager.ServerChannel getFoxcoreNetworkChannel() {
         return foxcoreNetworkChannel;
     }
-
-    private static final UUID FOX_UUID = UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371");
 
     @Listener
     public void playerJoin(ClientConnectionEvent.Join event) {

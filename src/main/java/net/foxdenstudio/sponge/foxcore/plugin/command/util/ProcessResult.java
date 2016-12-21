@@ -36,7 +36,9 @@ public final class ProcessResult {
     private static final ProcessResult FAILURE = of(false);
 
     private final boolean success;
-    private final @Nullable Text message;
+    private final
+    @Nullable
+    Text message;
 
     private ProcessResult(boolean success, @Nullable Text message) {
         this.success = success;
@@ -51,7 +53,7 @@ public final class ProcessResult {
         return new ProcessResult(success, message);
     }
 
-    public static ProcessResult of(boolean success, String message){
+    public static ProcessResult of(boolean success, String message) {
         return of(success, Text.of(message));
     }
 

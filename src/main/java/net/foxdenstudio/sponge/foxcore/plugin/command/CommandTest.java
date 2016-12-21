@@ -27,12 +27,10 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 
 import com.google.common.collect.ImmutableList;
-import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -61,7 +59,7 @@ public class CommandTest extends FCCommandBase {
 
         for (int i = 0; i < parse.args.length; i++) {
             builder.append(Text.of(TextColors.RESET, parse.args[i]));
-            if(i < parse.args.length - 1) builder.append(Text.of(TextColors.GOLD, ", "));
+            if (i < parse.args.length - 1) builder.append(Text.of(TextColors.GOLD, ", "));
         }
         builder.append(Text.of(TextColors.GOLD, "\"\n"));
 

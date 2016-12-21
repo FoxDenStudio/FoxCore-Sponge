@@ -36,14 +36,16 @@ public class WandKeys {
 
     public static final Key<Value<String>> TYPE = KeyFactory.makeSingleKey(
             TypeToken.of(String.class),
-            new TypeToken<Value<String>>() {},
+            new TypeToken<Value<String>>() {
+            },
             DataQuery.of("type"),
             "foxcore:wandtype",
             "Wand Type");
 
     public static final Key<Value<Integer>> ID = KeyFactory.makeSingleKey(
             TypeToken.of(Integer.class),
-            new TypeToken<Value<Integer>>() {},
+            new TypeToken<Value<Integer>>() {
+            },
             DataQuery.of("id"),
             "foxcore:wandID",
             "Wand ID"
@@ -51,7 +53,8 @@ public class WandKeys {
 
     public static final Key<Value<IWand>> WAND = KeyFactory.makeSingleKey(
             TypeToken.of(IWand.class),
-            new TypeToken<Value<IWand>>() {},
+            new TypeToken<Value<IWand>>() {
+            },
             DataQuery.of("wand"),
             "foxcore:wanddata",
             "Wand Data"

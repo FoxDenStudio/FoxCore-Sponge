@@ -52,6 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.COLOR_ALIASES;
 import static net.foxdenstudio.sponge.foxcore.plugin.util.Aliases.isIn;
@@ -110,7 +111,7 @@ public class PositionStateField extends ListStateFieldBase<Position> {
                 .parse();
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT)) {
             if (parse.current.index == 0) {
-                return ImmutableList.of("add", "remove").stream()
+                return Stream.of("add", "remove")
                         .filter(new StartsWithPredicate(parse.current.token))
                         .collect(GuavaCollectors.toImmutableList());
             } else if (parse.current.index < 4 && parse.args[0].equals("add")) {
@@ -221,7 +222,7 @@ public class PositionStateField extends ListStateFieldBase<Position> {
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT) && parse.current.index < 3 && parse.current.token.isEmpty()) {
             return ImmutableList.of(parse.current.prefix + "~");
         } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.LONGFLAGKEY))
-            return ImmutableList.of("color").stream()
+            return Stream.of("color")
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());

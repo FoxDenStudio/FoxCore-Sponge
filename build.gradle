@@ -1,4 +1,3 @@
-
 apply from: project.file("gradle/versions.gradle")
 
 buildscript {

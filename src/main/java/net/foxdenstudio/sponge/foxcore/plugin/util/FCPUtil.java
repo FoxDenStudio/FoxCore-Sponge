@@ -41,6 +41,9 @@ import static org.spongepowered.api.text.format.TextColors.*;
  */
 public class FCPUtil {
 
+    public static final TextColor[] colors = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
+            DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
+
     public static Text readableBooleanText(boolean bool) {
         return bool ? Text.of(TextColors.GREEN, "True") : Text.of(TextColors.RED, "False");
     }
@@ -107,9 +110,6 @@ public class FCPUtil {
     public static void updatePositions(Player player) {
         FoxCoreMain.instance().getFoxcoreNetworkChannel().sendPacket(player, new ServerPositionPacket(getPositions(player)));
     }
-
-    public static final TextColor[] colors = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
-            DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
 
     public static Optional<TextColor> textColorFromName(String name) {
         int code = FCCUtil.colorCodeFromName(name);

@@ -10,7 +10,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Fox on 4/30/2016.

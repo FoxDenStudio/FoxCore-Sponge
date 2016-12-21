@@ -35,6 +35,26 @@ public class RasterSelection implements ISelection {
         this.positions = positions;
     }
 
+    public static void main(String[] args) {
+        HashSet<Vector3i> set = new HashSet<>();
+        //Random random = new Random();
+        System.out.println("Generating values");
+        int x = 0;
+        for (int i = 0; i < 50000000; i++) {
+            set.add(new Vector3i(x++, x++, x++));
+        }
+        RasterSelection selection = new RasterSelection(set);
+        System.out.println("Starting calculation");
+        long start = System.currentTimeMillis();
+        selection.calculateBounds();
+        long end = System.currentTimeMillis();
+        System.out.println("Time: " + (end - start));
+
+        try (DB db = DBMaker.memoryDB().make()) {
+
+        }
+    }
+
     @Override
     public Text overview() {
         return Text.EMPTY;
@@ -120,26 +140,6 @@ public class RasterSelection implements ISelection {
     @Override
     public boolean isEmpty() {
         return this.positions.isEmpty();
-    }
-
-    public static void main(String[] args) {
-        HashSet<Vector3i> set = new HashSet<>();
-        //Random random = new Random();
-        System.out.println("Generating values");
-        int x = 0;
-        for (int i = 0; i < 50000000; i++) {
-            set.add(new Vector3i(x++, x++, x++));
-        }
-        RasterSelection selection = new RasterSelection(set);
-        System.out.println("Starting calculation");
-        long start = System.currentTimeMillis();
-        selection.calculateBounds();
-        long end = System.currentTimeMillis();
-        System.out.println("Time: " + (end - start));
-
-        try(DB db = DBMaker.memoryDB().make()){
-
-        }
     }
 
     @Override

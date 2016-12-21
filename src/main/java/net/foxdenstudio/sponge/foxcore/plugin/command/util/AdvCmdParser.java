@@ -43,8 +43,7 @@ import java.util.regex.Pattern;
  */
 public final class AdvCmdParser {
 
-    public static final FlagMapper
-            DEFAULT_MAPPER = map -> key -> value -> {
+    public static final FlagMapper DEFAULT_MAPPER = map -> key -> value -> {
         map.put(key, value);
         return true;
     };
@@ -159,7 +158,7 @@ public final class AdvCmdParser {
         List<String> argsList = new ArrayList<>();
         // Matcher for identifying arguments and flags.
         Matcher matcher = pattern.matcher(arguments);
-        boolean lastIsCurrent = !(arguments.length() == 0) && (inQuote || !arguments.substring(arguments.length() - 1).matches("[\"' ]"));
+        boolean lastIsCurrent = !arguments.isEmpty() && (inQuote || !arguments.substring(arguments.length() - 1).matches("[\"' ]"));
         // Whether or not the jump key was used.
         boolean jump = false;
         // Stores flags that were not accepted by the mapper, to be given to the final block, if it exists.
@@ -216,7 +215,8 @@ public final class AdvCmdParser {
                     // Parses result as a short flag. Limit behavior is the same as long flags
                     // multiple letters are treated as multiple flags. Repeating letters add a second flag with a repetition
                     // Example: "-aab" becomes flags "a", "aa", and "b"
-                } else if (result.startsWith("-") && result.substring(1).matches("^.*[^\\d\\.].*$")
+                } else if (result.startsWith("-") && (result.length() < 2 || !result.substring(1, 2).matches("[0-9.]"))
+                        && result.substring(1).matches("^.*[^\\d.].*$")
                         && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit && !jump))) {
                     if (result.equals("-")) {
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
@@ -306,7 +306,7 @@ public final class AdvCmdParser {
                 }
             }
         }
-        for(String flag : extraFlags){
+        for (String flag : extraFlags) {
             finalBlock = flag + " " + finalBlock;
         }
 

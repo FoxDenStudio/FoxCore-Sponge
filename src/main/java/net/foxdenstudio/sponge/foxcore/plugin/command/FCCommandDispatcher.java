@@ -31,7 +31,6 @@ import org.spongepowered.api.command.*;
 import org.spongepowered.api.command.dispatcher.Disambiguator;
 import org.spongepowered.api.command.dispatcher.Dispatcher;
 import org.spongepowered.api.command.dispatcher.SimpleDispatcher;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;

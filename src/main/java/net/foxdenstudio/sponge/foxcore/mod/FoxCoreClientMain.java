@@ -71,6 +71,7 @@ public class FoxCoreClientMain {
     public void load(FMLInitializationEvent event) {
         logger.info("Registering event handlers");
         MinecraftForge.EVENT_BUS.register(renderHandler = new RenderHandler(Minecraft.getMinecraft()));
+        //MinecraftForge.EVENT_BUS.register(new GuiRenderListener());
         //MinecraftForge.EVENT_BUS.register(RenderManager.instance());
         MinecraftForge.EVENT_BUS.register(this);
         logger.info("Registering MinecraftForge networking channels");

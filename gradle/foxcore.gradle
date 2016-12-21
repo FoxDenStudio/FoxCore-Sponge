@@ -11,7 +11,7 @@ buildscript {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
-publishing{
+publishing {
     publications {
         library(MavenPublication) {
             from components.java
@@ -36,8 +36,8 @@ publishing{
     }
 }
 
-if(System.env.TRAVIS && !Boolean.valueOf(System.env.TRAVIS_PULL_REQUEST)){
-    if(System.env.TRAVIS_TAG){
+if (System.env.TRAVIS && !Boolean.valueOf(System.env.TRAVIS_PULL_REQUEST)) {
+    if (System.env.TRAVIS_TAG) {
         travisPublish.dependsOn 'publishLibraryPublicationToFDSReleasesRepository'
     } else {
         travisPublish.dependsOn 'publishLibraryPublicationToFDSSnapshotsRepository'

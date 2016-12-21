@@ -28,14 +28,14 @@ package net.foxdenstudio.sponge.foxcore.common.util;
 import com.flowpowered.math.vector.Vector3f;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColor;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static org.spongepowered.api.text.format.TextColors.*;
-
 public final class FCCUtil {
+
+    public static final String[] colorNames = {"black", "darkblue", "darkgreen", "darkaqua", "darkred", "darkpurple", "gold", "gray",
+            "darkgray", "blue", "green", "aqua", "red", "lightpurple", "yellow", "white"};
 
     public static double parseCoordinate(double sPos, String arg) throws NumberFormatException {
         if (arg.equals("~")) {
@@ -138,9 +138,6 @@ public final class FCCUtil {
         } else throw new CommandException(Text.of("Regex missing a second slash!"));
     }
 
-    public static final String[] colorNames = {"black", "darkblue", "darkgreen", "darkaqua", "darkred", "darkpurple", "gold", "gray",
-            "darkgray", "blue", "green", "aqua", "red", "lightpurple", "yellow", "white"};
-
     public static int colorCodeFromName(String name) {
         for (int i = 0; i < colorNames.length; i++) {
             if (colorNames[i].equalsIgnoreCase(name)) return i;
@@ -150,6 +147,10 @@ public final class FCCUtil {
 
     public static boolean checkPermissionString(String permission) {
         return permission.matches("[a-zA-Z0-9\\-_.]") && !permission.matches("^.*\\.\\..*$") && !permission.startsWith(".") && !permission.endsWith(".");
+    }
+
+    public static String toCapitalCase(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
 
     public static class FCPattern {
@@ -165,10 +166,6 @@ public final class FCCUtil {
             if (matchAny) return pattern.matcher(string).find();
             else return pattern.matcher(string).matches();
         }
-    }
-
-    public static String toCapitalCase(String str){
-        return str.substring(0,1).toUpperCase() + str.substring(1).toLowerCase();
     }
 
 }

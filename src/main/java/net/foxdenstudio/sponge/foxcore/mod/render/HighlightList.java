@@ -29,7 +29,6 @@ import com.flowpowered.math.vector.Vector2i;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 
 import static org.lwjgl.opengl.GL11.*;
