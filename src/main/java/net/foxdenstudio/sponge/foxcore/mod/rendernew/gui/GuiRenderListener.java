@@ -18,29 +18,28 @@ public class GuiRenderListener {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
         glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
         glPushMatrix();
-
-        glColor3f(1, 1, 1);
-
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        int xPos = 10;
+        int yPos = 50;
+        int width = 50;
+        int height = 50;
+        float red = .5f;
+        float green = 0;
+        float blue = .5f;
+        glColor3f(red, green, blue);
 
         glBegin(GL_QUADS);
-
-        glTexCoord2d(0, 0);
-        glVertex2d(0, 0);
-
-        glTexCoord2d(0, 1);
-        glVertex2d(0, 500);
-
-        glTexCoord2d(1, 1);
-        glVertex2d(500, 500);
-
-        glTexCoord2d(1, 0);
-        glVertex2d(500, 0);
-
+        glVertex2f(xPos + width, yPos);
+        glVertex2f(xPos, yPos);
+        glVertex2f(xPos, yPos + height);
+        glVertex2f(xPos + width, yPos + height);
         glEnd();
 
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
         glPopMatrix();
         glPopAttrib();
     }
-
-
 }
