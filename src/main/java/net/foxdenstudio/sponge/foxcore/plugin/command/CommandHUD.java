@@ -93,13 +93,16 @@ public class CommandHUD extends FCCommandBase {
                 .arguments(arguments)
                 .autoCloseQuotes(true)
                 .parse();
-        if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.ARGUMENT &&
-                parse.current.index == 0)
-            return Stream.of("on", "off", "reset")
-                    .filter(new StartsWithPredicate(parse.current.token))
-                    .map(args -> parse.current.prefix + args)
-                    .collect(GuavaCollectors.toImmutableList());
-        else return ImmutableList.of();
+        if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.ARGUMENT) {
+            if (parse.current.index == 0) {
+                return Stream.of("on", "off", "reset")
+                        .filter(new StartsWithPredicate(parse.current.token))
+                        .map(args -> parse.current.prefix + args)
+                        .collect(GuavaCollectors.toImmutableList());
+            }
+        } else if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.COMPLETE))
+            return ImmutableList.of(parse.current.prefix + " ");
+        return ImmutableList.of();
     }
 
     @Override
