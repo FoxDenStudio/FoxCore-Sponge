@@ -1,12 +1,12 @@
 package net.foxdenstudio.sponge.foxcore.mod.windows;
 
 import net.foxdenstudio.sponge.foxcore.mod.windows.exceptions.PartAlreadyRegisteredException;
-import net.foxdenstudio.sponge.foxcore.mod.windows.parts.IBasePart;
 import net.foxdenstudio.sponge.foxcore.mod.windows.parts.IComponentPart;
 import net.foxdenstudio.sponge.foxcore.mod.windows.parts.ModulePart;
 import net.foxdenstudio.sponge.foxcore.mod.windows.parts.WindowPart;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class Registry {
 
     private final Map<UUID, IComponentPart> components;
     private final Map<UUID, ModulePart> modules;
-    private final Map<UUID, WindowPart> windows;
+    private final UseOrderList<WindowPart> windows;
 
     private Registry() {
         this.componentPartsMap = new HashMap<>();
@@ -31,7 +31,7 @@ public class Registry {
 
         this.components = new HashMap<>();
         this.modules = new HashMap<>();
-        this.windows = new HashMap<>();
+        this.windows = new UseOrderList<>();
     }
 
     public static Registry getInstance() {
@@ -85,7 +85,7 @@ public class Registry {
     }
 
     @Nonnull
-    public Map<UUID, WindowPart> getWindows() {
+    public UseOrderList<WindowPart> getWindows() {
         return this.windows;
     }
 
@@ -112,16 +112,21 @@ public class Registry {
     }
 
     public Registry addWindow(@Nonnull final UUID uuid, @Nonnull final WindowPart windowPart) {
-        this.windows.put(uuid, windowPart);
+        this.windows.use(windowPart);
         return this;
     }
 
-    @Nonnull
-    public Map<UUID, IBasePart> getParts() {
-        final Map<UUID, IBasePart> joinedMap = new HashMap<>();
-        joinedMap.putAll(this.getComponents());
-        joinedMap.putAll(this.getModules());
-        joinedMap.putAll(this.getWindows());
-        return joinedMap;
+    @Nullable
+    public WindowPart getWindowUnder(int x, int y) {
+        for (final WindowPart windowPart : this.windows.itemList) {
+            if (x >= windowPart.getPositionX() && x <= windowPart.getPositionX() + windowPart.getWidth() && y >= windowPart.getPositionY() && y <= windowPart.getPositionY() + windowPart.getHeight()) {
+                return windowPart;
+            }
+        }
+        return null;
+    }
+
+    public void removeWindow(@Nonnull final WindowPart windowPart) {
+        this.windows.remove(windowPart);
     }
 }

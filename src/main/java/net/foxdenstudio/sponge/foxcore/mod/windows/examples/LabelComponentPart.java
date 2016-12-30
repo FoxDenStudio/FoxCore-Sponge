@@ -86,6 +86,16 @@ public class LabelComponentPart implements IComponentPart {
         return false;
     }
 
+    @Override
+    public void mouseClicked(int x, int y) {
+
+    }
+
+    @Override
+    public void mouseReleased(int x, int y) {
+
+    }
+
     public LabelComponentPart setHeight(int height) {
         this.height = height;
         return this;

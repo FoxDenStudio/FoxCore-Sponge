@@ -20,4 +20,8 @@ public interface IBasePart {
     int getHeight();
 
     boolean isPinned();
+
+    void mouseClicked(int x, int y);
+
+    void mouseReleased(int x, int y);
 }

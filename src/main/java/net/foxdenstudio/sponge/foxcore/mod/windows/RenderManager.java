@@ -32,20 +32,24 @@ public class RenderManager {
     @SubscribeEvent
     public void render(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
-        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_BLEND | GL_TEXTURE_2D | GL_LIGHTING);
+        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
         glPushMatrix();
 
         glEnable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_LIGHTING);
+//        glDisable(GL_LIGHTING);
 
         if (FoxCoreClientMain.instance.getIsWindowControlActive()) {
-            Registry.getInstance().getParts().values().forEach(this::protectedRender);
+            Registry.getInstance().getWindows().reverseStream().forEachOrdered(this::protectedRender);
+//            Registry.getInstance().getParts().values().forEach(this::protectedRender);
         } else {
-            Registry.getInstance().getParts().values().stream().filter(IBasePart::isPinned).forEach(this::protectedRender);
+            Registry.getInstance().getWindows().reverseStream().filter(IBasePart::isPinned).forEachOrdered(this::protectedRender);
+//            Registry.getInstance().getParts().values().stream().filter(IBasePart::isPinned).forEach(this::protectedRender);
         }
 
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
         glPopMatrix();
         glPopAttrib();
     }
@@ -54,6 +58,7 @@ public class RenderManager {
 
 //        final Framebuffer framebuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, false);
 //        framebuffer.bindFramebuffer(true);
+        glPushMatrix();
         glTranslated(iBasePart.getPositionX(), iBasePart.getPositionY(), 0);
 
 //        glColor3f(0, 0, 1);
@@ -63,11 +68,10 @@ public class RenderManager {
 //        this.vertexBuffer.pos(iBasePart.getPositionX() + iBasePart.getWidth(), iBasePart.getPositionY() + iBasePart.getHeight(), 0.0D).endVertex();
 //        this.vertexBuffer.pos(iBasePart.getPositionX() + iBasePart.getWidth(), iBasePart.getPositionY(), 0.0D).endVertex();
 //        this.tessellator.draw();
-
         startGlScissor(iBasePart.getPositionX(), iBasePart.getPositionY(), iBasePart.getWidth(), iBasePart.getHeight());
         iBasePart.render();
         endGlScissor();
-
+        glPopMatrix();
 //        framebuffer.framebufferRender(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 //        framebuffer.unbindFramebuffer();
 //        framebuffer.deleteFramebuffer();

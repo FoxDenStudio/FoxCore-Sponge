@@ -30,10 +30,12 @@ import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPrin
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
+import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.RenderUtils;
 import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.components.Window;
 import net.foxdenstudio.sponge.foxcore.mod.windows.Registry;
 import net.foxdenstudio.sponge.foxcore.mod.windows.RenderManager;
 import net.foxdenstudio.sponge.foxcore.mod.windows.examples.BasicWindow;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.WindowPart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
@@ -50,7 +52,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,17 +166,17 @@ public class FoxCoreClientMain {
     @SubscribeEvent
     public void onTickEvent(TickEvent event) {
         if (this.windowControlActive) {
-            /*
             while (Mouse.next()) {
                 final Point point = RenderUtils.calculateMouseLocation();
-                final Window window = this.renderManager.getWindowUnder(point.x, point.y);
+                final WindowPart window = Registry.getInstance().getWindowUnder(point.x, point.y);
 //                System.out.println(window);
-                int dx = Mouse.getDX(), dy = -Mouse.getDY();
-
-                if (window != null) {
-                    this.lastWindow = window;
-                }
-
+//                System.out.println(window);
+//                int dx = Mouse.getDX(), dy = -Mouse.getDY();
+//
+//                if (window != null) {
+//                    this.lastWindow = window;
+//                }
+//
 
                 int k = Mouse.getEventButton();
 
@@ -181,25 +185,26 @@ public class FoxCoreClientMain {
                     this.lastMouseEvent = Minecraft.getSystemTime();
 //                    this.mouseClicked(i, j, this.eventButton);
 //                    System.out.println("Mouse Clicked: " + point.x + " | " + point.y + " | " + this.eventButton);
-                    if (this.lastWindow != null) {
-                        this.lastWindow.click(point.x, point.y);
+                    if (window != null) {
+                        Registry.getInstance().getWindows().use(window);
+                        window.mouseClicked(point.x, point.y);
                     }
                 } else if (k != -1) {
                     this.eventButton = -1;
-//                    this.mouseReleased(i, j, k);
+                    if (window != null) {
+                        window.mouseReleased(point.x, point.y);
+                    }
 //                    System.out.println("Mouse Release: " + point.x + " | " + point.y + " | " + k);
                 } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
-                    long l = Minecraft.getSystemTime() - this.lastMouseEvent;
+//                    long l = Minecraft.getSystemTime() - this.lastMouseEvent;
 //                    this.mouseClickMove(i, j, this.eventButton, l);
 //                    System.out.println("Mouse Dragged: " + point.x + " | " + point.y + " | " + this.eventButton + " | " + l);
-                    if (this.lastWindow != null) {
-                        logger.debug(dx + " | " + dy);
-                        this.lastWindow.drag(point.x, point.y);
-                    }
+//                    if (this.lastWindow != null) {
+//                        logger.debug(dx + " | " + dy);
+//                        this.lastWindow.drag(point.x, point.y);
+//                    }
                 }
-
-
-            }*/
+            }
             while (Keyboard.next()) {
                 if (Keyboard.isKeyDown(Keyboard.getEventKey())) {
                     if (Keyboard.getEventKey() == KEY_ESCAPE || Keyboard.getEventKey() == this.windowControlKeyBinding.getKeyCode()) {

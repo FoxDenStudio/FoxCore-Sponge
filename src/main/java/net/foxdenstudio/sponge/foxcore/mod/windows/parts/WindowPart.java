@@ -105,4 +105,14 @@ public abstract class WindowPart implements IBasePart {
         this.title = title;
         return this;
     }
+
+    @Override
+    public void mouseClicked(int x, int y) {
+
+    }
+
+    @Override
+    public void mouseReleased(int x, int y) {
+
+    }
 }

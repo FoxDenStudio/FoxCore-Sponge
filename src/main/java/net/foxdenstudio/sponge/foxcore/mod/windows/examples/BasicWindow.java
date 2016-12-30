@@ -1,5 +1,6 @@
 package net.foxdenstudio.sponge.foxcore.mod.windows.examples;
 
+import net.foxdenstudio.sponge.foxcore.mod.windows.Registry;
 import net.foxdenstudio.sponge.foxcore.mod.windows.parts.WindowPart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -11,6 +12,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class BasicWindow extends WindowPart {
 
+    final int headButtonSize = 13;
     private final float[] frameColor = {.15f, .15f, .15f};
     private final float[] backgroundColor = {.25f, .25f, .25f};
     private final FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
@@ -36,24 +38,22 @@ public class BasicWindow extends WindowPart {
         this.vertexBuffer.pos(getWidth(), 0, 0.0D).endVertex();
         this.tessellator.draw();
 
-        final int buttonSize = 13;
-
         glColor3f(.7f, 0, 0);
         this.vertexBuffer.begin(GL_QUADS, DefaultVertexFormats.POSITION);
-        this.vertexBuffer.pos(getWidth() - buttonSize - this.frameWidth, (this.headSize - buttonSize) / 2, 0.0D).endVertex();
-        this.vertexBuffer.pos(getWidth() - buttonSize - this.frameWidth, (this.headSize - buttonSize) / 2 + buttonSize, 0.0D).endVertex();
-        this.vertexBuffer.pos(getWidth() - this.frameWidth, (this.headSize - buttonSize) / 2 + buttonSize, 0.0D).endVertex();
-        this.vertexBuffer.pos(getWidth() - this.frameWidth, (this.headSize - buttonSize) / 2, 0.0D).endVertex();
+        this.vertexBuffer.pos(getWidth() - this.headButtonSize - this.frameWidth, (this.headSize - this.headButtonSize) / 2, 0.0D).endVertex();
+        this.vertexBuffer.pos(getWidth() - this.headButtonSize - this.frameWidth, (this.headSize - this.headButtonSize) / 2 + this.headButtonSize, 0.0D).endVertex();
+        this.vertexBuffer.pos(getWidth() - this.frameWidth, (this.headSize - this.headButtonSize) / 2 + this.headButtonSize, 0.0D).endVertex();
+        this.vertexBuffer.pos(getWidth() - this.frameWidth, (this.headSize - this.headButtonSize) / 2, 0.0D).endVertex();
         this.tessellator.draw();
 
 
         // BEGIN RENDER TITLE
-        renderText(this.title, this.frameWidth + 1, (this.headSize - buttonSize) / 2 + 2);
+        renderText(this.title, this.frameWidth + 1, (this.headSize - this.headButtonSize) / 2 + 2);
         // END RENDER TITLE
         // BEGIN RENDER CONTROL BUTTONS
-        final int buttonXBaseOffset = getWidth() - buttonSize / 2;
-        renderText("X", (buttonXBaseOffset - (this.fontRendererObj.getStringWidth("X") / 2)) - this.frameWidth, (this.headSize - buttonSize) / 2 + 2);
-        renderText(isPinned() ? "V" : ">", (((buttonXBaseOffset - buttonSize)) - (this.fontRendererObj.getStringWidth(isPinned() ? "V" : ">") / 2)) - this.frameWidth, (this.headSize - buttonSize) / 2 + 2);
+        final int buttonXBaseOffset = getWidth() - this.headButtonSize / 2;
+        renderText("X", (buttonXBaseOffset - (this.fontRendererObj.getStringWidth("X") / 2)) - this.frameWidth, (this.headSize - this.headButtonSize) / 2 + 2);
+        renderText(isPinned() ? "V" : ">", (((buttonXBaseOffset - this.headButtonSize)) - (this.fontRendererObj.getStringWidth(isPinned() ? "V" : ">") / 2)) - this.frameWidth, (this.headSize - this.headButtonSize) / 2 + 2);
         // END RENDER CONTROL BUTTONS
     }
 
@@ -112,5 +112,16 @@ public class BasicWindow extends WindowPart {
     public BasicWindow setFrameWidth(int frameWidth) {
         this.frameWidth = frameWidth;
         return this;
+    }
+
+    @Override
+    public void mouseClicked(int x, int y) {
+        if (x >= (getWidth() - this.headButtonSize - this.frameWidth) && x <= (getWidth() - this.frameWidth) && y >= ((this.headSize - this.headButtonSize) / 2) && y <= ((this.headSize - this.headButtonSize) / 2) + this.headButtonSize) {
+            this.close();
+        }
+    }
+
+    private void close() {
+        Registry.getInstance().removeWindow(this);
     }
 }
