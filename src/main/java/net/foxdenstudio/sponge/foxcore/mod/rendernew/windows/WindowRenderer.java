@@ -1,62 +1,69 @@
 package net.foxdenstudio.sponge.foxcore.mod.rendernew.windows;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.foxdenstudio.sponge.foxcore.mod.FoxCoreClientMain;
+import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.components.Window;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class WindowRenderer extends GuiScreen {
-    @Override
-    public void initGui() {
-        super.initGui();
-        System.out.println("Initied");
+public class WindowRenderer {
+
+    private final List<Window> windows;
+
+    public WindowRenderer() {
+        this.windows = new ArrayList<>();
     }
 
-    @Override
-    public void updateScreen() {
-//        System.out.println("Update");
-
-//        glColor3f(0, 1, 0);
-//        glBegin(GL_QUADS);
-//        glVertex2f(0, 0);
-//        glVertex2f(100, 0);
-//        glVertex2f(100, 100);
-//        glVertex2f(0, 100);
-//        glEnd();
+    public boolean add(@Nonnull final Window window) {
+        return this.windows.add(window);
     }
 
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        super.drawGradientRect(0, 0, 0, 0, 0x00ff00ff, 0x0000ffff);
+    public boolean remove(@Nonnull final Window window) {
+        return this.windows.remove(window);
     }
 
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
-
-    /*
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void render(RenderGameOverlayEvent.Post event) {
-//        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+        glPushMatrix();
 
-        GlStateManager.pushAttrib();
-        GlStateManager.color(1.0F, 0.0F, 0.0F, 1.0F);
-        GlStateManager.disableLighting();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glBegin(GL_QUADS);
-        glVertex2d(0, 0);
-        glVertex2d(0, 50);
-        glVertex2d(50, 50);
-        glVertex2d(50, 0);
-        glEnd();
+        if (FoxCoreClientMain.instance.getIsWindowControlActive()) {
+            this.windows.iterator().forEachRemaining(Window::render);
+        } else {
+            this.windows.iterator().forEachRemaining(window -> {
+                if (window.isPinned()) {
+                    window.render();
+                }
+            });
+        }
 
-        GlStateManager.popAttrib();
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glPopMatrix();
+        glPopAttrib();
     }
-*/
 
+    @Nullable
+    public Window getWindowUnder(int x, int y) {
+        for (Window window : this.windows) {
+            if ((x >= window.getPosX()) && (x <= (window.getPosX() + window.getWidth())) && (y >= window.getPosY()) && (y <= (window.getPosY() + window.getHeight()))) {
+                return window;
+            }
+        }
+        return null;
+    }
 }

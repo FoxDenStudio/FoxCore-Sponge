@@ -129,12 +129,12 @@ public class WandBlockListener implements EventListener<InteractBlockEvent> {
                     if (event instanceof InteractBlockEvent.Primary) {
                         if (positions.contains(pos)) {
                             positions.remove(positions.lastIndexOf(pos));
-                            player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                            player.sendMessage(Text.of(TextColors.GREEN, "Successfully removed position (" + pos.getPosX() + ", " + pos.getPosY() + ", " + pos.getZ() + ")!"));
                             FCCUtil.updatePositions(player);
                         }
                     } else if (event instanceof InteractBlockEvent.Secondary) {
                         positions.add(pos);
-                        player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")!"));
+                        player.sendMessage(Text.of(TextColors.GREEN, "Successfully added position (" + pos.getPosX() + ", " + pos.getPosY() + ", " + pos.getZ() + ")!"));
                         FCCUtil.updatePositions(player);
                     }
                     FCStateManager.instance().getStateMap().get(player).updateScoreboard();

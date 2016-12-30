@@ -30,11 +30,12 @@ import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPrin
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
-import net.foxdenstudio.sponge.foxcore.mod.rendernew.gui.GuiRenderListener;
-import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.WindowRenderer;
+import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.components.Window;
+import net.foxdenstudio.sponge.foxcore.mod.windows.Registry;
+import net.foxdenstudio.sponge.foxcore.mod.windows.RenderManager;
+import net.foxdenstudio.sponge.foxcore.mod.windows.examples.BasicWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -49,7 +50,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,9 +67,14 @@ public class FoxCoreClientMain {
     public static Logger logger;
     private final KeyBinding windowControlKeyBinding = new KeyBinding("Window Control Key", KEY_GRAVE, "FoxCore");
     private final HashMap<Integer, List<Consumer<Integer>>> keyBindings = new HashMap<>();
-    private boolean guiShown = false;
+    private final HashMap<Integer, List<Consumer<Integer>>> mouseBindings = new HashMap<>();
+    private boolean windowControlActive = false;
     private RenderHandler renderHandler;
     private FCClientNetworkManager.ClientChannel foxcoreChannel;
+    private RenderManager renderManager;
+    private int eventButton;
+    private long lastMouseEvent;
+    private Window lastWindow;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -77,37 +82,56 @@ public class FoxCoreClientMain {
         logger.info("Instantiating client network manager");
         FCClientNetworkManager manager = FCClientNetworkManager.instance();
         logger.info("Creating foxcore network channel");
-        foxcoreChannel = manager.getOrCreateClientChannel("foxcore");
+        this.foxcoreChannel = manager.getOrCreateClientChannel("foxcore");
         logger.info("Registering server packet listeners");
-        foxcoreChannel.registerListener(ServerPositionPacket.ID, new ServerPositionPacketListener());
-        foxcoreChannel.registerListener(ServerPrintStringPacket.ID, new ServerPrintStringPacketListener());
+        this.foxcoreChannel.registerListener(ServerPositionPacket.ID, new ServerPositionPacketListener());
+        this.foxcoreChannel.registerListener(ServerPrintStringPacket.ID, new ServerPrintStringPacketListener());
         registerKeyBinds();
+        registerMouseBinds();
     }
 
     private void registerKeyBinds() {
-        System.out.println("(Re)Registering Keybinds!");
+        System.out.println("(Re)Registering Key Bindings!");
+        this.keyBindings.clear();
         addKeyBinding(KEY_E, System.out::println);
         addKeyBinding(KEY_S, System.err::println);
+        addKeyBinding(KEY_K, integer -> {
+            System.out.println("Adding window...");
+            Registry.getInstance().addWindow(new BasicWindow().setPositionX(25).setPositionY(25).setWidth(150).setHeight(150).setTitle("FoxEdit Info"));
+        });
+    }
+
+    private void registerMouseBinds() {
+        System.out.println("(Re)Registering Mouse Bindings!");
+        this.mouseBindings.clear();
+        addMouseBinding(0, System.out::println);
     }
 
     private void addKeyBinding(int key, Consumer<Integer> consumer) {
-        if (!keyBindings.containsKey(key)) {
-            keyBindings.put(key, new ArrayList<>());
+        if (!this.keyBindings.containsKey(key)) {
+            this.keyBindings.put(key, new ArrayList<>());
         }
-        keyBindings.get(key).add(consumer);
+        this.keyBindings.get(key).add(consumer);
+    }
+
+    private void addMouseBinding(int mouseButton, Consumer<Integer> consumer) {
+        if (!this.mouseBindings.containsKey(mouseButton)) {
+            this.mouseBindings.put(mouseButton, new ArrayList<>());
+        }
+        this.mouseBindings.get(mouseButton).add(consumer);
     }
 
     @EventHandler
     public void loadS(FMLInitializationEvent event) {
         logger.info("Registering event handlers");
-        MinecraftForge.EVENT_BUS.register(renderHandler = new RenderHandler(Minecraft.getMinecraft()));
-        MinecraftForge.EVENT_BUS.register(new WindowRenderer());
-        MinecraftForge.EVENT_BUS.register(new GuiRenderListener());
+        MinecraftForge.EVENT_BUS.register(this.renderHandler = new RenderHandler(Minecraft.getMinecraft()));
+        MinecraftForge.EVENT_BUS.register(this.renderManager = new RenderManager());
+//        MinecraftForge.EVENT_BUS.register(new GuiRenderListener());
         //MinecraftForge.EVENT_BUS.register(RenderManager.instance());
         MinecraftForge.EVENT_BUS.register(this);
         logger.info("Registering MinecraftForge networking channels");
         FCClientNetworkManager.instance().registerNetworkingChannels();
-        ClientRegistry.registerKeyBinding(windowControlKeyBinding);
+        ClientRegistry.registerKeyBinding(this.windowControlKeyBinding);
     }
 
     @EventHandler
@@ -128,31 +152,68 @@ public class FoxCoreClientMain {
     }
 
     public RenderHandler getRenderHandler() {
-        return renderHandler;
+        return this.renderHandler;
     }
 
     public FCClientNetworkManager.ClientChannel getFoxcoreChannel() {
-        return foxcoreChannel;
+        return this.foxcoreChannel;
     }
 
     @SubscribeEvent
     public void onTickEvent(TickEvent event) {
-        if (guiShown) {
-            while (Keyboard.next()) {
-                //TODO Handle Custom Key Binds
+        if (this.windowControlActive) {
+            /*
+            while (Mouse.next()) {
+                final Point point = RenderUtils.calculateMouseLocation();
+                final Window window = this.renderManager.getWindowUnder(point.x, point.y);
+//                System.out.println(window);
+                int dx = Mouse.getDX(), dy = -Mouse.getDY();
 
+                if (window != null) {
+                    this.lastWindow = window;
+                }
+
+
+                int k = Mouse.getEventButton();
+
+                if (Mouse.getEventButtonState()) {
+                    this.eventButton = k;
+                    this.lastMouseEvent = Minecraft.getSystemTime();
+//                    this.mouseClicked(i, j, this.eventButton);
+//                    System.out.println("Mouse Clicked: " + point.x + " | " + point.y + " | " + this.eventButton);
+                    if (this.lastWindow != null) {
+                        this.lastWindow.click(point.x, point.y);
+                    }
+                } else if (k != -1) {
+                    this.eventButton = -1;
+//                    this.mouseReleased(i, j, k);
+//                    System.out.println("Mouse Release: " + point.x + " | " + point.y + " | " + k);
+                } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
+                    long l = Minecraft.getSystemTime() - this.lastMouseEvent;
+//                    this.mouseClickMove(i, j, this.eventButton, l);
+//                    System.out.println("Mouse Dragged: " + point.x + " | " + point.y + " | " + this.eventButton + " | " + l);
+                    if (this.lastWindow != null) {
+                        logger.debug(dx + " | " + dy);
+                        this.lastWindow.drag(point.x, point.y);
+                    }
+                }
+
+
+            }*/
+            while (Keyboard.next()) {
                 if (Keyboard.isKeyDown(Keyboard.getEventKey())) {
-                    if (Keyboard.getEventKey() == KEY_ESCAPE || Keyboard.getEventKey() == windowControlKeyBinding.getKeyCode()) {
-                        guiShown = false;
+                    if (Keyboard.getEventKey() == KEY_ESCAPE || Keyboard.getEventKey() == this.windowControlKeyBinding.getKeyCode()) {
+                        this.windowControlActive = false;
                         Minecraft.getMinecraft().setIngameFocus();
                         KeyBinding.unPressAllKeys();
                     } else if (Keyboard.getEventKey() == KEY_BACKSLASH) {
                         if (Keyboard.isKeyDown(KEY_RSHIFT)) {
                             registerKeyBinds();
+                            registerMouseBinds();
                         }
                     } else {
-                        if (keyBindings.containsKey(Keyboard.getEventKey())) {
-                            keyBindings.get(Keyboard.getEventKey()).iterator().forEachRemaining(con -> con.accept(Keyboard.getEventKey()));
+                        if (this.keyBindings.containsKey(Keyboard.getEventKey())) {
+                            this.keyBindings.get(Keyboard.getEventKey()).iterator().forEachRemaining(con -> con.accept(Keyboard.getEventKey()));
                         }
                     }
                 }
@@ -161,21 +222,17 @@ public class FoxCoreClientMain {
     }
 
     @SubscribeEvent
-    public void onMouseEvent(MouseEvent event) {
-        if (Mouse.isButtonDown(0) && guiShown) {
-            //TODO handle custom mouse events
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
-        if (windowControlKeyBinding.isPressed()) {
-            if (!guiShown) {
+        if (this.windowControlKeyBinding.isPressed()) {
+            if (!this.windowControlActive) {
                 Minecraft.getMinecraft().setIngameNotInFocus();
-                guiShown = true;
+                this.windowControlActive = true;
                 KeyBinding.unPressAllKeys();
             }
         }
+    }
+
+    public boolean getIsWindowControlActive() {
+        return this.windowControlActive;
     }
 }
