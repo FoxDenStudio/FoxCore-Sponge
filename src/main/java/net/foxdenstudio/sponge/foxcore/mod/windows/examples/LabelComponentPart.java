@@ -3,12 +3,13 @@ package net.foxdenstudio.sponge.foxcore.mod.windows.examples;
 import net.foxdenstudio.sponge.foxcore.mod.windows.Dependency;
 import net.foxdenstudio.sponge.foxcore.mod.windows.Registry;
 import net.foxdenstudio.sponge.foxcore.mod.windows.exceptions.PartAlreadyRegisteredException;
-import net.foxdenstudio.sponge.foxcore.mod.windows.parts.IComponentPart;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.BasePart;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.ComponentPart;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class LabelComponentPart implements IComponentPart {
+public class LabelComponentPart extends ComponentPart {
 
     static {
         try {
@@ -81,23 +82,33 @@ public class LabelComponentPart implements IComponentPart {
         return this.height;
     }
 
+    public LabelComponentPart setHeight(int height) {
+        this.height = height;
+        return this;
+    }
+
     @Override
     public boolean isPinned() {
         return false;
     }
 
     @Override
-    public void mouseClicked(int x, int y) {
+    public void mouseClicked(int x, int y, int button) {
 
     }
 
     @Override
-    public void mouseReleased(int x, int y) {
+    public void mouseReleased(int x, int y, int button) {
 
     }
 
-    public LabelComponentPart setHeight(int height) {
-        this.height = height;
+    @Override
+    public void mouseDrag(int x, int y, int button) {
+
+    }
+
+    @Override
+    public BasePart revalidate() {
         return this;
     }
 }

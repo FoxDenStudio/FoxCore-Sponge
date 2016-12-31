@@ -1,7 +1,8 @@
 package net.foxdenstudio.sponge.foxcore.mod.windows;
 
 import net.foxdenstudio.sponge.foxcore.mod.windows.exceptions.PartAlreadyRegisteredException;
-import net.foxdenstudio.sponge.foxcore.mod.windows.parts.IComponentPart;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.BasePart;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.ComponentPart;
 import net.foxdenstudio.sponge.foxcore.mod.windows.parts.ModulePart;
 import net.foxdenstudio.sponge.foxcore.mod.windows.parts.WindowPart;
 
@@ -9,40 +10,35 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @SuppressWarnings("SameParameterValue")
 public class Registry {
 
     private static final Registry INSTANCE = new Registry();
 
-    private final Map<String, Class<? extends IComponentPart>> componentPartsMap;
+    private final Map<String, Class<? extends ComponentPart>> componentPartsMap;
     private final Map<String, Class<? extends ModulePart>> modulePartsMap;
     private final Map<String, Class<? extends WindowPart>> windowPartsMap;
 
-    private final Map<UUID, IComponentPart> components;
-    private final Map<UUID, ModulePart> modules;
-    private final UseOrderList<WindowPart> windows;
+    private final UseOrderList<BasePart> partList;
 
     private Registry() {
         this.componentPartsMap = new HashMap<>();
         this.modulePartsMap = new HashMap<>();
         this.windowPartsMap = new HashMap<>();
 
-        this.components = new HashMap<>();
-        this.modules = new HashMap<>();
-        this.windows = new UseOrderList<>();
+        this.partList = new UseOrderList<>();
     }
 
     public static Registry getInstance() {
         return INSTANCE;
     }
 
-    public Registry registerComponentPart(@Nonnull final String fullyQualifiedName, Class<? extends IComponentPart> iComponent) throws PartAlreadyRegisteredException {
+    public Registry registerComponentPart(@Nonnull final String fullyQualifiedName, Class<? extends ComponentPart> iComponent) throws PartAlreadyRegisteredException {
         return registerComponentPart(fullyQualifiedName, iComponent, false);
     }
 
-    public Registry registerComponentPart(@Nonnull final String fullyQualifiedName, Class<? extends IComponentPart> iComponent, final boolean force) throws PartAlreadyRegisteredException {
+    public Registry registerComponentPart(@Nonnull final String fullyQualifiedName, Class<? extends ComponentPart> iComponent, final boolean force) throws PartAlreadyRegisteredException {
         if (!force && this.componentPartsMap.containsKey(fullyQualifiedName)) {
             throw new PartAlreadyRegisteredException(fullyQualifiedName, iComponent);
         }
@@ -75,58 +71,29 @@ public class Registry {
     }
 
     @Nonnull
-    public Map<UUID, IComponentPart> getComponents() {
-        return this.components;
+    public UseOrderList<BasePart> getPartList() {
+        return this.partList;
     }
 
     @Nonnull
-    public Map<UUID, ModulePart> getModules() {
-        return this.modules;
-    }
-
-    @Nonnull
-    public UseOrderList<WindowPart> getWindows() {
-        return this.windows;
-    }
-
-    public Registry addComponent(@Nonnull final IComponentPart iComponentPart) {
-        return addComponent(UUID.randomUUID(), iComponentPart);
-    }
-
-    public Registry addComponent(@Nonnull final UUID uuid, @Nonnull final IComponentPart windowPart) {
-        this.components.put(uuid, windowPart);
-        return this;
-    }
-
-    public Registry addModule(@Nonnull final ModulePart modulePart) {
-        return addModule(UUID.randomUUID(), modulePart);
-    }
-
-    public Registry addModule(@Nonnull final UUID uuid, @Nonnull final ModulePart modulePart) {
-        this.modules.put(uuid, modulePart);
-        return this;
-    }
-
-    public Registry addWindow(@Nonnull final WindowPart windowPart) {
-        return addWindow(UUID.randomUUID(), windowPart);
-    }
-
-    public Registry addWindow(@Nonnull final UUID uuid, @Nonnull final WindowPart windowPart) {
-        this.windows.use(windowPart);
+    public Registry addParts(@Nonnull final BasePart... parts) {
+        for (final BasePart part : parts) {
+            this.partList.use(part);
+        }
         return this;
     }
 
     @Nullable
-    public WindowPart getWindowUnder(int x, int y) {
-        for (final WindowPart windowPart : this.windows.itemList) {
-            if (x >= windowPart.getPositionX() && x <= windowPart.getPositionX() + windowPart.getWidth() && y >= windowPart.getPositionY() && y <= windowPart.getPositionY() + windowPart.getHeight()) {
-                return windowPart;
+    public BasePart getPartUnder(int x, int y) {
+        for (final BasePart basePart : this.partList.itemList) {
+            if (x >= basePart.getPositionX() && x <= basePart.getPositionX() + basePart.getWidth() && y >= basePart.getPositionY() && y <= basePart.getPositionY() + basePart.getHeight()) {
+                return basePart;
             }
         }
         return null;
     }
 
-    public void removeWindow(@Nonnull final WindowPart windowPart) {
-        this.windows.remove(windowPart);
+    public void removePart(@Nonnull final BasePart basePart) {
+        this.partList.remove(basePart);
     }
 }

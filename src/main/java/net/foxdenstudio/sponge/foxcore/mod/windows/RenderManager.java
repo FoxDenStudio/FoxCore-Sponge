@@ -2,7 +2,7 @@ package net.foxdenstudio.sponge.foxcore.mod.windows;
 
 import net.foxdenstudio.sponge.foxcore.mod.FoxCoreClientMain;
 import net.foxdenstudio.sponge.foxcore.mod.windows.examples.BasicWindow;
-import net.foxdenstudio.sponge.foxcore.mod.windows.parts.IBasePart;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.BasePart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class RenderManager {
 
     public RenderManager() {
-        Registry.getInstance().addWindow(
+        Registry.getInstance().addParts(
                 new BasicWindow()
                         .setTitle("FoxCore Window Test")
                         .setPositionX(10)
@@ -25,7 +25,26 @@ public class RenderManager {
                         .setHeight(200)
                         .setWidth(150)
                         .setPinned(true)
+                        .revalidate()
         );
+    }
+
+    public static void startGlScissor(int x, int y, int width, int height) {
+        final Minecraft mc = Minecraft.getMinecraft();
+        final ScaledResolution reso = new ScaledResolution(mc);
+        final double scaleW = (double) mc.displayWidth / reso.getScaledWidth_double();
+        final double scaleH = (double) mc.displayHeight / reso.getScaledHeight_double();
+
+        if (width <= 0 || height <= 0) return;
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+
+        glEnable(GL_SCISSOR_TEST);
+        glScissor((int) Math.floor((double) x * scaleW), (int) Math.floor((double) mc.displayHeight - ((double) (y + height) * scaleH)), (int) Math.floor((double) (x + width) * scaleW) - (int) Math.floor((double) x * scaleW), (int) Math.floor((double) mc.displayHeight - ((double) y * scaleH)) - (int) Math.floor((double) mc.displayHeight - ((double) (y + height) * scaleH))); //starts from lower left corner (minecraft starts from upper left)
+    }
+
+    public static void endGlScissor() {
+        glDisable(GL_SCISSOR_TEST);
     }
 
     @SideOnly(Side.CLIENT)
@@ -38,14 +57,10 @@ public class RenderManager {
         glEnable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//        glDisable(GL_LIGHTING);
-
         if (FoxCoreClientMain.instance.getIsWindowControlActive()) {
-            Registry.getInstance().getWindows().reverseStream().forEachOrdered(this::protectedRender);
-//            Registry.getInstance().getParts().values().forEach(this::protectedRender);
+            Registry.getInstance().getPartList().reverseStream().forEachOrdered(this::protectedRender);
         } else {
-            Registry.getInstance().getWindows().reverseStream().filter(IBasePart::isPinned).forEachOrdered(this::protectedRender);
-//            Registry.getInstance().getParts().values().stream().filter(IBasePart::isPinned).forEach(this::protectedRender);
+            Registry.getInstance().getPartList().reverseStream().filter(BasePart::isPinned).forEachOrdered(this::protectedRender);
         }
 
         glEnable(GL_TEXTURE_2D);
@@ -54,77 +69,12 @@ public class RenderManager {
         glPopAttrib();
     }
 
-    private void protectedRender(@Nonnull final IBasePart iBasePart) {
-
-//        final Framebuffer framebuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, false);
-//        framebuffer.bindFramebuffer(true);
+    private void protectedRender(@Nonnull final BasePart basePart) {
         glPushMatrix();
-        glTranslated(iBasePart.getPositionX(), iBasePart.getPositionY(), 0);
-
-//        glColor3f(0, 0, 1);
-//        this.vertexBuffer.begin(GL_QUADS, DefaultVertexFormats.POSITION);
-//        this.vertexBuffer.pos(iBasePart.getPositionX(), iBasePart.getPositionY(), 0.0D).endVertex();
-//        this.vertexBuffer.pos(iBasePart.getPositionX(), iBasePart.getPositionY() + iBasePart.getHeight(), 0.0D).endVertex();
-//        this.vertexBuffer.pos(iBasePart.getPositionX() + iBasePart.getWidth(), iBasePart.getPositionY() + iBasePart.getHeight(), 0.0D).endVertex();
-//        this.vertexBuffer.pos(iBasePart.getPositionX() + iBasePart.getWidth(), iBasePart.getPositionY(), 0.0D).endVertex();
-//        this.tessellator.draw();
-        startGlScissor(iBasePart.getPositionX(), iBasePart.getPositionY(), iBasePart.getWidth(), iBasePart.getHeight());
-        iBasePart.render();
+        glTranslated(basePart.getPositionX(), basePart.getPositionY(), 0);
+        startGlScissor(basePart.getPositionX(), basePart.getPositionY(), basePart.getWidth(), basePart.getHeight());
+        basePart.render();
         endGlScissor();
         glPopMatrix();
-//        framebuffer.framebufferRender(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-//        framebuffer.unbindFramebuffer();
-//        framebuffer.deleteFramebuffer();
-//        final Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
-//
-//        framebuffer.bindFramebuffer(true);
-//        framebuffer.setFramebufferColor(0, 0, 1, 1);
-//        glColor3f(1, 0, 0);
-//        FoxCoreClientMain.logger.debug(iBasePart.getPositionX() + " | " + iBasePart.getPositionY() + " | " + iBasePart.getHeight() + " | " + iBasePart.getWidth());
-//        glEnable(GL_STENCIL_TEST);
-//
-//        glStencilFunc(GL_ALWAYS, 1, 1);
-//        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-//        this.vertexBuffer.begin(GL_QUADS, DefaultVertexFormats.POSITION);
-//        this.vertexBuffer.pos(iBasePart.getPositionX(), iBasePart.getPositionY(), 0.0D).endVertex();
-//        this.vertexBuffer.pos(iBasePart.getPositionX(), iBasePart.getPositionY() + iBasePart.getHeight(), 0.0D).endVertex();
-//        this.vertexBuffer.pos(iBasePart.getPositionX() + iBasePart.getWidth(), iBasePart.getPositionY() + iBasePart.getHeight(), 0.0D).endVertex();
-//        this.vertexBuffer.pos(iBasePart.getPositionX() + iBasePart.getWidth(), iBasePart.getPositionY(), 0.0D).endVertex();
-//        this.tessellator.draw();
-
-//        glColor3f(0, 1, 0);
-//        glStencilFunc(GL_EQUAL, 1, 1);
-//        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-//        iBasePart.render();
-//        glDisable(GL_STENCIL_TEST);
-//        framebuffer.unbindFramebuffer();
-//        framebuffer.framebufferRender(iBasePart.getWidth(), iBasePart.getHeight());
-    }
-
-    public void startGlScissor(int x, int y, int width, int height) {
-        final Minecraft mc = Minecraft.getMinecraft();
-
-        ScaledResolution reso = new ScaledResolution(mc);
-
-        double scaleW = (double) mc.displayWidth / reso.getScaledWidth_double();
-        double scaleH = (double) mc.displayHeight / reso.getScaledHeight_double();
-
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-        if (x < 0) {
-            x = 0;
-        }
-        if (y < 0) {
-            y = 0;
-        }
-
-        glEnable(GL_SCISSOR_TEST);
-
-        glScissor((int) Math.floor((double) x * scaleW), (int) Math.floor((double) mc.displayHeight - ((double) (y + height) * scaleH)), (int) Math.floor((double) (x + width) * scaleW) - (int) Math.floor((double) x * scaleW), (int) Math.floor((double) mc.displayHeight - ((double) y * scaleH)) - (int) Math.floor((double) mc.displayHeight - ((double) (y + height) * scaleH))); //starts from lower left corner (minecraft starts from upper left)
-    }
-
-    public void endGlScissor() {
-        glDisable(GL_SCISSOR_TEST);
     }
 }

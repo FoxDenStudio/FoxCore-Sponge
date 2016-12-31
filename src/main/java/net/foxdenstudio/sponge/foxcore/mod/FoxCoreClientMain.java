@@ -31,11 +31,10 @@ import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositi
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
 import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.RenderUtils;
-import net.foxdenstudio.sponge.foxcore.mod.rendernew.windows.components.Window;
 import net.foxdenstudio.sponge.foxcore.mod.windows.Registry;
 import net.foxdenstudio.sponge.foxcore.mod.windows.RenderManager;
 import net.foxdenstudio.sponge.foxcore.mod.windows.examples.BasicWindow;
-import net.foxdenstudio.sponge.foxcore.mod.windows.parts.WindowPart;
+import net.foxdenstudio.sponge.foxcore.mod.windows.parts.BasePart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,7 +77,7 @@ public class FoxCoreClientMain {
     private RenderManager renderManager;
     private int eventButton;
     private long lastMouseEvent;
-    private Window lastWindow;
+    private BasePart lastBasePart;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -100,8 +99,11 @@ public class FoxCoreClientMain {
         addKeyBinding(KEY_E, System.out::println);
         addKeyBinding(KEY_S, System.err::println);
         addKeyBinding(KEY_K, integer -> {
-            System.out.println("Adding window...");
-            Registry.getInstance().addWindow(new BasicWindow().setPositionX(25).setPositionY(25).setWidth(150).setHeight(150).setTitle("FoxEdit Info"));
+            final BasicWindow basicWindow = new BasicWindow();
+            basicWindow.setPositionX(25).setPositionY(25).setWidth(150).setHeight(150);
+            basicWindow.setTitle("FoxEdit Info").revalidate();
+            System.out.println("Adding window: " + basicWindow);
+            Registry.getInstance().addParts(basicWindow);
         });
     }
 
@@ -168,14 +170,14 @@ public class FoxCoreClientMain {
         if (this.windowControlActive) {
             while (Mouse.next()) {
                 final Point point = RenderUtils.calculateMouseLocation();
-                final WindowPart window = Registry.getInstance().getWindowUnder(point.x, point.y);
-//                System.out.println(window);
-//                System.out.println(window);
+                final BasePart basePart = Registry.getInstance().getPartUnder(point.x, point.y);
+//                System.out.println(basePart);
+//                System.out.println(basePart);
 //                int dx = Mouse.getDX(), dy = -Mouse.getDY();
 //
-//                if (window != null) {
-//                    this.lastWindow = window;
-//                }
+                if (basePart != null) {
+                    this.lastBasePart = basePart;
+                }
 //
 
                 int k = Mouse.getEventButton();
@@ -184,25 +186,25 @@ public class FoxCoreClientMain {
                     this.eventButton = k;
                     this.lastMouseEvent = Minecraft.getSystemTime();
 //                    this.mouseClicked(i, j, this.eventButton);
-//                    System.out.println("Mouse Clicked: " + point.x + " | " + point.y + " | " + this.eventButton);
-                    if (window != null) {
-                        Registry.getInstance().getWindows().use(window);
-                        window.mouseClicked(point.x, point.y);
+//                    logger.debug("Mouse Clicked: " + point.x + " | " + point.y + " | " + this.eventButton);
+                    if (this.lastBasePart != null) {
+                        Registry.getInstance().getPartList().use(this.lastBasePart);
+                        this.lastBasePart.mouseClicked(point.x - this.lastBasePart.getPositionX(), point.y - this.lastBasePart.getPositionY(), k);
                     }
                 } else if (k != -1) {
                     this.eventButton = -1;
-                    if (window != null) {
-                        window.mouseReleased(point.x, point.y);
+//                    logger.debug("Mouse Release: " + point.x + " | " + point.y + " | " + k);
+                    if (this.lastBasePart != null) {
+                        this.lastBasePart.mouseReleased(point.x - this.lastBasePart.getPositionX(), point.y - this.lastBasePart.getPositionY(), k);
                     }
-//                    System.out.println("Mouse Release: " + point.x + " | " + point.y + " | " + k);
+                    this.lastBasePart = null;
                 } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
-//                    long l = Minecraft.getSystemTime() - this.lastMouseEvent;
+                    long l = Minecraft.getSystemTime() - this.lastMouseEvent;
 //                    this.mouseClickMove(i, j, this.eventButton, l);
-//                    System.out.println("Mouse Dragged: " + point.x + " | " + point.y + " | " + this.eventButton + " | " + l);
-//                    if (this.lastWindow != null) {
-//                        logger.debug(dx + " | " + dy);
-//                        this.lastWindow.drag(point.x, point.y);
-//                    }
+//                    logger.debug("Mouse Dragged: " + point.x + " | " + point.y + " | " + this.eventButton + " | " + l);
+                    if (l > 100 && this.lastBasePart != null) {
+                        this.lastBasePart.mouseDrag(point.x - this.lastBasePart.getPositionX(), point.y - this.lastBasePart.getPositionY(), this.eventButton);
+                    }
                 }
             }
             while (Keyboard.next()) {
