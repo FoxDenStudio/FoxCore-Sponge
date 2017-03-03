@@ -25,13 +25,13 @@
 
 package net.foxdenstudio.sponge.foxcore.plugin.wand.data;
 
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class WandDataBuilder extends AbstractDataBuilder<WandData> implements DataManipulatorBuilder<WandData, ImmutableWandData> {
@@ -42,21 +42,21 @@ public class WandDataBuilder extends AbstractDataBuilder<WandData> implements Da
         super(WandData.class, CONTENT_VERSION);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public WandData create() {
         return new WandData();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public Optional<WandData> createFrom(@NotNull DataHolder dataHolder) {
+    public Optional<WandData> createFrom(@Nonnull DataHolder dataHolder) {
         return create().fill(dataHolder);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    protected Optional<WandData> buildContent(@NotNull DataView view) throws InvalidDataException {
+    protected Optional<WandData> buildContent(@Nonnull DataView view) throws InvalidDataException {
         WandData data = create();
         return data.from(view);
     }

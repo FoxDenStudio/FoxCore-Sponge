@@ -92,6 +92,7 @@ public class CommandHUD extends FCCommandBase {
         AdvCmdParser.ParseResult parse = AdvCmdParser.builder()
                 .arguments(arguments)
                 .autoCloseQuotes(true)
+                .excludeCurrent(true)
                 .parse();
         if (parse.current.type == AdvCmdParser.CurrentElement.ElementType.ARGUMENT) {
             if (parse.current.index == 0) {

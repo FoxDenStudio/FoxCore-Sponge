@@ -22,6 +22,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyle;
+import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.util.Tristate;
 
 import java.io.IOException;
@@ -35,13 +37,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.spongepowered.api.text.format.TextColors.*;
+import static org.spongepowered.api.text.format.TextStyles.*;
 
 /**
  * Created by Fox on 7/7/2016.
  */
 public class FCPUtil {
 
-    public static final TextColor[] colors = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
+    public static final TextColor[] COLORS = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY,
             DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
 
     public static Text readableBooleanText(boolean bool) {
@@ -113,14 +116,33 @@ public class FCPUtil {
 
     public static Optional<TextColor> textColorFromName(String name) {
         int code = FCCUtil.colorCodeFromName(name);
-        if (code >= 0) return Optional.of(colors[code]);
+        if (code >= 0) return Optional.of(COLORS[code]);
         else return Optional.empty();
     }
 
     public static Optional<TextColor> textColorFromHex(String hex) {
         if (!hex.matches("[0-9a-f]")) return Optional.empty();
         int code = Integer.parseInt(hex, 16);
-        return Optional.of(colors[code]);
+        return Optional.of(COLORS[code]);
+    }
+
+    public static Optional<TextStyle> textStyleFromCode(String code) {
+        switch (code) {
+            case "k":
+                return Optional.of(OBFUSCATED);
+            case "l":
+                return Optional.of(BOLD);
+            case "m":
+                return Optional.of(STRIKETHROUGH);
+            case "n":
+                return Optional.of(UNDERLINE);
+            case "o":
+                return Optional.of(ITALIC);
+            case "r":
+                return Optional.of(TextStyles.RESET);
+            default:
+                return Optional.empty();
+        }
     }
 
     public static String getColorName(TextColor color, boolean upperCase) {
