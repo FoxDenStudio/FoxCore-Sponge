@@ -6,6 +6,7 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -44,7 +45,7 @@ public abstract class FCCommandBase implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.EMPTY;
+        return Text.of(TextStyles.ITALIC, "No Usage Text");
     }
 
 }
