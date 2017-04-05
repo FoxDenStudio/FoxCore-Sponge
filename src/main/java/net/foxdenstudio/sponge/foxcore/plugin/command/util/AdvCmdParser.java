@@ -216,7 +216,6 @@ public final class AdvCmdParser {
                     // multiple letters are treated as multiple flags. Repeating letters add a second flag with a repetition
                     // Example: "-aab" becomes flags "a", "aa", and "b"
                 } else if (result.startsWith("-") && (result.length() < 2 || !result.substring(1, 2).matches("[0-9.]"))
-                        && result.substring(1).matches("^.*[^\\d.].*$")
                         && (extractSubFlags || limit <= 0 || argsList.size() < limit || (parseLastFlags && argsList.size() <= limit && !jump))) {
                     if (result.equals("-")) {
                         parseResult.current = new CurrentElement(CurrentElement.ElementType.SHORTFLAG, "", 0, "");
