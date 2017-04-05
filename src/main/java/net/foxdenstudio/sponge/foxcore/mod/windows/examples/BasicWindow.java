@@ -33,6 +33,7 @@ public class BasicWindow extends WindowPart {
             System.out.println(vector2i + " | " + integer);
         });
         this.button.revalidate();
+        this.partList.add(this.button);
 
         layoutHeadButtons();
     }
@@ -90,8 +91,8 @@ public class BasicWindow extends WindowPart {
         tessellator.draw();
 
 
-        this.button.render();
-
+//        this.button.render();
+        this.partList.forEach(BasePart::render);
     }
 
     @Override
@@ -150,7 +151,7 @@ public class BasicWindow extends WindowPart {
     }
 
     @Override
-    public void mouseReleased(int x, int y, int buttonCode) {
+    public void mouseReleased(int x, int y, final int buttonCode) {
         if (buttonCode == 0) {
             if (!this.currentlyDraggable) {
                 if (this.closeButton.pointLiesWithin(x, y, 0)) {
@@ -159,7 +160,11 @@ public class BasicWindow extends WindowPart {
                     this.setPinned(!this.isPinned());
                 }
                 y -= this.headSize;
-                this.button.tryClick(x, y, buttonCode);
+                for (final BasePart basePart : this.partList) {
+                    if (basePart.tryClick(x, y, buttonCode)) {
+                        break;
+                    }
+                }
             }
             this.currentlyDraggable = false;
         }

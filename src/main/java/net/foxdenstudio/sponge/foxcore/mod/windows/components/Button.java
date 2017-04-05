@@ -131,6 +131,21 @@ public class Button extends ComponentPart {
         return this;
     }
 
+    public GeometrySquareButton getGeometry() {
+        return this.geometry;
+    }
+
+    @Override
+    public void mouseEntered(int x, int y) {
+        this.geometry.color = this.backgroundColorVector.div(2);//new Vector4f(.5f, 0, .5f, 1);
+    }
+
+
+    @Override
+    public void mouseExited(int x, int y) {
+        this.geometry.color = this.backgroundColorVector;
+    }
+
     @Override
     public String toString() {
         return "Button{" +

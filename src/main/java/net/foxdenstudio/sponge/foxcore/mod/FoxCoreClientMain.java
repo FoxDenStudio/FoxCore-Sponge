@@ -131,9 +131,7 @@ public class FoxCoreClientMain {
     public void loadS(FMLInitializationEvent event) {
         logger.info("Registering event handlers");
         MinecraftForge.EVENT_BUS.register(this.renderHandler = new RenderHandler(Minecraft.getMinecraft()));
-        MinecraftForge.EVENT_BUS.register(this.renderManager = new RenderManager());
-//        MinecraftForge.EVENT_BUS.register(new GuiRenderListener());
-        //MinecraftForge.EVENT_BUS.register(RenderManager.instance());
+        MinecraftForge.EVENT_BUS.register(RenderManager.getInstance());
         MinecraftForge.EVENT_BUS.register(this);
         logger.info("Registering MinecraftForge networking channels");
         FCClientNetworkManager.instance().registerNetworkingChannels();
@@ -175,10 +173,23 @@ public class FoxCoreClientMain {
 //                System.out.println(basePart);
 //                int dx = Mouse.getDX(), dy = -Mouse.getDY();
 //
+//                if (this.lastBasePart != basePart && this.lastBasePart != null) {
+//                    System.out.println("Mouse Exited: " + this.lastBasePart);
+//                    this.lastBasePart.mouseExited(point.x - this.lastBasePart.getPositionX(), point.y - this.lastBasePart.getPositionY());
+//                    this.lastBasePart = null;
+//                }
+//                if (basePart != null && this.lastBasePart != basePart) {
+//                    System.out.println("Mouse Entered: " + basePart);
+//                    basePart.mouseEntered(point.x - basePart.getPositionX(), point.y - basePart.getPositionY());
+//                }
+
                 if (basePart != null) {
                     this.lastBasePart = basePart;
                 }
-//
+
+                if (this.lastBasePart != null) {
+                    this.lastBasePart.mouseMoved(point.x - this.lastBasePart.getPositionX(), point.y - this.lastBasePart.getPositionY());
+                }
 
                 int k = Mouse.getEventButton();
 

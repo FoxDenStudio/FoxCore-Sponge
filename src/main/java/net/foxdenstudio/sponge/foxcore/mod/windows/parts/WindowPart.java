@@ -49,11 +49,31 @@ public abstract class WindowPart extends BasePart {
     }
 
     @Override
+    public void mouseEntered(int x, int y) {
+
+    }
+
+    @Override
+    public void mouseExited(int x, int y) {
+
+    }
+
+    @Override
+    public void mouseDrag(int x, int y, int button) {
+    }
+
+    @Override
+    public void mouseMoved(int x, int y) {
+
+    }
+
+    @Override
     public BasePart revalidate() {
         return this;
     }
 
     @Override
-    public void mouseDrag(int x, int y, int button) {
+    public boolean tryClick(int x, int y, int buttonCode) {
+        return false;
     }
 }

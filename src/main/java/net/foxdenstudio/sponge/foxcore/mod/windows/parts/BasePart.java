@@ -97,4 +97,12 @@ public abstract class BasePart {
     public abstract void mouseDrag(int x, int y, int buttonCode);
 
     public abstract BasePart revalidate();
+
+    public abstract void mouseEntered(int x, int y);
+
+    public abstract void mouseExited(int x, int y);
+
+    public abstract void mouseMoved(int x, int y);
+
+    public abstract boolean tryClick(int x, int y, int buttonCode);
 }
