@@ -4,14 +4,16 @@ ext.repoVersion = ''
 if (System.env.TRAVIS) {
     String tempVersion = ''
     if (System.env.TRAVIS_TAG) {
-        tempVersion = System.env.TRAVIS_TAG;
+        tempVersion = System.env.TRAVIS_TAG
         if (tempVersion.startsWith("v")) {
             tempVersion = tempVersion.substring(1)
         }
-        tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
+        tempVersion.replaceAll('/', '-')
         repoVersion = tempVersion
+        tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
     } else {
         tempVersion = "$System.env.TRAVIS_BRANCH-SNAPSHOT"
+        tempVersion.replaceAll('/', '-')
         repoVersion = tempVersion
         tempVersion += "-$System.env.TRAVIS_BUILD_NUMBER"
     }
