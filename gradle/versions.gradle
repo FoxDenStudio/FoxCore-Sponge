@@ -1,4 +1,4 @@
-ext.spongeVersion = '5.0.0-SNAPSHOT'
+ext.spongeVersion = '5.2.0-SNAPSHOT'
 ext.clientForgeVersion = '2079'
 ext.mcpMappings = 'snapshot_20160822'
 ext.gradleWrapperVersion = '3.2.1'
