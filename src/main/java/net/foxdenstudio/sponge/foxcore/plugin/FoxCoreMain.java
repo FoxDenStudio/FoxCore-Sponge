@@ -46,6 +46,7 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
@@ -153,7 +154,13 @@ public final class FoxCoreMain {
     @Listener
     public void registerData(GameInitializationEvent event) {
         logger.info("Registering custom data manipulators");
-        game.getDataManager().register(WandData.class, ImmutableWandData.class, new WandDataBuilder());
+        DataRegistration.<WandData, ImmutableWandData>builder()
+                .dataClass(WandData.class)
+                .immutableClass(ImmutableWandData.class)
+                .builder(new WandDataBuilder())
+                .manipulatorId("wanddata")
+                .dataName("FoxCoreWandData")
+                .buildAndRegister(this.container);
     }
 
     @Listener
