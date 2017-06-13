@@ -30,14 +30,14 @@ public class ModuleManager {
 
     private void populateFileList() {
         try {
-            File moduleFolder = new File("fc-modules").getCanonicalFile();
+            File moduleFolder = new File("C:\\Users\\d4rkfly3r\\Desktop\\FoxCore\\build\\classes\\main\\net\\foxdenstudio\\sponge\\foxcore\\plugin\\command").getCanonicalFile();
             System.out.println(moduleFolder.getCanonicalPath());
             if (!moduleFolder.exists()) {
                 moduleFolder.mkdirs();
             }
 
             for (final File moduleFile : moduleFolder.listFiles()) {
-                if (FilenameUtils.isExtension(moduleFile.getCanonicalPath(), new String[]{"fm", "foxmod", "fgm", "fcm", "fem"})) {
+                if (FilenameUtils.isExtension(moduleFile.getCanonicalPath(), new String[]{"fm", "foxmod", "fgm", "fcm", "fem","class"})) {
                     moduleFileList.add(moduleFile);
                 }
             }

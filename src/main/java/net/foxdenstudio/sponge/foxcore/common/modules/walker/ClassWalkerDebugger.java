@@ -21,11 +21,13 @@ public class ClassWalkerDebugger {
 
         HashMap<Class<? extends IConstant>, MutableInt> data = new HashMap<>();
         for (IConstant constantPoolItem : classWalker.constantPoolItems) {
-            final Class<? extends IConstant> aClass = constantPoolItem.getClass();
-            if (!data.containsKey(aClass)) {
-                data.put(aClass, new MutableInt(0));
+            if (constantPoolItem != null) {
+                final Class<? extends IConstant> aClass = constantPoolItem.getClass();
+                if (!data.containsKey(aClass)) {
+                    data.put(aClass, new MutableInt(0));
+                }
+                data.get(aClass).add(1);
             }
-            data.get(aClass).add(1);
         }
 
         out.println();

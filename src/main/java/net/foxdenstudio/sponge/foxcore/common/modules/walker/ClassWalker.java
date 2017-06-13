@@ -19,6 +19,9 @@ public class ClassWalker {
     public short superClass;
     public short interfaceListSize;
     public short fieldListSize;
+    public FieldDeclaration[] fieldList;
+    public short methodListSize;
+    public MethodDeclaration[] methodList;
 
 
     public ClassWalker(final File moduleFile) {
@@ -37,7 +40,7 @@ public class ClassWalker {
             offset += 2;
 
             constantPoolItems = new IConstant[constantPoolSize];
-            offset = parseConstantPool(offset, constantPoolSize);
+            offset = parseConstantPool(offset);
 
             accessFlags = new AccessFlags(u2(offset));
             offset += 2;
@@ -54,7 +57,23 @@ public class ClassWalker {
 
             fieldListSize = u2(offset);
             offset += 2;
+            fieldList = new FieldDeclaration[fieldListSize];
+            offset = parseFieldList(offset);
 
+            methodListSize = u2(offset);
+            offset += 2;
+            methodList = new MethodDeclaration[methodListSize];
+            offset = parseMethodList(offset);
+
+//            for (FieldDeclaration fieldDeclaration : fieldList) {
+//                System.out.println(constantPoolItems[fieldDeclaration.getNameIndex() - 1]);
+//            }
+//            System.out.println();
+//            for (MethodDeclaration methodDeclaration : methodList) {
+//                System.out.println(constantPoolItems[methodDeclaration.getNameIndex() - 1]);
+//            }
+
+            System.err.println(constantPoolItems[((ClassReferenceConstant) constantPoolItems[thisClass - 1]).getClassFQCNIndex() - 1]);
             new ClassWalkerDebugger(this).output(true);
 
         } catch (IOException e) {
@@ -63,7 +82,76 @@ public class ClassWalker {
         }
     }
 
-    private int parseConstantPool(int offset, short constantPoolSize) {
+    private int parseMethodList(int offset) {
+        for (short methodListOffset = 0; methodListOffset < methodListSize; methodListOffset++) {
+            short accessFlags = u2(offset);
+            offset += 2;
+            short nameIndex = u2(offset);
+            offset += 2;
+            short descriptorIndex = u2(offset);
+            offset += 2;
+            short attributesCount = u2(offset);
+            offset += 2;
+
+            for (int i = 0; i < attributesCount; i++) {
+                short attrName = u2(offset);
+                offset += 2;
+                int attrLen = u4(offset);
+                offset += 4;
+                offset += attrLen;
+            }
+
+            methodList[methodListOffset] = new MethodDeclaration(accessFlags, nameIndex, descriptorIndex, attributesCount);
+        }
+        return offset;
+    }
+
+    private int parseFieldList(int offset) {
+        for (short fieldListOffset = 0; fieldListOffset < fieldListSize; fieldListOffset++) {
+            short accessFlags = u2(offset);
+            offset += 2;
+            short nameIndex = u2(offset);
+            offset += 2;
+            short descriptorIndex = u2(offset);
+            offset += 2;
+            short attributesCount = u2(offset);
+            offset += 2;
+
+            for (int i = 0; i < attributesCount; i++) {
+                short attrName = u2(offset);
+                offset += 2;
+                int attrLen = u4(offset);
+                offset += 4;
+                offset += attrLen;
+
+//                if (((UTF8StringConstant) constantPoolItems[attrName - 1]).getUTF8String().equals("RuntimeVisibleAnnotations")) {
+//                    int attrLen = u4(offset);
+//                    offset += 4;
+//                    short numAnnos = u2(offset);
+//                    offset += 2;
+//
+//                    for (int j = 0; j < numAnnos; j++) {
+//                        offset++; //FIXME Attriubutes arent actually read... need to fix this if i want to be able to scan for annoations
+//                    }
+//                    System.out.println();
+//                } else {
+//                    int attrLen = u4(offset);
+//                    offset += 4;
+//                    System.out.println("T: ");
+//                    for (int j = 0; j < attrLen; j++) {
+//                        System.out.print(classBytes[offset + j] + " ");
+//                    }
+//                    System.out.println();
+//                    offset += attrLen;
+//                }
+            }
+
+            fieldList[fieldListOffset] = new FieldDeclaration(accessFlags, nameIndex, descriptorIndex, attributesCount);
+        }
+        return offset;
+    }
+
+    private int parseConstantPool(int offset) {
         for (short constantPoolOffset = 0; constantPoolOffset < constantPoolSize; constantPoolOffset++) {
             switch (classBytes[offset++]) {
                 case 0x01: // UTF8
@@ -78,11 +166,11 @@ public class ClassWalker {
                     offset = FloatConstant.parse(this, offset, constantPoolOffset);
                     break;
                 case 0x05:
-                    System.out.println("Long");
+//                    System.out.println("Long");
                     offset += 8;
                     break;
                 case 0x06:
-                    System.out.println("Double");
+//                    System.out.println("Double");
                     offset += 8;
                     break;
                 case 0x07: // Class Ref
@@ -108,15 +196,17 @@ public class ClassWalker {
                 case 0x0e:
                     throw new RuntimeException("Invalid Constant Tag Byte: 0x0e");
                 case 0x0F:
-                    System.out.println("Method Handle");
+//                    System.out.println("Method Handle");
+                    offset += 3;
                     break;
                 case 0x10:
-                    System.out.println("Method Type");
+//                    System.out.println("Method Type");
+                    offset += 2;
                     break;
                 case 0x11:
                     throw new RuntimeException("Invalid Constant Tag Byte: 0x11");
                 case 0x12:
-                    System.out.println("Invoke Dynamic");
+//                    System.out.println("Invoke Dynamic");
 //                    offset = parseInvokeDynamic(offset, constantPoolItems, constantPoolOffset);
                     offset += 4;
                     break;
