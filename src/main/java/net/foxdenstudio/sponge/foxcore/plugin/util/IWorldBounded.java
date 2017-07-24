@@ -9,7 +9,7 @@ import org.spongepowered.api.world.World;
 /**
  * Created by Fox on 6/5/2017.
  */
-public interface IWorldBounded extends IWorldlessBounded, IBounded {
+public interface IWorldBounded extends IWorldlessBounded, IBounded, IWorldBound {
 
     World getWorld();
 
