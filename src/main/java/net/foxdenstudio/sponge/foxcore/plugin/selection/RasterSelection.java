@@ -4,8 +4,6 @@ import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.ProcessResult;
 import net.foxdenstudio.sponge.foxcore.plugin.util.BoundingBox3;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
@@ -36,23 +34,28 @@ public class RasterSelection implements ISelection {
     }
 
     public static void main(String[] args) {
-        HashSet<Vector3i> set = new HashSet<>();
+        final int count = 16 * 16 * 256 *314;
+        System.out.println(count);
+        HashSet<Vector3i> set = new HashSet<>(count);
         //Random random = new Random();
         System.out.println("Generating values");
+        long start = System.currentTimeMillis();
         int x = 0;
-        for (int i = 0; i < 50000000; i++) {
+        for (int i = 0; i < count; i++) {
             set.add(new Vector3i(x++, x++, x++));
         }
-        RasterSelection selection = new RasterSelection(set);
-        System.out.println("Starting calculation");
-        long start = System.currentTimeMillis();
-        selection.calculateBounds();
         long end = System.currentTimeMillis();
         System.out.println("Time: " + (end - start));
+        RasterSelection selection = new RasterSelection(set);
+        System.out.println("Starting calculation");
+        start = System.currentTimeMillis();
+        selection.calculateBounds();
+        end = System.currentTimeMillis();
+        System.out.println("Time: " + (end - start));
 
-        try (DB db = DBMaker.memoryDB().make()) {
+        /*try (DB db = DBMaker.memoryDB().make()) {
 
-        }
+        }*/
     }
 
     @Override

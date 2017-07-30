@@ -61,7 +61,7 @@ public class RenderHandler {
     public void render(RenderWorldLastEvent event) {
 
         //System.out.println("TEST");
-        EntityPlayerSP player = mc.thePlayer;
+        EntityPlayerSP player = mc.player;
         float partialTicks = event.getPartialTicks();
         double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
         double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
