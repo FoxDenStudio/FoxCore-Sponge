@@ -29,9 +29,12 @@ import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPosi
 import net.foxdenstudio.sponge.foxcore.common.network.client.listener.ServerPrintStringPacketListener;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
+import net.foxdenstudio.sponge.foxcore.mod.cui.CUI;
 import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -39,8 +42,13 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
 
 @Mod(modid = FoxCoreClientMain.MODID, name = "FoxCoreClient", clientSideOnly = true)
 public class FoxCoreClientMain {
@@ -54,6 +62,8 @@ public class FoxCoreClientMain {
 
     private RenderHandler renderHandler;
     private FCClientNetworkManager.ClientChannel foxcoreChannel;
+    @SideOnly(Side.CLIENT)
+    private CUI cui;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -78,9 +88,12 @@ public class FoxCoreClientMain {
         FCClientNetworkManager.instance().registerNetworkingChannels();
     }
 
+    @SideOnly(Side.CLIENT)
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-
+        this.cui = new CUI(this);
+        MinecraftForge.EVENT_BUS.register(this.cui);
+        this.cui.getRegisteredKeyBindings().forEach(ClientRegistry::registerKeyBinding);
     }
 
     @EventHandler
