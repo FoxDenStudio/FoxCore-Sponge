@@ -58,7 +58,7 @@ public final class Aliases {
 
 
     public static boolean isIn(String[] aliases, String input) {
-        if (input == null || input.isEmpty()) return false;
+        if (input == null || aliases == null || input.isEmpty()) return false;
         for (String alias : aliases) {
             if (alias.equalsIgnoreCase(input)) return true;
         }
