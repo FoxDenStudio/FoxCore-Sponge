@@ -27,7 +27,7 @@ apply plugin: 'org.spongepowered.plugin'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 group 'net.foxdenstudio.sponge'
-version 'api6-SNAPSHOT'
+version 'api7-SNAPSHOT'
 
 apply from: project.file("gradle/fox.gradle")
 apply from: project.file("gradle/minecraft.gradle")
@@ -36,7 +36,7 @@ apply from: project.file("gradle/foxcore.gradle")
 
 dependencies {
     compile "org.spongepowered:spongeapi:$spongeVersion"
-    compile 'com.flowpowered:flow-math:1.0.2'
+    compile 'com.flowpowered:flow-math:1.0.3'
     compile 'org.mapdb:mapdb:3.0.2'
     compile 'net.minecrell.mcstats:statslite-sponge:0.2.2'
     //compile 'com.google.code.gson:gson:2.8.0'
