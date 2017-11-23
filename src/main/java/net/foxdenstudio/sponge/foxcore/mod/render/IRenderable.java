@@ -25,10 +25,10 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
-import com.flowpowered.math.vector.Vector2i;
+import com.flowpowered.math.vector.Vector3i;
 
 public interface IRenderable {
 
-    void render(Vector2i offset);
+    void render(Vector3i offset);
 
 }

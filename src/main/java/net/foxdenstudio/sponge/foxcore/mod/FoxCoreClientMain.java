@@ -31,6 +31,7 @@ import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositi
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPrintStringPacket;
 import net.foxdenstudio.sponge.foxcore.mod.cui.CUI;
 import net.foxdenstudio.sponge.foxcore.mod.render.RenderHandler;
+import net.foxdenstudio.sponge.foxcore.mod.rendernew.world.RenderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
@@ -82,7 +83,7 @@ public class FoxCoreClientMain {
         logger.info("Registering event handlers");
         MinecraftForge.EVENT_BUS.register(renderHandler = new RenderHandler(Minecraft.getMinecraft()));
         //MinecraftForge.EVENT_BUS.register(new GuiRenderListener());
-        //MinecraftForge.EVENT_BUS.register(RenderManager.instance());
+        MinecraftForge.EVENT_BUS.register(RenderManager.instance());
         MinecraftForge.EVENT_BUS.register(this);
         logger.info("Registering MinecraftForge networking channels");
         FCClientNetworkManager.instance().registerNetworkingChannels();

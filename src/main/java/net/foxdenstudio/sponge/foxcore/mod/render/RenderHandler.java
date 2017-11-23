@@ -25,7 +25,6 @@
 
 package net.foxdenstudio.sponge.foxcore.mod.render;
 
-import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import net.minecraft.client.Minecraft;
@@ -70,9 +69,9 @@ public class RenderHandler {
 
         glPushMatrix();
 
-        Vector2i offset = new Vector2i(-playerX, -playerZ);
+        Vector3i offset = new Vector3i(-playerX, -playerY, -playerZ);
 
-        glTranslated(-playerX - offset.getX(), -playerY, -playerZ - offset.getY());
+        glTranslated(-playerX - offset.getX(), -playerY - offset.getY(), -playerZ - offset.getZ());
         list.render(offset);
         glPopMatrix();
     }

@@ -58,6 +58,7 @@ public class Window {
         final float frameColorG = this.frameColor.getY();
         final float frameColorB = this.frameColor.getZ();
         final float frameColorA = this.frameColor.getW();
+
         // Frame
         vertexBuffer.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         vertexBuffer.pos(0, 0, 0).color(frameColorR, frameColorG, frameColorB, frameColorA).endVertex();
@@ -215,6 +216,8 @@ public class Window {
             if (this.currentlyDraggable) {
                 this.positionX += x - this.lastClickLocation.getX();
                 this.positionY += y - this.lastClickLocation.getY();
+            }else{
+
             }
         }
     }

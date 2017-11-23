@@ -1,6 +1,7 @@
 package net.foxdenstudio.sponge.foxcore.mod.cui;
 
 import net.foxdenstudio.sponge.foxcore.mod.cui.windows.Window;
+import net.foxdenstudio.sponge.foxcore.mod.cui.windows.builtin.Console;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -34,6 +35,8 @@ class WindowSystem extends CUISubSystem {
     private final KeyBinding windowControlBinding;
     private final HashMap<Integer, List<Consumer<Integer>>> internalKeyBindings;
     private final HashMap<Window, Double> lastVisibleState;
+    UUID consoleWindowUUID;
+    Console console;
     private boolean windowControlActive;
     private Window lastTouchedWindow;
     private long lastMouseEventTime;
@@ -54,23 +57,23 @@ class WindowSystem extends CUISubSystem {
 
         final ArrayList<Consumer<Integer>> list = new ArrayList<>();
         list.add(ignored -> {
-            this.registerWindow(new Window()
-                    .setTitle("Test Window")
-                    .setPositionX(10)
-                    .setPositionY(20)
-                    .setWidth(200)
-                    .setHeight(100)
-                    .setVisible(true));
+            if (this.consoleWindowUUID != null) {
+                this.registeredWindows.remove(this.consoleWindowUUID);
+                this.windowUseOrder.remove(this.console);
+            }
+            this.console = new Console();
+            this.consoleWindowUUID = this.registerWindow(this.console);
         });
         this.internalKeyBindings.put(KEY_BACKSLASH, list);
 
     }
 
-    public void registerWindow(@Nonnull final Window window) {
+    public UUID registerWindow(@Nonnull final Window window) {
         final UUID windowUUID = UUID.randomUUID();
         this.registeredWindows.put(windowUUID, window);
         this.windowUseOrder.use(window);
         this.lastVisibleState.put(window, 0.00D);
+        return windowUUID;
     }
 
     public void render(float partialTicks) {
