@@ -42,7 +42,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = FoxCoreClientMain.MODID, name = "FoxCoreClient", clientSideOnly = true)
+//@Mod(modid = FoxCoreClientMain.MODID, name = "FoxCoreClient", clientSideOnly = true)
 public class FoxCoreClientMain {
 
     public static final String MODID = "foxcoreclient";

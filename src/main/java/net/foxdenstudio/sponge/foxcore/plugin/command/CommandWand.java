@@ -222,7 +222,6 @@ public class CommandWand extends FCCommandBase {
                 .parse();
         if (parse.current.type.equals(AdvCmdParser.CurrentElement.ElementType.ARGUMENT))
             return FCWandRegistry.getInstance().getTypes().stream()
-                    .sorted()
                     .filter(new StartsWithPredicate(parse.current.token))
                     .map(args -> parse.current.prefix + args)
                     .collect(GuavaCollectors.toImmutableList());
@@ -235,7 +234,6 @@ public class CommandWand extends FCCommandBase {
             if (isIn(PLAYER_ALIASES, parse.current.key))
                 return Sponge.getGame().getServer().getOnlinePlayers().stream()
                         .map(Player::getName)
-                        .sorted()
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
@@ -243,7 +241,6 @@ public class CommandWand extends FCCommandBase {
                 return Sponge.getRegistry().getAllOf(ItemType.class).stream()
                         .filter(itemType -> itemType != ItemTypes.NONE)
                         .map(ItemType::getId)
-                        .sorted()
                         .filter(new StartsWithPredicate(parse.current.token))
                         .map(args -> parse.current.prefix + args)
                         .collect(GuavaCollectors.toImmutableList());
