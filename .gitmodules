@@ -1,0 +1,3 @@
+[submodule "FoxCore-Common"]
+	path = FoxCore-Common
+	url = git@github.com:FoxDenStudio/FoxCore-Common.git

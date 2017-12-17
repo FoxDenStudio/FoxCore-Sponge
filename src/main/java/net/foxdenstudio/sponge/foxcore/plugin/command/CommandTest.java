@@ -27,12 +27,19 @@ package net.foxdenstudio.sponge.foxcore.plugin.command;
 
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.foxdenstudio.sponge.foxcore.plugin.command.util.AdvCmdParser;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.text.serializer.TextSerializer;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -40,9 +47,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+import static org.spongepowered.api.text.format.TextColors.*;
+import static org.spongepowered.api.text.format.TextStyles.BOLD;
+
 public class CommandTest extends FCCommandBase {
 
-    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+    /*public CommandResult process(CommandSource source, String arguments) throws CommandException {
         if (!testPermission(source)) {
             source.sendMessage(Text.of(TextColors.RED, "You don't have permission to use this command!"));
             return CommandResult.empty();
@@ -70,6 +80,44 @@ public class CommandTest extends FCCommandBase {
         builder.append(Text.of(TextColors.GOLD, "Index: ", TextColors.RESET, parse.current.index, TextColors.GOLD, "\n"));
         builder.append(Text.of(TextColors.GOLD, "Key: \"", TextColors.RESET, parse.current.key, TextColors.GOLD, "\"\n"));
         source.sendMessage(builder.build());
+        return CommandResult.empty();
+    }*/
+
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+        if (!testPermission(source)) {
+            source.sendMessage(Text.of(RED, "You don't have permission to use this command!"));
+            return CommandResult.empty();
+        }
+
+        /*Text text = Text.of(
+                RED, BOLD, "hello world", Text.of(
+                        GREEN, "I am a child", Text.of(
+                                RESET, "and i am a grandchild"
+                        )
+                )
+        );
+
+        TextSerializer serializer = TextSerializers.JSON;
+
+        String jsonString = serializer.serialize(text);
+
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(jsonString).getAsJsonObject();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String prettyJson = gson.toJson(jsonObject);
+
+        source.sendMessage(Text.of(jsonString));
+        //source.sendMessage(Text.of(prettyJson));
+        //source.sendMessage(text);
+
+        JsonObject custom = new JsonObject();*/
+
+
+
+
+//        System.out.println(prettyJson);
+
         return CommandResult.empty();
     }
 

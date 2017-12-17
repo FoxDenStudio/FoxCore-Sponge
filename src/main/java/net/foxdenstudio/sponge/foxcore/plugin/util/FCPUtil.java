@@ -1,6 +1,13 @@
 package net.foxdenstudio.sponge.foxcore.plugin.util;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.foxdenstudio.sponge.foxcore.common.network.server.packet.ServerPositionPacket;
+import net.foxdenstudio.sponge.foxcore.common.util.CacheMap;
 import net.foxdenstudio.sponge.foxcore.common.util.FCCUtil;
 import net.foxdenstudio.sponge.foxcore.plugin.FoxCoreMain;
 import net.foxdenstudio.sponge.foxcore.plugin.state.FCStateManager;
@@ -24,15 +31,14 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.text.serializer.TextSerializer;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.util.Tristate;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -282,4 +288,65 @@ public class FCPUtil {
         itemStack.offer(loreData);
         itemStack.offer(Keys.DISPLAY_NAME, wand.getItemName());
     }
+
+    /*private static final String[] STYLE_TO_FLATTEN = {"bold", "italic", "underlined", "strikethrough", "obfuscated", "color", "insertion", "clickEvent", "colorEvent"};
+
+    private static Text smartTrim(Text text) {
+        TextSerializer serializer = TextSerializers.JSON;
+
+        String jsonString = serializer.serialize(text);
+
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(jsonString).getAsJsonObject();
+
+
+        return serializer.deserialize(jsonObject.toString());
+    }
+
+    private static void smartTrim(JsonObject json) {
+        JsonArray extra = json.getAsJsonArray("extra");
+        if (extra != null) {
+            for (JsonElement child : extra) {
+                if (child instanceof JsonObject) smartTrim((JsonObject) child);
+            }
+            for (String styleProp : STYLE_TO_FLATTEN) {
+                int keyLength = styleProp.length() + 3;
+                Multimap<JsonElement, JsonObject> map = HashMultimap.create();
+                for (JsonElement child : extra) {
+                    if (child instanceof JsonObject) {
+                        JsonObject childObject = ((JsonObject) child);
+                        JsonElement propValue = childObject.get(styleProp);
+                        map.put(propValue, childObject);
+                    }
+                }
+                JsonElement basePropValue = json.get(styleProp);
+                JsonElement targetValue = basePropValue;
+                int delta = 0;
+                if (basePropValue != null) {
+                    int baseEntryLength = keyLength + basePropValue.toString().length();
+                    if()
+
+                } else {
+                    for (Map.Entry<JsonElement, Collection<JsonObject>> entry : map.asMap().entrySet()) {
+                        Collection<JsonObject> objects = entry.getValue();
+                        int size = objects.size();
+                        if (size > 1) {
+                            int newdelta = 0;
+                            JsonElement element = entry.getKey();
+                            int entryLength = keyLength + element.toString().length();
+                            newdelta -= entryLength * (size - 1);
+                            if (newdelta < delta){
+                                newdelta = delta;
+                                targetValue = element;
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+        }
+
+    }*/
 }
