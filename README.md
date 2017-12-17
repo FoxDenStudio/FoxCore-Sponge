@@ -1,5 +1,5 @@
-# FoxCore [![Build Status](https://travis-ci.org/FoxDenStudio/FoxCore.svg?branch=master)](https://travis-ci.org/FoxDenStudio/FoxCore)
-A Core Library for [FoxGuard](https://github.com/FoxDenStudio/FoxGuard) written for the [SpongeAPI](https://github.com/SpongePowered/SpongeAPI)
+# FoxCore [![Build Status](https://travis-ci.org/FoxDenStudio/FoxCore-Sponge.svg?branch=master)](https://travis-ci.org/FoxDenStudio/FoxCore-Sponge)
+A Core Library for [FoxGuard](https://github.com/FoxDenStudio/FoxGuard-Sponge) written for the [SpongeAPI](https://github.com/SpongePowered/SpongeAPI)
 
 ## Overview
 This is a core library split off from FoxGuard. It contains the entire state buffer interface and will also contain the upcoming selections interface.
