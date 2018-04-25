@@ -176,7 +176,8 @@ public final class FoxCoreMain {
         game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
     }
 
-    @Listener void setupNetworking(GameInitializationEvent event){
+    @Listener
+    public void setupNetworking(GameInitializationEvent event){
         logger.info("Starting network packet manager");
         FCServerNetworkManager.instance().registerNetworkingChannels();
         logger.info("Creating server network channel");
