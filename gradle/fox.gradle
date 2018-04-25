@@ -26,8 +26,8 @@ targetCompatibility = '1.8'
 repositories {
     mavenCentral()
     maven {
-        name 'Sponge maven repo'
-        url 'http://repo.spongepowered.org/maven'
+        name = 'Sponge maven repo'
+        url = 'http://repo.spongepowered.org/maven'
     }
     maven {
         name = 'minecrell'
@@ -37,7 +37,8 @@ repositories {
 
 
 sponge.plugin {
-    id = archivesBaseName
+    def name = archivesBaseName.substring(0, archivesBaseName.indexOf("-"))
+    id = name
 }
 
 task wrapper(type: Wrapper) {
