@@ -43,7 +43,18 @@ import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandData;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.data.WandDataBuilder;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.types.CounterWand;
 import net.foxdenstudio.sponge.foxcore.plugin.wand.types.PositionWand;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
+import org.apache.logging.log4j.core.appender.rolling.DefaultRolloverStrategy;
+import org.apache.logging.log4j.core.appender.rolling.OnStartupTriggeringPolicy;
+import org.apache.logging.log4j.core.config.AppenderRef;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.DataRegistration;
@@ -67,6 +78,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tristate;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Plugin(id = "foxcore",
@@ -78,18 +90,28 @@ import java.util.UUID;
 public final class FoxCoreMain {
 
     private static final UUID FOX_UUID = UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371");
+    private static final String FOX_APPENDER_NAME = "FoxFile";
+    private static final String FOX_LOGGER_CONFIG_NAME = "fox";
+    private static final String FOXCORE_LOGGER_NAME = "fox.core";
     private static FoxCoreMain instance;
-    @Inject
-    private Logger logger;
+
+    private Logger logger = LoggerFactory.getLogger(FOXCORE_LOGGER_NAME);
+
     @Inject
     private Game game;
+
     @Inject
     private EventManager eventManager;
+
     @Inject
     @ConfigDir(sharedRoot = true)
     private Path configDirectory;
+
+    private Path foxLogDirectory = Paths.get("logs", "fox");
+
     @Inject
     private PluginContainer container;
+
     private FCCommandDispatcher fcDispatcher;
     private FCServerNetworkManager.ServerChannel foxcoreNetworkChannel;
 
@@ -104,30 +126,64 @@ public final class FoxCoreMain {
 
     @Listener
     public void preInit(GamePreInitializationEvent event) {
+        //logger.info("Injecting fox logger");
+        //setupLogging();
+
         logger.info("Beginning FoxCore initialization");
         logger.info("Version: " + container.getVersion().orElse("Unknown"));
+
         logger.info("Initializing state manager");
         FCStateManager.init();
+
         logger.info("Initializing network packet manager");
         FCServerNetworkManager.instance();
+
         logger.info("Configuring commands");
         configureCommands();
     }
 
+    // This code doesn't work for Log4J 2.0-beta9
+    // Will be used in MC 1.12.2 where Log4J is updated.
+    /*private void setupLogging() {
+        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        final Configuration config = ctx.getConfiguration();
+        String foxLogFile = foxLogDirectory.resolve("fox-latest.log").toString();
+        String foxLogPattern = foxLogDirectory.toString() + "/fox-%i.log";
+        PatternLayout layout = PatternLayout.createLayout("[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n", config, null, null, null);
+        Appender appender = RollingRandomAccessFileAppender.createAppender(foxLogFile, foxLogPattern, null, FOX_APPENDER_NAME, null,
+                OnStartupTriggeringPolicy.createPolicy(),
+                DefaultRolloverStrategy.createStrategy("3", null, "max", "0", config),
+                layout, null, "true", "false", null, config);
+        appender.start();
+        config.getAppenders().putIfAbsent(appender.getName(), appender);
+        AppenderRef ref = AppenderRef.createAppenderRef(appender.getName(), null, null);
+        AppenderRef[] refs = {ref};
+        LoggerConfig loggerConfig = LoggerConfig.createLogger("true", "all", FOX_LOGGER_NAME, null, refs, null, config, null);
+        loggerConfig.addAppender(appender, null, null);
+        config.getLoggers().putIfAbsent(loggerConfig.getName(), loggerConfig);
+        ctx.updateLoggers(config);
+    }*/
+
     @Listener
     public void init(GameInitializationEvent event) {
+        logger.info("Registering positions state field");
+        FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
+
+        logger.info("Registering wand factories");
+        registerWands();
+
+        logger.info("Registering commands");
+        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
+    }
+
+    @Listener
+    public void setupNetworking(GameInitializationEvent event){
         logger.info("Starting network packet manager");
         FCServerNetworkManager.instance().registerNetworkingChannels();
         logger.info("Creating server network channel");
         foxcoreNetworkChannel = FCServerNetworkManager.instance().getOrCreateServerChannel("foxcore");
         logger.info("Registering packet listeners");
         registerPackets();
-        logger.info("Registering positions state field");
-        FCStateManager.instance().registerStateFactory(new PositionStateField.Factory(), PositionStateField.ID, PositionStateField.ID, Aliases.POSITIONS_ALIASES);
-        logger.info("Registering wand factories");
-        registerWands();
-        logger.info("Registering commands");
-        game.getCommandManager().register(this, fcDispatcher, "foxcore", "foxc", "fcommon", "fc");
     }
 
     @Listener
@@ -236,6 +292,10 @@ public final class FoxCoreMain {
 
     public Path getConfigDirectory() {
         return configDirectory;
+    }
+
+    public Path getLogDirectory() {
+        return foxLogDirectory;
     }
 
     public PluginContainer getContainer() {
