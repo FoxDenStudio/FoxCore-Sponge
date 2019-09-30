@@ -116,6 +116,9 @@ public final class FoxCorePlugin {
 
         logger.info("Configuring commands");
         foxcore.configureCommands();
+
+        logger.info("Setting up static content");
+        foxcore.setupStaticContent();
     }
 
     // This code doesn't work for Log4J 2.0-beta9

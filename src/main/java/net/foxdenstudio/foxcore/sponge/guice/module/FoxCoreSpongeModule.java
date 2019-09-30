@@ -11,9 +11,12 @@ import net.foxdenstudio.foxcore.sponge.impl.SpongeTextFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.plugin.PluginContainer;
 
+import javax.annotation.Nullable;
+
 public class FoxCoreSpongeModule extends AbstractModule {
     protected void configure() {
         install(new FoxCoreModule());
+        install(new TextStyleModule());
         bind(TextFactory.class).to(SpongeTextFactory.class);
         //add configuration logic here
     }
@@ -28,6 +31,7 @@ public class FoxCoreSpongeModule extends AbstractModule {
         return (ConsoleSource) Sponge.getServer().getConsole();
     }
 
+    @Nullable
     @Provides
     @FoxCorePluginInstance
     Object getPluginInstance(PluginContainer container){
