@@ -8,13 +8,18 @@ public class SpongeTextFactory implements TextFactory {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public Text getText(String text) {
+    public Text of(String text) {
         return (Text) (Object) org.spongepowered.api.text.Text.of(text);
     }
 
     @Override
-    public Text getText(Object... objects){
+    public Text of(Object... objects){
         return (Text) org.spongepowered.api.text.Text.of(objects);
+    }
+
+    @Override
+    public Text.Builder builder() {
+        return (Text.Builder) org.spongepowered.api.text.Text.builder();
     }
 
 }

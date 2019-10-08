@@ -6,13 +6,17 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinCatalogType",
     "command.result.MixinCommandResult",
     "command.source.MixinCommandSource",
     "command.source.MixinConsoleSource",
     "command.MixinCommandCallable",
     "command.MixinCommandDispatcher",
     "command.MixinCommandManager",
+    "text.MixinText",
+    "text.MixinText$Builder",
     "text.channel.MixinMessageReceiver",
-    "text.MixinText"
+    "text.format.MixinTextColor",
+    "util.generator.dummy.MixinDummyClassGenerator"
   ]
 }
