@@ -19,6 +19,16 @@ public abstract class MixinDummyClassGenerator {
 
     private static final String[] validClassPrefixes = { "org.spongepowered.api" };
 
+    /**
+     * Mixin injection for the dummy class generator.
+     *
+     * Fixes a bug where if a catalog type has two public facing methods with the same signature (from different classes)
+     * the generator will generate duplicate methods, thus creating an invalid class.
+     *
+     * The callback removes methods with duplicate descriptors to fix this.
+     *
+     * This injection does not otherwise change behavior.
+     */
     @Inject(method = "generateMethods", at = @At("HEAD"))
     private void onGenerateMethods(ClassWriter cw, String internalName, List<Method> methods, Class<?> exceptionType, CallbackInfo ci) {
         if (methods == null || methods.isEmpty()) return;
@@ -30,6 +40,8 @@ public abstract class MixinDummyClassGenerator {
             String desc = Type.getMethodDescriptor(method);
             Method existing = map.get(desc);
             if (existing != null) {
+                // The package check is not strictly necessary,
+                // but it doesn't hurt to try to make the method list what sponge would already expect
                 String className = method.getDeclaringClass().getName();
                 boolean sponge = false;
                 for (String prefix : validClassPrefixes) {
