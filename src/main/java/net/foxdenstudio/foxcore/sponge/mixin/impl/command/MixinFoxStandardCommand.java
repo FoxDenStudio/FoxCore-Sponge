@@ -33,7 +33,9 @@ public interface MixinFoxStandardCommand extends CommandCallable {
         } catch (Exception e2) {
             throw new CommandException(Text.of("Unknown exception executing command", e2));
         }
-        return CommandResult.successCount(result.getSuccesses());
+        int successCount = result.getSuccesses();
+        if (successCount == 0) return CommandResult.empty();
+        return CommandResult.successCount(successCount);
     }
 
     @Override

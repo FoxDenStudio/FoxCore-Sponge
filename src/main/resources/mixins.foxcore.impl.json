@@ -2,11 +2,12 @@
   "required": true,
   "minVersion": "0.7.10",
   "package": "net.foxdenstudio.foxcore.sponge.mixin.impl",
-  "refmap": "mixins.foxguard.refmap.json",
+  "refmap": "mixins.foxcore.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "command.MixinFoxStandardCommand",
-    "command.MixinFoxStandardCommandBase"
+    "command.MixinFoxStandardCommandBase",
+    "text.MixinFoxTextRepresentable"
   ]
 }

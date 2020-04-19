@@ -1,4 +1,5 @@
 ext.spongeVersion = '7.0.0-SNAPSHOT'
-ext.clientForgeVersion = '1.12.2-14.23.5'
-ext.mcpMappings = 'snapshot_20160822'
-ext.gradleWrapperVersion = '4.4'
+ext.minecraftVersion = '1.12.2'
+ext.clientForgeVersion = '14.23.5'
+ext.clientForgeBuild = '2838'
+ext.mcpMappings = 'snapshot_20180808'

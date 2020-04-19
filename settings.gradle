@@ -1,2 +1,3 @@
 rootProject.name = 'FoxCore-Sponge'
 
+include 'FoxCore-Common'

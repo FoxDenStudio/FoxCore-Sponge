@@ -1,5 +1,8 @@
+ext.mcFullVersion = minecraftVersion + "-" + clientForgeVersion + "." + clientForgeBuild
+
 minecraft {
-    forgeVersion = clientForgeVersion
+    version = mcFullVersion
+    forgeVersion = mcFullVersion
     runDir = 'run'
     mappings = mcpMappings
     makeObfSourceJar = false

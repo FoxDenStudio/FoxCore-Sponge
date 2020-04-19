@@ -1,7 +1,7 @@
 apply from: project.file("gradle/versions.gradle")
 
 buildscript {
-    ext.kotlinVersion = '1.2.41'
+    ext.kotlinVersion = '1.3.61'
     repositories {
         jcenter()
         mavenCentral()
@@ -19,12 +19,24 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath('net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT') {
+            // The gradle Kotlin plugin depends on Intellij's custom fork
+            // of GNU Trove, which it doesn't relocate.
+            // Therefore, we need to remove any other version of Trove
+            // from the classpath, to ensure that 'gnu.trove.*' always
+            // resolves to Intellij's version of Trove at runtime
+            // See https://youtrack.jetbrains.com/issue/IDEA-211616
+            exclude group: 'trove', module: 'trove'
+            exclude group: 'net.sf.trove4j', module: 'trove4j'
+        }
         classpath 'org.spongepowered:spongegradle:0.8.2-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
+
+ext.foxCoreCommon = findProject('FoxCore-Common')
+if (ext.foxCoreCommon == null) ext.foxCoreCommon = findProject(':FoxCore-Common')
 
 apply plugin: 'kotlin'
 apply plugin: 'org.spongepowered.plugin'
@@ -33,18 +45,19 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 group = 'net.foxdenstudio.sponge'
 version = 'api7-SNAPSHOT'
 
-apply from: project.file("gradle/fox.gradle")
+apply from: ext.foxCoreCommon.file("gradle/config.gradle")
+apply from: ext.foxCoreCommon.file("gradle/fox.gradle")
 apply from: project.file("gradle/minecraft.gradle")
 apply from: project.file("gradle/publish.gradle")
 apply from: project.file("gradle/foxcore.gradle")
 
 dependencies {
-    compile project(':FoxCore-Common')
+    compile project.ext.foxCoreCommon
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     compile "org.spongepowered:spongeapi:$spongeVersion"
-    compile 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    compile 'org.spongepowered:mixin:0.8'
     //compile 'com.flowpowered:flow-math:1.0.3'
-    compile 'org.mapdb:mapdb:3.0.5'
+    //compile 'org.mapdb:mapdb:3.0.5'
     //compile 'net.minecrell.mcstats:statslite-sponge:0.2.2'
     //compile 'com.google.code.gson:gson:2.8.0'
     //testCompile group: 'junit', name: 'junit', version: '4.11'

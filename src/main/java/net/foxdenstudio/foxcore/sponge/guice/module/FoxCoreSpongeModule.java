@@ -28,13 +28,18 @@ public class FoxCoreSpongeModule extends AbstractModule {
 
     @Provides
     ConsoleSource getConsoleSource() {
-        return (ConsoleSource) Sponge.getServer().getConsole();
+        try {
+            return (ConsoleSource) Sponge.getServer().getConsole();
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Nullable
     @Provides
     @FoxCorePluginInstance
-    Object getPluginInstance(PluginContainer container){
+    Object getPluginInstance(PluginContainer container) {
         return container.getInstance().orElse(null);
     }
 }
