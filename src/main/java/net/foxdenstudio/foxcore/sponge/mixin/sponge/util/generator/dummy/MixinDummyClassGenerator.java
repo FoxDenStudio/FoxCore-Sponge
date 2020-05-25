@@ -29,7 +29,7 @@ public abstract class MixinDummyClassGenerator {
      *
      * This injection does not otherwise change behavior.
      */
-    @Inject(method = "generateMethods", at = @At("HEAD"))
+    @Inject(method = "generateMethods", at = @At("HEAD"), remap = false)
     private void onGenerateMethods(ClassWriter cw, String internalName, List<Method> methods, Class<?> exceptionType, CallbackInfo ci) {
         if (methods == null || methods.isEmpty()) return;
 

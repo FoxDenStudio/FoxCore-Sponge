@@ -18,6 +18,8 @@
     "text.MixinTextRepresentable",
     "text.channel.MixinMessageReceiver",
     "text.format.MixinTextColor",
-    "util.generator.dummy.MixinDummyClassGenerator"
+    "util.generator.dummy.MixinDummyClassGenerator",
+    "util.MixinIdentifiable",
+    "world.MixinWorld"
   ]
 }

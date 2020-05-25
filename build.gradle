@@ -54,8 +54,8 @@ apply from: project.file("gradle/foxcore.gradle")
 dependencies {
     compile project.ext.foxCoreCommon
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    compile "org.spongepowered:spongeapi:$spongeVersion"
     compile 'org.spongepowered:mixin:0.8'
+    compileOnly "org.spongepowered:spongeapi:$spongeVersion"
     //compile 'com.flowpowered:flow-math:1.0.3'
     //compile 'org.mapdb:mapdb:3.0.5'
     //compile 'net.minecrell.mcstats:statslite-sponge:0.2.2'

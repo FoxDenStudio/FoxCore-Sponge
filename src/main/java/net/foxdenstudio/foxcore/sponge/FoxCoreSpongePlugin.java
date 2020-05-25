@@ -33,6 +33,7 @@ import net.foxdenstudio.foxcore.sponge.guice.module.FoxCoreSpongeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
@@ -60,13 +61,13 @@ import java.util.UUID;
         authors = {"gravityfox"},
         url = "https://github.com/FoxDenStudio/FoxCore"
 )
-public final class FoxCorePlugin {
+public final class FoxCoreSpongePlugin {
 
     private static final UUID FOX_UUID = UUID.fromString("f275f223-1643-4fac-9fb8-44aaf5b4b371");
     private static final String FOX_APPENDER_NAME = "FoxFile";
     private static final String FOX_LOGGER_CONFIG_NAME = "fox";
     private static final String FOXCORE_LOGGER_NAME = "fox.core";
-    private static FoxCorePlugin instance;
+    private static FoxCoreSpongePlugin instance;
 
     private Logger logger = LoggerFactory.getLogger(FOXCORE_LOGGER_NAME);
 
@@ -90,7 +91,7 @@ public final class FoxCorePlugin {
 
     private FoxCore foxcore;
 
-    public static FoxCorePlugin instance() {
+    public static FoxCoreSpongePlugin instance() {
         return instance;
     }
 
@@ -119,6 +120,9 @@ public final class FoxCorePlugin {
 
         logger.info("Setting up static content");
         foxcore.setupStaticContent();
+
+        logger.info("Registering world load listener");
+        Sponge.getEventManager().registerListeners(this, foxcore.getWorldManager());
     }
 
     // This code doesn't work for Log4J 2.0-beta9
@@ -147,12 +151,15 @@ public final class FoxCorePlugin {
     public void init(GameInitializationEvent event) {
         logger.info("Registering commands");
         this.foxcore.registerCommands();
+
+        logger.info("Loading persistent indices and their objects");
+        this.foxcore.loadIndexObjects();
     }
 
-    @Listener
+    /*@Listener
     public void setupNetworking(GameInitializationEvent event) {
 
-    }
+    }*/
 
     @Listener
     public void registerListeners(GameInitializationEvent event) {
@@ -161,18 +168,18 @@ public final class FoxCorePlugin {
 
     }
 
-    @Listener
+    /*@Listener
     public void registerData(GameInitializationEvent event) {
         //logger.info("Registering custom data manipulators");
 
-    }
+    }*/
 
-    @Listener
+    /*@Listener
     public void configurePermissions(GamePostInitializationEvent event) {
         logger.info("Configuring permissions");
         game.getServiceManager().provide(PermissionService.class).get().getDefaults()
                 .getTransientSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, "foxcore.command.info", Tristate.TRUE);
-    }
+    }*/
 
     public Logger logger() {
         return logger;
@@ -186,19 +193,21 @@ public final class FoxCorePlugin {
     public void playerJoin(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
         if (player.getUniqueId().equals(FOX_UUID)) {
-            logger.info("A code fox has slipped into the server.");
+            logger.info("A code fox has slipped into the server...");
         }
     }
 
     public Path getConfigDirectory() {
-        return configDirectory;
+        return this.configDirectory;
     }
 
     public Path getLogDirectory() {
-        return foxLogDirectory;
+        return this.foxLogDirectory;
     }
 
     public PluginContainer getContainer() {
-        return container;
+        return this.container;
     }
+
+    public FoxCore getCommonInstance(){return this.foxcore;}
 }
