@@ -1,0 +1,5 @@
+JVM:
+-Dfml.coreMods.load=org.spongepowered.mod.SpongeCoremod
+
+Program
+--mixin mixins.foxcore.impl.json --mixin mixins.foxcore.sponge.json

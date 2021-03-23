@@ -1,7 +1,7 @@
 apply from: project.file("gradle/versions.gradle")
 
 buildscript {
-    ext.kotlinVersion = '1.3.61'
+    ext.kotlinVersion = '1.4.10'
     repositories {
         jcenter()
         mavenCentral()
@@ -29,7 +29,7 @@ buildscript {
             exclude group: 'trove', module: 'trove'
             exclude group: 'net.sf.trove4j', module: 'trove4j'
         }
-        classpath 'org.spongepowered:spongegradle:0.8.2-SNAPSHOT'
+        classpath 'gradle.plugin.org.spongepowered:spongegradle:0.8.1'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }

@@ -10,10 +10,12 @@ import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.world.World;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
+@Singleton
 public class SpongeFoxWorldManager extends FoxWorldManagerImplBase {
 
     @Inject
@@ -25,12 +27,14 @@ public class SpongeFoxWorldManager extends FoxWorldManagerImplBase {
     public void onWorldLoad(LoadWorldEvent event) {
         World world = event.getTargetWorld();
         String name = world.getName();
+        logger.info("Received world load event. Processing world \"{}\"", name);
         UUID uuid = world.getUniqueId();
         Path directory = world.getDirectory();
 
         FoxWorldImpl foxWorld = this.worldMapCopy.get(name);
         FoxWorldImpl.FoxObject object;
         if (foxWorld == null) {
+            logger.info("No index entry found for world \"{}\". Creating...", name);
             foxWorld = new FoxWorldImpl(name, uuid, directory);
             object = this.configureAndLoadWorldRep(foxWorld);
             this.worldMap.put(name, foxWorld);
@@ -41,7 +45,8 @@ public class SpongeFoxWorldManager extends FoxWorldManagerImplBase {
             } else {
                 object = this.configureAndLoadWorldRep(foxWorld);
             }
-
         }
+        foxWorld.setOnlineWorld((net.foxdenstudio.foxcore.platform.world.World) world);
+        this.weakOnlineMap.put((net.foxdenstudio.foxcore.platform.world.World) world, foxWorld);
     }
 }

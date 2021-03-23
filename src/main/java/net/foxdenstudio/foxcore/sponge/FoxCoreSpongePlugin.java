@@ -25,10 +25,12 @@
 
 package net.foxdenstudio.foxcore.sponge;
 
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import net.foxdenstudio.foxcore.FoxCore;
+import net.foxdenstudio.foxcore.api.world.FoxWorldManager;
 import net.foxdenstudio.foxcore.sponge.guice.module.FoxCoreSpongeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +40,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.*;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -54,6 +53,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "foxcore",
         name = "FoxCore",
@@ -113,7 +113,10 @@ public final class FoxCoreSpongePlugin {
         modules.add(new FoxCoreSpongeModule());
 
         Injector subInjector = pluginInjector.createChildInjector(modules);
+        logger.info("Injecting main FoxCore instance.");
+        Stopwatch stopwatch = Stopwatch.createStarted();
         foxcore = subInjector.getInstance(FoxCore.class);
+        logger.info("Injection took " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + " milliseconds.");
 
         logger.info("Configuring commands");
         foxcore.configureCommands();
@@ -121,8 +124,12 @@ public final class FoxCoreSpongePlugin {
         logger.info("Setting up static content");
         foxcore.setupStaticContent();
 
+        FoxWorldManager worldManager = foxcore.getWorldManager();
+        logger.info("Loading FoxWorldManager world index data.");
+        worldManager.load();
+
         logger.info("Registering world load listener");
-        Sponge.getEventManager().registerListeners(this, foxcore.getWorldManager());
+        Sponge.getEventManager().registerListeners(this,worldManager);
     }
 
     // This code doesn't work for Log4J 2.0-beta9
@@ -166,6 +173,12 @@ public final class FoxCoreSpongePlugin {
         //logger.info("Registering event listeners");
         EventManager manager = game.getEventManager();
 
+    }
+
+    @Listener
+    public void onServerStopping(GameStoppingServerEvent event){
+        logger.info("Server is stopping! Saving states.");
+        this.foxcore.getWorldManager().save();
     }
 
     /*@Listener
