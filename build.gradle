@@ -1,7 +1,5 @@
-apply from: project.file("gradle/versions.gradle")
-
 buildscript {
-    ext.kotlinVersion = '1.4.10'
+    ext.kotlinVersion = '1.4.32'
     repositories {
         jcenter()
         mavenCentral()
@@ -11,12 +9,9 @@ buildscript {
         }
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://files.minecraftforge.net/maven"
         }
-        maven {
-            name = 'Sponge maven repo'
-            url = 'http://repo.spongepowered.org/maven'
-        }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
         classpath('net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT') {
@@ -35,6 +30,8 @@ buildscript {
     }
 }
 
+apply from: project.file("gradle/versions.gradle")
+
 ext.foxCoreCommon = findProject('FoxCore-Common')
 if (ext.foxCoreCommon == null) ext.foxCoreCommon = findProject(':FoxCore-Common')
 
@@ -47,8 +44,8 @@ version = 'api7-SNAPSHOT'
 
 apply from: ext.foxCoreCommon.file("gradle/config.gradle")
 apply from: ext.foxCoreCommon.file("gradle/fox.gradle")
+apply from: ext.foxCoreCommon.file("gradle/publish.gradle")
 apply from: project.file("gradle/minecraft.gradle")
-apply from: project.file("gradle/publish.gradle")
 apply from: project.file("gradle/foxcore.gradle")
 
 dependencies {

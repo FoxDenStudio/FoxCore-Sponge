@@ -51,15 +51,8 @@ shadowJar {
     dependsOn reobfJar
     dependencies {
         include dependency('com.flowpowered:flow-math')
-        include dependency('org.mapdb:mapdb')
-        include dependency('org.mapdb:elsa')
-        include dependency('org.eclipse.collections:eclipse-collections')
-        include dependency('org.eclipse.collections:eclipse-collections-api')
-        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
-        include dependency('net.jpountz.lz4:lz4')
-        include dependency('net.minecrell.mcstats:statslite-sponge')
     }
 }
 
@@ -67,15 +60,8 @@ task serverJar(type: ShadowJar) {
     group = 'build'
     classifier = 'server'
     dependencies {
-        include dependency('org.mapdb:mapdb')
-        include dependency('org.mapdb:elsa')
-        include dependency('org.eclipse.collections:eclipse-collections')
-        include dependency('org.eclipse.collections:eclipse-collections-api')
-        include dependency('org.eclipse.collections:eclipse-collections-forkjoin')
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.jetbrains.kotlin:kotlin-runtime')
-        include dependency('net.jpountz.lz4:lz4')
-        include dependency('net.minecrell.mcstats:statslite-sponge')
     }
     from(sourceSets.main.output) {
         exclude "net/foxdenstudio/sponge/foxcore/mod"
